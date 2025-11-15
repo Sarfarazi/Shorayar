@@ -1,0 +1,64 @@
+﻿@model Council.Core.Models.UpdateSettings
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header">
+                ویرایش تنظیمات
+            </div>
+            @using (Html.BeginForm("Edit", "SystemSettings", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="card-body">
+                    @Html.ValidationSummary(true)
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.ID)
+
+                    <div class="row form-group">
+                        @Html.LabelFor(model => model.CouncilName, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.CouncilName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CouncilName, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        @Html.LabelFor(m => m.CouncilLogo, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.TextBoxFor(m => m.CouncilLogo, new { @class = "form-control", type = "file" })
+                            <span class="d-none"></span>
+                            <p class="mb-0"><strong>ابعاد:</strong> 52*190 پیکسل</p>
+                            @Html.ValidationMessageFor(m => m.CouncilLogo, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        @Html.LabelFor(m => m.CouncilLoginLogo, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.TextBoxFor(m => m.CouncilLoginLogo, new { @class = "form-control", type = "file" })
+                            <span class="d-none"></span>
+                            <p class="mb-0"><strong>ابعاد:</strong> 220*180 پیکسل</p>
+                            @Html.ValidationMessageFor(m => m.CouncilLoginLogo, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-12"></div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            <div>
+                                @Html.CheckBoxFor(m => m.Used)
+                                @Html.LabelFor(m => m.Used, new { @class = "control-label" })
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Used, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <input type="submit" value="به روز رسانی" class="btn btn-success" />
+                    @Html.ActionLink("انصراف" , "Index" , null, new { @class="btn btn-primary"})
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

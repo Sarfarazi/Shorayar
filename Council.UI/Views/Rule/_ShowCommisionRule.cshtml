@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Council.Core.Entities.Letter>
+@using Council.UI.Helpers;
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@{
+    var comNumber = 0;
+    Council.Service.PublicMetods publicMethod = new Council.Service.PublicMetods();
+    var commisions = ViewBag.Commisions as List<Council.Core.Models.CommisionNames>;
+}
+@foreach (var item in Model)
+{
+    var commisionName = item.CommissionMeeting != null ? commisions.Where(m => m.Id == item.CommissionMeeting.CommissionId).Select(m => m.Name).SingleOrDefault() : "";
+    <tr class="@(item.LetterStatus == LetterStatus.CommissionEnd ? "white-Color" : item.LetterStatus == LetterStatus.End ? "white-Color" : "" ) @(item.IsRule!=null ? item.IsRule==true?"isRule":"isNotRule":"" )">
+        <td>
+            <span id="rowNumber">@(++comNumber + Convert.ToInt32(ViewBag.rulePageNumber))</span>
+        </td>                
+        <td>
+            @if (!string.IsNullOrEmpty(commisionName))
+            {
+                <span class="PostText"> [ کمیسیون @commisionName ] &nbsp;&nbsp;</span>
+            }  
+            @Html.DisplayFor(modelItem => item.Title)               
+        </td>                
+        <td>
+            @Html.DisplayFor(modelItem => item.LetterNumber)
+        </td>            
+        <td>               
+            @Html.DisplayFor(modelItem => item.CreateOn)
+        </td>            
+        <td>                    
+            <a class="btn btn-info" href="@Url.Action("LetterItem", "Letter", new { letterID = item.ID })" title="نمایش">
+                نمایش
+            </a>
+        </td>
+    </tr>
+}
+@{
+    <input id="ruleLetterPageNumber" type="hidden" value="1" />
+    <input id="ruleLetterCount" type="hidden" value="@ViewBag.ruleLetterCount" />   
+}

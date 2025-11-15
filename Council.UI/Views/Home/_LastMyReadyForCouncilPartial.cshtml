@@ -1,0 +1,88 @@
+﻿@model  Council.Core.Models.HomePageViewModel
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.Core.Statics;
+@using Council.UI.CustomAuthentication;
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+
+    var forCouncil = Model != null ? Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.SendInvite).ToList() : null;
+
+    // Commission
+    var aa = Model != null ? Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting).ToList() : null;
+
+    var commissionForCouncil = Model != null ? Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting
+                && Model.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList() : null;
+
+    forCouncil.AddRange(commissionForCouncil);
+
+    forCouncil = forCouncil.OrderByDescending(m => m.CreatedOn).ToList();
+
+    bool userIsBoss = Model != null ? Model.UserIsBoss : false;
+    bool userIsBossHelper = Model != null ? Model.UserIsBossHelper : false;
+    bool userIsSiteManager = Model != null ? Model.UserIsSiteManager : false;
+    bool userIsMember = Model != null ? Model.UserIsMember : false;
+}
+
+@if (forCouncil.Count > 0 && userIsMember && forCouncil.Any(m => m.CommissionId == null))
+{
+    var counter = 1;
+    <div class="table-responsive">
+        <table class="table table-bordered table-condensed table-hover table-striped allletters">
+            <thead>
+                <tr>
+                    <td class="table-heade-rowNumber">ردیف</td>
+                    <td>شماره نامه</td>
+                    <td>موضوع</td>
+                    <td class="second-width"></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in forCouncil)
+                {
+                    bool isCommission = (item.CommissionName != null);
+
+                    var href = (item.LetterStatus == LetterStatus.SendInvite && !isCommission) ?
+                    ("/Letter/ReadyForCouncil?letterID=" + item.ID) :
+                    ("/Letter/CommissionReadyForCouncil?letterID=" + item.ID);
+
+                    var outHref = (item.LetterStatus == LetterStatus.SendInvite && !isCommission) ?
+                    ("/Letter/ChangeOutOfReadyForCouncil?letterID=" + item.ID) :
+                    ("/Letter/ChangeOutOfReadyForCommisionCouncil?letterID=" + item.ID);
+
+                    if (!isCommission)
+                    {
+                        <tr>
+                            <td>@(counter++)</td>
+                            <td>@item.LetterNumber</td>
+                            <td class="text-right">
+                                @{if (!String.IsNullOrEmpty(item.CommissionName))
+                                    {
+                                        <span>[ کمیسیون  @item.CommissionName ]</span>
+                                    }
+                                }
+                                <a href="@Url.Action("LetterItem","Letter", new { letterID = item.ID })">
+                                    @item.Title
+                                </a>
+                            </td>
+                            <td>
+                                <a href="@href" class="btn btn-default btn-sm ">
+                                    تنظیمات رای گیری
+                                </a>
+                                <a href="@outHref" class="btn btn-default btn-sm">
+                                    خروج از دستور جلسه
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p>داده ای برای نمایش وجود ندارد</p>
+}

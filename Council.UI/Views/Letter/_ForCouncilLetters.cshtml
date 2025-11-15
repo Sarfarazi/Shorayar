@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Council.Core.Models.MyLetter>
+@using Council.UI.Helpers;
+@using Council.Core.Entities@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+
+    @{
+        var rowNumber = -1;
+    }
+    @foreach (var item in Model.OrderByDescending(l => l.CreatedOn))
+    {
+        <tr>
+            <td> @(++rowNumber + Convert.ToInt32(ViewBag.CouncilRowNumber))</td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Title)
+                <input id="CouncilPageNumber" type="hidden" value="1" />
+                <input id="CouncilCount" type="hidden" value="@ViewBag.CouncilLetters" /> 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LetterNumber)
+            </td>
+            <td class="hideOnMobile">
+                @Html.GetPersianDate(item.CreatedOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Urgency)
+            </td>
+            <td class="btns-td text-right width-152">
+                <a class="btn btn-success" href="@Url.Action("LetterItem", "Letter", new { letterID = item.ID })" title="نمایش">
+                    نمایش
+                </a>
+                @if (item.LetterStatus == (int)LetterStatus.Votting)
+                {
+                    <a class="btn btn-primary" href="@Url.Action("ReadyForCouncil", "Letter", new { letterID = item.ID })" title="ارسال جهت شور">
+                        تنظیم خلاصه تصمیمات
+                    </a>
+                }
+                @if (item.LetterStatus == (int)LetterStatus.ReadyForVoting)
+                {
+                    <a class="btn btn-info" href="@Url.Action("AllowCouncil", "Letter", new { letterID = item.ID })" title="صدور اجازه رای گیری">
+                        صدور اجازه رای گیری
+                    </a>
+                }
+                @if (item.LetterStatus == (int)LetterStatus.End)
+                {
+                    <a class="btn btn-warning" href="@Url.Action("MeetingResult", "Letter", new { letterID = item.ID })" title="نمایش نتایج">
+                        نمایش نتایج
+                    </a>
+                }
+            </td>
+        </tr>
+    }

@@ -1,0 +1,40 @@
+﻿@model  Council.Core.Models.LastCommisionModel
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+ }
+
+
+@if (Model.MyLetters.Count > 0)
+{
+    var comNumber = 0;
+    foreach (var item in Model.MyLetters)
+    {
+        <tr class="temp">
+            <td class="text-center">
+                <input id="CommisionPageNumber" type="hidden" value="1" />
+                <input id="CommisionCount" type="hidden" value="@ViewBag.CommisionCount" />
+                <span id="rowNumber">@(++comNumber + Convert.ToInt32(ViewBag.CommPageNumber))</span>
+            </td>
+            <td>@(item.LetterNumber)</td>
+            <td class="text-right">
+                
+                @{if (!String.IsNullOrEmpty(item.CommissionName))
+                    {<span class="redColor">[کمیسیون @item.CommissionName]</span>}
+                }&nbsp;&nbsp;
+                <a href="@Url.Action("LetterItem","Letter" , new { letterID = item.ID})">@item.Title</a>
+            </td>
+            
+            <td class="@((Model.MyCommissions.Any(c => c.BossId == UserID && c.CommissionId == item.CommissionId) ? "" : "table-heade")) text-right">
+              <a href="@Url.Action("MeetingResult", "Letter", new { letterID =item.ID,isCommission=true })" target="_blank" class="btn btn-default btn-sm"> نمایش نتایج</a>
+                @if (item.IsRule==null && Model.MyCommissions.Any(c => c.BossId == UserID && c.CommissionId == item.CommissionId))
+                {
+                    <a href="@Url.Action("CommissionReVoting","Letter" , new { letterID = item.ID})" class="btn btn-default btn-sm" >ابطال و رای گیری مجدد</a>
+                }
+            </td>
+        </tr>
+    }
+}

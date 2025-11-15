@@ -1,0 +1,198 @@
+﻿@model Council.Core.Models.PrintModel
+@using Council.UI.Helpers;
+@using Council.Service.DBServices;
+@{
+    Layout = null;
+    var approvalVots = Model.Votings.Where(v => v.VoteStatus == "1").Count();
+    var notApprovalVots = Model.Votings.Where(v => v.VoteStatus == "2").Count();
+    var momtaneVots = Model.Votings.Where(v => v.VoteStatus == "3").Count();
+    var isHiddenVoting = ViewBag.IsVotingHidden != null ? ViewBag.IsVotingHidden : false;
+
+    SystemSettingsService settingsService = new SystemSettingsService();
+    var curentSetting = settingsService.All().FirstOrDefault(m => m.Used);
+    var Settings = new Council.Core.Models.CurrentSetting
+    {
+        CouncilName = curentSetting != null ? curentSetting.CouncilName : "شورایار",
+        CouncilLogo = curentSetting != null ? curentSetting.CouncilLogo : "default-logo.png",
+        CouncilLoginLogo = curentSetting != null ? curentSetting.CouncilLoginLogo : "default-login-logo.png"
+    };
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />    
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+</head>
+<body>
+    <div class="print-part">
+        <table class="text-center" style="width:100%">
+            <tr>
+                <td class="centerContent">
+                    <img src="~/Images/logo/@Settings.CouncilLoginLogo" style="width:85px" />
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered table-hover table-striped">
+            <tr>
+                <td colspan="6" class="centerContent">
+                    فرم صورتجلسه،
+                    @(Model.IsCommission ? "تصمیمات کمیسیون " + Model.CommissionInfo.Name : "جلسه (عادی-فوق العاده)")
+                    شورای اسلامی شهر
+                    @Settings.CouncilName
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2" class="text-right" style="width:40%">
+                    موضوع:
+
+                    @Model.MeetingResult.Subject
+                </td>
+                <td>
+                    شماره نامه:
+                    
+                    @Model.MeetingResult.LetterNumber
+                </td>
+                
+                <td>
+                    شماره ثبت:
+                    
+                    @Model.MeetingResult.RegisterNumber
+                </td>
+                <td>
+                    شماره جلسه:
+                    
+                    @Model.MeetingResult.MeetingNumber
+                </td>
+                
+            </tr>
+            <tr>
+                <td>
+                    تاریخ نامه:
+                    
+                    @Model.MeetingResult.OutLetterDate
+                </td>
+                
+                <td>
+                    تاریخ ثبت:
+                    
+                    @Model.MeetingResult.SendDate
+                    @*@Html.GetPersianDate(Model.MeetingResult.CreatedOn)*@
+                </td>
+                <td>
+                    تاریخ جلسه:
+                    
+                    @Html.GetPersianDate(Model.MeetingResult.MeetingDate)
+                </td>
+            </tr>
+        </table>
+        <table class="table table-bordered table-hover table-striped">
+            <tr>
+                <td>
+                    <div style="font-size:16px !important">شرح تصمیم @(Model.IsCommission ? "کمیسیون" : "شورا") </div>
+                    <br />
+                    <div id="contentTxt" style="font-size:14px !important;text-align: justify;">@Html.Raw(Model.MeetingResult.Content)</div>
+                </td>               
+            </tr>
+        </table>
+        <div class="col-lg-12">جلسه بصورت  <span>@(isHiddenVoting ? " مخفی " : " علنی ")</span>برگزار شده است</div>
+        <div class="col-md-6 col-lg-6">
+            @(isHiddenVoting ? "تعداد آرا موافق " + approvalVots.ToString() : "")،
+            @(isHiddenVoting ? "تعداد آرا مخالف " + notApprovalVots.ToString() : "")،
+            @(isHiddenVoting ? "تعداد آرا ممتنع " + momtaneVots.ToString() : "")
+        </div>
+        <br />
+        <div>
+            @{
+                if (Model.IsCommission)
+                {
+                    <div style="text-align:center">
+                        محل درج امضا اعضای کمیسیون
+                        @Model.CommissionInfo.Name
+                        شورای اسلامی شهر
+                        @Settings.CouncilName
+                    </div>
+                }
+            }
+        </div>       
+        <table class="table table-bordered table-hover table-striped text-right">
+            <tr class="text-bold">
+                <td>نام و نام خانوادگی</td>
+                <td>موافق</td>
+                <td>مخالف</td>
+                <td>ممتنع</td>
+                <td>محل امضا</td>
+                <td>توضیحات</td>
+            </tr>
+            @foreach (var item in Model.Votings.OrderBy(v => v.User.LastName))
+            {
+                <tr>
+                    <td>@(item.User.FirstName + " " + item.User.LastName)
+                      <span class="PostText">
+                        @{
+                            if (item.User.IsCouncilBoss)
+                            {
+                                <text>"[رئیس  شورا]"</text>
+                            }
+                            else if (item.User.BossHelper)
+                            {
+                                <text>"[نائب رئیس  شورا]"</text>
+                            }
+                            else if (item.User.IsWriter1)
+                            {
+                                <text>"[منشی اول - دبیر جلسه]"</text>
+                            }
+                            else if (item.User.IsWriter2)
+                            {
+                                <text>"[منشی دوم]"</text>
+                            }
+                            else if (item.User.IsCouncilMember)
+                            {
+                                <text>"[عضو شورا]"</text>
+                            }
+                       }
+                      </span>
+                    </td>
+                    <td class="centerContent bigestFontSize">@(!isHiddenVoting && item.VoteStatus == "1" ? "#" : "")</td>
+                    <td class="centerContent bigestFontSize">@(!isHiddenVoting && item.VoteStatus == "2" ? "#" : "")</td>
+                    <td class="centerContent bigestFontSize">@(!isHiddenVoting && item.VoteStatus == "3" ? "#" : "")</td>
+                    <td class="centerContent"><img src="@item.User.Signature" style="max-height:50px" /></td>
+                    <td>@item.Comment</td>
+                </tr>
+            }
+            <tr>
+                <td>
+                    تعداد کل آرا
+                </td>
+                <td>@(!isHiddenVoting ? approvalVots.ToString() : "")</td>
+                <td>@(!isHiddenVoting ? notApprovalVots.ToString() : "")</td>
+                <td>@(!isHiddenVoting ? momtaneVots.ToString() : "")</td>
+
+            </tr>
+        </table>        
+        @if (Model.IsCommission)
+        {
+            <h4>@ViewBag.CityName ریاست محترم شورای اسلامی شهر </h4>
+            <div>
+                سلام علیکم :
+                احتراما دستور فرمایید مصوبه فوق کمیسیون
+                @Model.CommissionInfo.Name
+                در اولین فرصت در صحن شورا مطرح و مورد بررسی قرار گیرد و با عنایت اعضا محترم تصویب شود.
+                <br />
+                <h4 style="float:left; text-align:center">
+                    @Model.CommissionInfo.CommissionChairman <br /><br />
+                    رئیس کمیسیون
+                    @Model.CommissionInfo.Name
+                </h4>
+            </div>
+        }
+    </div>
+    <script>
+        window.print();
+    </script>
+</body>
+</html>
+<script>
+    $("#contentTxt span").css("font-size", "15px")
+</script>

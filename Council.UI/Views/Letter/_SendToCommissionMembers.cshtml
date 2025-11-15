@@ -1,0 +1,30 @@
+﻿@model string
+@using (Html.BeginForm("SendToCommissionMemberss", "Letter", FormMethod.Post))
+{
+    <input type="text" name="letterID" id="letterID" class="hidden" value="@Model" />
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">ارسال به اعضای کمیسیون جهت شور</h5>
+            <div class="row form-group">
+                <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" cols="5" data-val="true" id="Transcript3" name="Transcript"></textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal3">
+                        ثبت جمله پیشفرض
+                    </button>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <input type="submit" class="btn btn-primary" value="ارسال">
+                </div>
+            </div>            
+        </div>
+    </div>
+}

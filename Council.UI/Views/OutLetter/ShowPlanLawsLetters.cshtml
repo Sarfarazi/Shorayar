@@ -1,0 +1,206 @@
+﻿@model IEnumerable<Council.Core.Models.LowPlansModel>
+@using Council.UI.Helpers;
+@using Council.Core.Extensions;
+@{
+    ViewBag.Title = "نامه های برون سازمانی";
+    //var Recived = Model.Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits())).ToList();
+    //var Sended = Model.Where(l => !l.Received && !l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits())).ToList();
+    //var Archived = Model.Where(l => l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits()));
+    //var Removed = Model.Where(l => l.Removed).OrderByDescending(o => o.CreatedOn);
+
+    //Correspond.Core.Entities.User user = ViewBag.User;
+    //var tabs = ViewBag.Tabs as List<Council.Core.Entities.LetterTabs>;
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+}
+
+<div class="card">
+    <div class="card-header">
+        لوایح - طرح ها    
+    </div>
+    <div class="card-body">
+        @{
+            if (ViewBag.PlanLawsLetterCount > 0)
+            {
+                <div class="row form-group">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        @Html.DropDownList("Organ", new SelectList(organs, "ID", "Name"), " ", new { @class = "form-control drop-height form-group" })
+                        <button id="organSearch" class="btn btn-default" type="submit">فیلتر سازمان</button>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <form action="~/OutLetter/SearchPlanLetter/" method="get">
+                            <div class="search">
+                                <input type="text" class="form-control form-group" id="query" name="filter" placeholder='فیلتر' required>
+                                <span>
+                                    <button class="btn btn-default" type="submit">جستجو</button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="marginTopDiv">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="allLetterradio" type="radio" value="2" checked="checked" />
+                        <label class="form-check-label">همه</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="planradio" type="radio" value="0" />
+                        <label class="form-check-label">طرحها</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" id="lawradio" type="radio" value="1" />
+                        <label class="form-check-label">لایحه ها</label>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>
+                                        ردیف
+                                    </td>
+                                    <td>
+                                        موضوع نامه
+                                    </td>
+                                    <td>
+                                        شماره نامه
+                                    </td>
+                                    <td>نوع نامه</td>
+                                    <td>
+                                        تاریخ
+                                    </td>
+                                    <td>
+                                        دریافت کننده
+                                    </td>
+
+                                    @*<td>
+                            شماره زونکن بایگانی
+                        </td>*@
+
+                                </tr>
+                            </thead>
+                            <tbody class="PlanOutLetter">
+                                @Html.Action("GetPlanLawsLetters", new { skip = "0", take = "50" })
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="ExtraPlan" class="row text-center">
+                        <div class="col-lg-9 comm-right">
+                            <span> نمایش نامه های دریافتی <span id="AnyPlanSpan"></span> از <span id="AllPlanSpan"></span></span>
+                        </div>
+                        <div class="col-lg-3 comm-left">
+                            <span id="ShowPlanSpan"><a id="MorePlan" href="#">اطلاعات بیشتر</a> @*/ <a id="AllRecivedLink" href="#">نمایش همه</a>*@</span>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="emptyData">
+                    <text><h5>داده ای برای نمایش وجود ندارد</h5></text>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+
+    var Plan_PageNumber = 1;
+
+        $(document).ready(function () {
+            if ($("tbody.PlanOutLetter tr").length == 0) {
+                $("#ExtraPlan").hide();
+                $("tbody.PlanOutLetter").parent().parent().hide();
+            } else {
+                if (Number($("#LetterCount").val()) <= 50 || $("tbody.PlanOutLetter tr").length == Number($("#LetterCount").val()))
+                    $("#ShowPlanSpan").hide();
+                document.getElementById('AllPlanSpan').innerHTML = ' ' + $("#LetterCount").val();
+                document.getElementById('AnyPlanSpan').innerHTML = ' ' + $("tbody.PlanOutLetter tr").length;
+            }
+        })
+        $("#MorePlan").click(function () {
+            //var pageCount = Number($("#RecievedOutLetterPageNumber").val());
+            $.ajax({
+                url: "/OutLetter/ExtraPlanOutLetters",
+                data: { skip: recievedPageNumber * 50, take: 50, organId: $("select[name=Organ]").val() },
+                type: "POST",
+                success: function (result) {
+
+                    $("tbody.PlanOutLetter").append(result);
+
+                    Plan_PageNumber++;
+                    // $("#RecievedOutLetterPageNumber").val(pageCount);
+                    if ($("tbody.PlanOutLetter tr").length > 0) {
+                        $("#ExtraPlan").show();
+                        $("tbody.PlanOutLetter").parent().parent().show();
+                        document.getElementById('AllPlanSpan').innerHTML = ' ' + $("#LetterCount").val();
+                        document.getElementById('AnyPlanSpan').innerHTML = ' ' + $("tbody.PlanOutLetter tr").length;
+                    }else if ($("tbody.PlanOutLetter tr").length == 0) {
+                        $("#ExtraPlan").hide();
+                        $("tbody.PlanOutLetter").parent().parent().hide();
+                    }
+                    if ($("tbody.PlanOutLetter tr").length == Number($("#LetterCount").val() || Number($("#LetterCount").val()) <= 50)) {
+                        $("#ShowPlanSpan").hide();
+                    }
+
+                }
+
+            })
+        })
+
+        $("#organSearch").click(function () {
+
+            $.ajax({
+                url: "/OutLetter/SearchPlanOrganLetters",
+                data: { skip:0, take: 50, organId: $("select[name=Organ]").val() },
+                type: "POST",
+                success: function (result) {
+                    debugger;
+
+                    $("tbody.PlanOutLetter").empty();
+                    $("tbody.PlanOutLetter").html(result);
+
+                    if ($("tbody.PlanOutLetter tr").length>0) {
+                        $("#ExtraPlan").show();
+                        $("tbody.PlanOutLetter").parent().parent().show();
+                        document.getElementById('AllPlanSpan').innerHTML = ' ' + $("#LetterCount").val();
+                        document.getElementById('AnyPlanSpan').innerHTML = ' ' + $("tbody.PlanOutLetter tr").length;
+                    }else if ($("tbody.PlanOutLetter tr").length == 0) {
+                        $("#ExtraPlan").hide();
+                        $("tbody.PlanOutLetter").parent().parent().hide();
+                    }
+                    if ($("tbody.PlanOutLetter tr").length == Number($("#LetterCount").val() || Number($("#LetterCount").val()) <= 50)) {
+                        $("#ShowPlanSpan").hide();
+                    }
+                }
+            })
+        })
+        $("#allLetterradio").click(function () {
+            $("#planradio").prop("checked", false);
+            $("#lawradio").prop("checked", false);
+            $('.PlanOutLetter tr').each(function (i, element) {
+                $(this).show();
+            });
+        });
+        $("#planradio").click(function () {
+            $("#allLetterradio").prop("checked", false);
+            $("#lawradio").prop("checked", false);
+            $('.PlanOutLetter tr .letterStatusTd span').each(function (i, element) {
+                if ($(this).hasClass('planLetter'))
+                    $(this).parent().parent().show()
+                else
+                    $(this).parent().parent().hide()
+            });
+
+        });
+        $("#lawradio").click(function () {
+            $("#allLetterradio").prop("checked", false);
+            $("#planradio").prop("checked", false);
+            $('.PlanOutLetter tr .letterStatusTd span').each(function (i, element) {
+                if ($(this).hasClass('lawLetter'))
+                    $(this).parent().parent().show()
+                else
+                    $(this).parent().parent().hide()
+            });
+        });
+</script>

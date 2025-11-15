@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Council.Core.Models.LowPlansModel>
+@using Council.UI.Helpers;
+@{
+    ViewBag.Title = "جستجو";
+}
+
+@if (Model.Count() > 0)
+ {
+   
+        var rowNumber = 0;
+        foreach (var item in Model)
+        {
+            <tr>
+
+                <td class="text-center"><span id="rowNumber">@(++rowNumber + Convert.ToInt32(ViewBag.PlanSearchPageNumber))</span></td>
+                <td style="width: 35%">
+                    @Html.DisplayFor(modelItem => item.Title)
+                    <input id="LetterPageNumber" type="hidden" value="1" />
+                    <input id="LetterCount" type="hidden" value="@ViewBag.LetterSearchCount" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OutLetterNumber)
+                </td>
+                <td class="letterStatusTd">
+                    @{
+                        if (item.TypeLetter == 1)
+                        {
+                            <span class="lawLetter">لایحه</span>
+                        }
+                        else
+                        {
+                            <span class="planLetter">طرح</span>
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.GetPersianDate(item.OutLettersCreatedOn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrganName)
+                </td>
+                <td style="width: 80px;">
+                    @Html.ActionLink("نمایش", "DisplaySendLetter", "OutLetter", new { letterID = item.OutLetterId }, new { @class = "btn btn-success" })
+                </td>
+                <td style="width: 130px;">
+                    <a href="#">ارسال بصورت ECE</a>
+                </td>
+
+            </tr>
+        }
+  
+        }
+        else
+        {
+                    <text>نامه ای یافت نشد</text>
+  }

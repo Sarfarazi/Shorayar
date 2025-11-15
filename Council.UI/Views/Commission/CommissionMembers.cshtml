@@ -1,0 +1,122 @@
+﻿@model Council.Core.Entities.Commission
+
+@{
+    ViewBag.Title = "اعضای کمیسیون";
+    var members = ViewBag.Members as List<Council.Core.Entities.User>;
+    var currentChairman = Model.CommissionChairman;
+    var commissionMembers = ViewBag.CommisionMembers as List<Council.Core.Entities.User>;
+}
+
+<div class="card">
+    <div class="card-header">
+        اعضای کمیسیون
+    </div>
+    <div class="card-body">
+        <ul>
+            <li><strong>نام کمیسیون: </strong> @Model.Name</li>
+            <li>
+                <strong>رئیس کمیسیون: </strong>
+                @foreach (var item in members)
+                {
+                    if (item == currentChairman)
+                    {
+                        <label>@(item.FirstName + " " + item.LastName)</label>
+                    }
+                }
+            </li>
+        </ul>
+        <div class="table-responsive">
+            <table class="table-bordered table-condensed table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <td>نام و نام خانوادگی</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in commissionMembers)
+                    {
+                        <tr>
+                            <td class="firstAndLastName" data-value="@item.ID">@(item.FirstName + "  " + item.LastName)</td>
+                            @if (item != currentChairman)
+                            {
+                                <td>
+                                    @Html.ActionLink("حذف", "RemoveMember",
+                                new { memberId = item.ID, commissionId = Model.ID },
+                                new { @class = "btn btn-sm btn-danger" })
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                ثبت کاربر
+            </button>
+            @Html.ActionLink("بازگشت" , "Index" , "Commission" , null, new { @class="btn btn-sm btn-primary"})
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب کاربران مجاز</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group left-addon searchInput form-group">
+                    <input type="text" class="form-control text-right" placeholder="فیلتر..." id="filterRecivers" />
+                    <i class="fa fa-search"></i>
+                </div>
+                <div class="table-responsive">
+                    <table id="cUsers" class="table table-bordered table-condensed table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <td>نام و نام خانوادگی</td>
+                                <td>انتخاب</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in members)
+                            {
+                                if (commissionMembers == null || !commissionMembers.Exists(c => c == item))
+                                {
+                                    <tr>
+                                        <td class="firstAndLastName" id="@("firstAndLastName" + item.ID)">@(item.FirstName + "  " + item.LastName)</td>
+                                        <td>
+                                            @Html.ActionLink("ثبت", "AddMember",
+                                             new { memberId = item.ID, commissionId = Model.ID },
+                                             new { @class = "btn btn-default" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#filterRecivers').keyup(function () {
+            var _filter = $(this).val();
+            $('#cUsers .firstAndLastName').each(function (i, element) {
+                if (_filter.length < 1)
+                    $(this).parent().show()
+                else {
+                    if ($(this).html().indexOf(_filter) >= 0)
+                        $(this).parent().show()
+                    else
+                        $(this).parent().hide();
+                }
+
+            });
+        });
+    </script>    
+}

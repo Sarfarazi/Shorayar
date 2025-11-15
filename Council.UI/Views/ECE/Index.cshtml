@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewBag.Title = "دریافت به صورت ECE";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        دریافت به صورت ECE
+    </div>
+    <div class="card-body">
+        @if (TempData["message"] != null)
+        {
+            var message = (Council.Core.Models.ShowMessage)TempData["message"];
+            <div class="alert @message.MessageType"><span class="closebtn">×</span>@message.Message</div>
+        }
+        @using (Html.BeginForm("GetFile", "ECE", FormMethod.Post))
+        {
+            <input type="hidden" id="hfMessageId" name="MessageId" />
+            <input type="hidden" id="hfFileId" name="FileId" />
+            <input type="submit" id="btnDownload" value="Download" style="display:none" />
+        }
+        @using (Html.BeginForm("GetZipFile", "ECE", FormMethod.Post))
+        {
+            <input type="hidden" id="hfzFileId" name="zFileId" />
+            <input type="submit" id="btnZipDownload" value="Download" style="display:none" />
+        }
+        <div class="row form-group">
+            <div class="col-md-12">
+                <a href="#" id="GetEmails">
+                    <i class="fa fa-refresh"></i> دریافت ایمیل ها
+                </a>
+            </div>
+        </div>
+        <div id="EmailList">
+            @Html.Action("_GetECE")
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/ECE/GetECE.js"></script>
+    <script>
+        function GetFile(msgId , fileId) {
+            $("#hfMessageId").val(msgId);
+            $("#hfFileId").val(fileId);
+            $("#btnDownload")[0].click();
+        };
+
+        function GetZipFile(fileId) {
+            $("#hfzFileId").val(fileId);
+            $("#btnZipDownload")[0].click();
+        };
+    </script>
+}

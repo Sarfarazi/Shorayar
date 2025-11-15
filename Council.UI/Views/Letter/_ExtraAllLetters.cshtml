@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Council.Core.Models.MyLetter>
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+    var rowNumber = -1;
+    var endLetters = ViewBag.EndLetters as List<string>;
+}
+@foreach (var item in Model.OrderByDescending(l => l.CreatedOn))
+{
+
+    <tr>
+        <td> @(++rowNumber + Convert.ToInt32(ViewBag.AllLetterRowNumber))</td>
+        <td>
+
+            @Html.DisplayFor(modelItem => item.Title)
+            <input id="AllLettersPageNumber" type="hidden" value="1" />
+            <input id="AllLettersCount" type="hidden" value="@ViewBag.AllLetterCount" />
+        </td>
+        <td>
+            @{
+                if (item.OutLetter_ID != null && item.HasOutLetterNote)
+                {
+                    <a href="javascript:void(0)" onclick="GetOutletterNote('@item.ID')"><span class="glyphicon glyphicon-file" style="color:#5cb85c" title="یادداشت دارد"></span></a>
+                }
+                else if (item.OutLetter_ID == null && item.HasLetterNote)
+                {
+                    <a href="javascript:void(0)" onclick="GetletterNote('@item.ID')"><span class="glyphicon glyphicon-file" style="color:#5cb85c" title="یادداشت دارد"></span></a>
+                }
+                else
+                {
+                    <span style="color:#c1c1c1" class="glyphicon glyphicon-file" title="یادداشت ندارد"></span>
+                }
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LetterNumber)
+        </td>
+        <td class="hideOnMobile">
+            @Html.GetPersianDate(item.CreatedOn)
+        </td>
+        <td>
+            @{
+                if (item.OutLetter_ID == null)
+                {
+                    <span class="glyphicon glyphicon-import importLetter" title="درون سازمانی"></span>
+                }
+                else
+                {
+                    <span class="glyphicon glyphicon-export" title="برون سازمانی"></span>
+                }
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Urgency)
+        </td>
+        <td class="btns-td text-right width-219">
+            <a class="btn btn-success" href="@Url.Action("LetterItem", "Letter", new { letterID = item.ID })" title="نمایش">
+                نمایش
+            </a>
+            <a class="btn btn-primary" href="@Url.Action("MarkAsArchived", "Letter", new { letterID = item.ID })" title="بایگانی کردن">
+                بایگانی
+            </a>
+            @if (item.OutLetter_ID == null)
+                {
+                <a class="btn btn-danger" href="@Url.Action("MarkAsRemoved", "Letter", new { letterID = item.ID })" title="حذف">
+                    حذف
+                </a>
+            }
+            @if (item.OutLetter_ID == null && UserID == item.SenderAppID && !endLetters.Any(m => m == item.ID))
+            {
+                <a class="btn btn-info" href="@Url.Action("MarkAsEnd", "Letter", new { letterID = item.ID })" title="اختتام نامه">
+                    اختتام نامه
+                </a>
+            }
+        </td>
+    </tr>
+                }

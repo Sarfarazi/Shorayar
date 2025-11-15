@@ -1,0 +1,187 @@
+﻿@model  Council.Core.Models.HomePageViewModel
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.UI.CustomAuthentication;
+@using Council.Service.DBServices;
+@{
+    MeetingServices mettingService = new MeetingServices();
+    LetterServices letterService = new LetterServices();
+
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+
+    //نامه های با وضعیت AllowVotting
+    var meetingLetters = Model != null ? Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.AllowVotting).ToList() : null;
+
+    // Commission
+    var aa = Model != null ? Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting).ToList() : null;
+
+    //نامه های کمیسیون گپکه اجازه رای گیری صادر شده است
+    var commissionMeetingLetters =
+        Model != null ?
+        Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionAllowVotting && Model.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList()
+        : null;
+
+    meetingLetters.AddRange(commissionMeetingLetters);
+
+    meetingLetters = meetingLetters.OrderByDescending(m => m.CreatedOn).ToList();
+
+    bool userIsBoss = Model != null ? Model.UserIsBoss : false;
+    bool userIsBossHelper = Model != null ? Model.UserIsBossHelper : false;
+    bool userIsSiteManager = Model != null ? Model.UserIsSiteManager : false;
+    bool userIsMember = Model != null ? Model.UserIsMember : false;
+}
+
+@*<h4 class="card-title">آماده رای گیری</h4>*@
+@if (meetingLetters.Count > 0 && userIsMember)
+{
+    var counter = 1;
+    <div class="table-responsive">
+    <table class="table table-bordered table-condensed table-hover table-striped allletters">
+        <thead>
+            <tr>
+                <td class="table-heade-rowNumber">ردیف</td>
+                <td>شماره نامه</td>                
+                <td>موضوع</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in meetingLetters.OrderByDescending(m => m.CreatedOn))
+            {
+                var LetterID = item.ID;
+
+                var Currentletter = letterService.All().FirstOrDefault(m => m.ID == LetterID);
+                var Metting = Currentletter.Meeting;
+                var CommissionMetting = Currentletter.CommissionMeeting;
+
+                var MettingID = Metting != null ? Metting.ID : null;
+                var CommisonMettingID = CommissionMetting != null ? CommissionMetting.ID : null;
+
+                bool imAvailable = false;
+
+                if (MettingID != null)
+                {
+                    imAvailable = mettingService.All().Any(m => m.ID == MettingID && m.MeetingUsers.Any(p => p.User.ID == UserID && p.status == 1));
+                }
+                else if (CommisonMettingID != null)
+                {
+                    imAvailable = mettingService.All().Any(m => m.ID == CommisonMettingID && m.MeetingUsers.Any(p => p.User.ID == UserID && p.status == 1));
+                }                
+
+                var vottingHref = (item.LetterStatus == LetterStatus.AllowVotting) ?
+                       ("/Letter/Voting?letterID=" + item.ID) :
+                       ("/Letter/CommissionVoting?letterID=" + item.ID);
+
+                var href = (item.LetterStatus == LetterStatus.AllowVotting) ?
+                           Url.Action("EndMeeting", "Letter", new { letterID = item.ID }) :
+                           Url.Action("CommissionEndMeeting", "Letter", new { letterID = item.ID });
+
+                bool isCommission = (item.LetterStatus == LetterStatus.CommissionAllowVotting);
+                bool imVottingThis = Model.MyReadyVotingIds.Any(m => m == item.ID);
+                bool imCommisionVottingThis = Model.MyReadyCommisionVotingIds.Any(m => m == item.ID);
+
+
+                <tr>
+                    <td>@(counter++)</td>
+                    <td>@item.LetterNumber</td>
+                    <td class="text-right">
+                        @{if (!String.IsNullOrEmpty(item.CommissionName))
+                            {<span>[ کمیسیون  @item.CommissionName ]</span>}
+                        }
+                        <a href="@Url.Action("LetterItem","Letter", new { letterID =  item.ID})">
+                            <span @(imVottingThis ? "class=greenColor" : "")>@item.Title</span>
+                        </a>
+                    </td>
+                    <td class="second-width text-right">
+                        @if ((userIsMember || userIsBoss || userIsBossHelper))
+                        {
+                            if (isCommission)
+                            {
+                                if (imCommisionVottingThis && !imVottingThis) //کمیسیون رای داده نشده
+                                {
+                                    if (item.LetterStatus == LetterStatus.CommissionAllowVotting && imAvailable)
+                                    {
+                                        <a href="@vottingHref" class="btn btn-default btn-sm linkWidth">
+                                            انجام رای گیری
+                                        </a>
+                                    }
+                                }
+                                else if (!imCommisionVottingThis && imVottingThis) //کمیسیون رای داده شده و تشخیص داده می شود که مرحله دوم رای است یا همان رای اول کافی است
+                                {
+                                    if (item.LetterStatus == LetterStatus.AllowVotting && imAvailable)
+                                    {
+                                        <a href="@vottingHref" class="btn btn-default btn-sm linkWidth">
+                                            انجام رای گیری
+                                        </a>
+                                    }
+                                    else if (item.LetterStatus == LetterStatus.CommissionAllowVotting)
+                                    {
+                                        <span class="badge">رای گیری انجام شده</span>
+                                    }
+                                }
+                                else if (!imCommisionVottingThis && !imVottingThis) // هر دو مرحله رای گیری انجام شده است
+                                {
+                                    @*<span class="badge">رای گیری انجام شده</span>*@
+                                }
+                            }
+                            else
+                            {
+                                if (imVottingThis)
+                                {
+                                    if (item.LetterStatus == LetterStatus.AllowVotting)
+                                    {
+                                        <a href="@vottingHref" class="btn btn-default btn-sm linkWidth">
+                                            انجام رای گیری
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    @*<span class="badge">رای گیری انجام شده</span>*@
+                                }
+                            }
+                        }
+
+                        @if (isCommission)
+                        {
+                            if (Model.MyCommissions.Any(c => c.BossId == UserID && c.CommissionId == item.CommissionId))
+                            {
+                                @*if (imAvailable)
+                {
+                    <a href="@vottingHref" class="btn btn-default btn-sm linkWidth">
+                        انجام رای گیری
+                    </a>
+                }*@
+                                <a href="javascript:void(0)" onclick="EndVotingFunction2('@item.ID','@href','1')" class="btn btn-info btn-sm allUserVote">
+                                  چک کن 
+                                </a>
+                                <a href="javascript:void(0)" onclick="EndVotingFunction('@item.ID','@href','1')" class="btn btn-danger btn-sm allUserVote">
+                                    اختتام رای گیری
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            if (userIsBoss || userIsBossHelper)
+                            {
+                                <a href="javascript:void(0)" onclick="EndVotingFunction2('@item.ID','@href','0')" class="btn btn-info btn-sm allUserVote">
+                                  چک کن
+                                </a>
+                                <a href="javascript:void(0)" onclick="EndVotingFunction('@item.ID','@href','0')" class="btn btn-danger btn-sm allUserVote">
+                                    اختتام رای گیری
+                                </a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+  </div>
+}
+else
+{
+    <p>داده ای برای نمایش وجود ندارد</p>
+}

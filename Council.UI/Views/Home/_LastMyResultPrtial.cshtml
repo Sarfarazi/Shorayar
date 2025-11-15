@@ -1,0 +1,169 @@
+﻿
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+
+<div class="row form-group">
+    <div class="col-lg-12">
+        <h4 class="card-title">آخرین رای گیری های انجام شده (شورا)</h4>
+            <div class="table-responsive">
+                <table id="NewOpinion" class="table table-bordered table-condensed table-hover table-striped allletters">
+                    <thead>
+                        <tr>
+                            <td class="text-center table-heade-rowNumber">ردیف</td>
+                            <td>شماره نامه</td>
+                            <td>
+                                موضوع
+                            </td>
+                            <td class="text-center second-width">
+                                نتایج
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="allOpinion">
+                        @Html.Action("GetLastOpinionData", new { skip = "0", take = "50" })
+                    </tbody>
+                </table>
+            </div>
+            <div id="ExtraOpinion" class="row text-center">
+                <div class="col-lg-9 comm-right">
+                    <span> نمایش شورا <span id="AnyOpinionSpan"></span> از <span id="AllOpinionSpan"></span></span>
+                </div>
+                <div class="col-lg-3 comm-left">
+                    <span id="ShowOpinionSpan"><a id="MoreOpinions" href="#">اطلاعات بیشتر</a> / <a id="AllOpinionsLink" href="#">نمایش همه</a></span>
+                </div>
+            </div>
+    </div>    
+</div>
+<div class="row form-group">
+    <div class="col-lg-12">
+        <h4 class="card-title">آخرین رای گیری های انجام شده (کمیسیون)</h4>
+        <div class="table-responsive">
+            <table id="NewCommision" class="table table-bordered table-condensed table-hover table-striped allletters">
+                <thead>
+                    <tr>
+                        <td class="text-center table-heade-rowNumber">ردیف</td>
+                        <td>شماره نامه</td>
+                        <td>
+                            موضوع
+                        </td>
+                        <td class="text-center second-width">
+                            نتایج
+                        </td>
+                    </tr>
+                </thead>
+                <tbody class="allCommision">
+                    @Html.Action("GetLastCommisionData", new { skip = "0", take = "50" })
+                </tbody>
+            </table>
+        </div>
+        <div id="ExtraCommision" class="row text-center">
+            <div class="col-lg-9 comm-right">
+                <span> نمایش کمیسیون <span id="AnyCommisionSpan"></span> از <span id="AllCommisionSpan"></span></span>
+            </div>
+            <div class="col-lg-3 comm-left">
+                <span id="ShowCommisionSpan"><a id="MoreCommisions" href="#">اطلاعات بیشتر</a> / <a id="AllCommisionsLink" href="#">نمایش همه</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    var commisionPagenumber = 1;
+
+    var isComm = 0;
+    var hrefVote = "";
+    var letterId = "";
+    var isCommision = "";
+    $(document).ready(function () {
+        if ($("tbody.allCommision tr").length == 0) {
+            $("#ExtraCommision").hide();
+            $("tbody.allCommision").parent().parent().parent().hide();
+        } else {
+            if (Number($("#CommisionCount").val()) <= 50)
+                $("#ShowCommisionSpan").hide();
+            document.getElementById('AllCommisionSpan').innerHTML = ' ' + $("#CommisionCount").val();
+            document.getElementById('AnyCommisionSpan').innerHTML = ' ' + $("tbody.allCommision tr").length;
+        }
+        if ($("tbody.allOpinion tr").length == 0) {
+            $("#ExtraOpinion").hide();
+            $("tbody.allOpinion").parent().parent().parent().hide();
+        } else {
+            if (Number($("#OpinionCount").val()) <= 50)
+                $("#ShowOpinionSpan").hide();
+            document.getElementById('AllOpinionSpan').innerHTML = ' ' + $("#OpinionCount").val();
+            document.getElementById('AnyOpinionSpan').innerHTML = ' ' + $("tbody.allOpinion tr").length;
+        }
+    });
+
+    $("#MoreCommisions").click(function () {
+        //var pageCount = Number($("#CommisionPageNumber").val());
+        $.ajax({
+            url: "/Home/GetLastCommisionData",
+            data: { skip: commisionPagenumber * 50, take: 50 },
+            type: "POST",
+            success: function (result) {
+                $("tbody.allCommision").append(result);
+                document.getElementById('AllCommisionSpan').innerHTML = ' ' + $("#CommisionCount").val();
+                document.getElementById('AnyCommisionSpan').innerHTML = ' ' + $("tbody.allCommision tr").length;
+                commisionPagenumber++;
+                // $("#CommisionPageNumber").val(pageCount);
+                if ($("tbody.allCommision tr").length == Number($("#CommisionCount").val())) {
+                    $("#ShowCommisionSpan").hide()
+                }
+            }
+        })
+    });
+    $("#AllCommisionsLink").click(function () {
+        //var pageCount = Number($("#CommisionPageNumber").val());
+        $.ajax({
+            url: "/Home/GetLastCommisionData",
+            data: { skip: commisionPagenumber * 50, take: -1 },
+            type: "POST",
+            success: function (result) {
+                $("tbody.allCommision").append(result);
+                document.getElementById('AnyCommisionSpan').innerHTML = ' ' + $("#CommisionCount").val();
+                document.getElementById('AllCommisionSpan').innerHTML = ' ' + $("#CommisionCount").val();
+                commisionPagenumber++;
+                // $("#CommisionPageNumber").val(pageCount);
+                $("#ShowCommisionSpan").hide();
+            }
+
+        })
+    });
+    $("#MoreOpinions").click(function () {
+        // var pageCount = Number($("#OpinionPageNumber").val());
+        $.ajax({
+            url: "/Home/GetLastOpinionData",
+            data: { skip: opinionPagenumber * 50, take: 50 },
+            type: "POST",
+            success: function (result) {
+                $("tbody.allOpinion").append(result);
+                document.getElementById('AllOpinionSpan').innerHTML = ' ' + $("#OpinionCount").val();
+                document.getElementById('AnyOpinionSpan').innerHTML = ' ' + $("tbody.allOpinion tr").length;
+                opinionPagenumber++;
+                //$("#OpinionPageNumber").val(pageCount);
+                if ($("tbody.allOpinion tr").length == Number($("#OpinionCount").val())) {
+                    $("#ShowOpinionSpan").hide()
+                }
+            }
+
+        })
+    });
+    $("#AllOpinionsLink").click(function () {
+        //var pageCount = Number($("#CommisionPageNumber").val());
+        $.ajax({
+            url: "/Home/GetLastOpinionData",
+            data: { skip: opinionPagenumber * 50, take: -1 },
+            type: "POST",
+            success: function (result) {
+                $("tbody.allOpinion").append(result);
+                document.getElementById('AllOpinionSpan').innerHTML = ' ' + $("#OpinionCount").val();
+                document.getElementById('AnyOpinionSpan').innerHTML = ' ' + $("#OpinionCount").val();
+                opinionPagenumber++;
+                //$("#OpinionPageNumber").val(pageCount);
+                $("#ShowOpinionSpan").hide()
+            }
+
+        })
+    })
+</script>

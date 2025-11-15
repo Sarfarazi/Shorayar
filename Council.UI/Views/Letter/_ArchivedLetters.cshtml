@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Council.Core.Models.MyLetter>
+@using Council.UI.Helpers;
+
+    @{
+        var rowNumber = -1;
+    }
+    @foreach (var item in Model.OrderByDescending(l => l.CreatedOn))
+    {
+        <tr>
+            <td> @(++rowNumber + Convert.ToInt32(ViewBag.ArchivedRowNumber))</td>
+            <td>
+
+                @Html.DisplayFor(modelItem => item.Title)
+                <input id="ArchivedPageNumber" type="hidden" value="1" />
+                <input id="ArchivedCount" type="hidden" value="@ViewBag.ArchivedLetters" /> 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LetterNumber)
+            </td>
+            <td class="hideOnMobile">
+                @Html.GetPersianDate(item.CreatedOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Urgency)
+            </td>
+            <td class="btns-td text-right width-152">
+                @*@Html.ActionLink("نمایش", "LetterItem", new { letterID = item.ID })*@
+                <a class="btn btn-success" href="@Url.Action("LetterItem", "Letter", new { letterID = item.ID })" title="نمایش">
+                    نمایش
+                </a>
+                @if (item.OutLetter_ID == null)
+                {
+                    <a class="btn btn-danger" href="@Url.Action("MarkAsRemoved", "Letter", new { letterID = item.ID })" title="حذف">
+                        حذف
+                    </a>
+                }                
+            </td>
+        </tr>
+    }

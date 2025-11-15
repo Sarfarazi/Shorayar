@@ -1,0 +1,418 @@
+﻿@model Council.Core.Entities.OutLetter
+
+@{
+    ViewBag.Title = "ویرایش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@{
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+    var CanSignatureList = ViewBag.CanSignatureList as List<Council.Core.Entities.User>;
+}
+<style>
+    table, td, tr, th {
+        background-color: white;
+        color: black;
+    }
+</style>
+<script src="~/Content/tinymce/tinymce.min.js"></script>
+<script src="~/Scripts/scripts.js"></script>
+<script type="text/javascript">
+    tinymce.init({
+        selector: "textarea",
+        setup: function (ed) {
+            ed.on('init', function () {
+                this.execCommand("fontSize", false, "18px");
+            });
+        },
+        directionality: 'rtl',
+        theme: "modern",
+        theme_modern_font_sizes: ["6px,7px,8px,9px,10px,11px,12px,13px,14px,15px,16px,17px,18px,19px,20px,21px,22px,23px,24px,25px,26px,27px,28px,29px,30px,31px,32px,36px,38px,40px"],
+        theme_advanced_buttons1: "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+
+        plugins: [
+            "advlist autolink lists link image charmap print preview anchor",
+            "searchreplace visualblocks code fullscreen",
+            "insertdatetime media table contextmenu paste"
+        ],
+        toolbar: "forecolor backcolor | insertfile undo redo | fontsizeselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+    });
+</script>
+<div class="card">
+    <div class="card-header">
+        ویرایش
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.ID)
+                @Html.HiddenFor(model => model.Received)
+
+                <input type="hidden" name="Organ" value="@Model.Organ" />
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.Subject, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Subject)
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    <div class="control-label col-md-4">
+                        <label>تاریخ نامه صادره</label>
+                    </div>
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.OutLetterDate, new { htmlAttributes = new { @class = "form-control text-box allowDatePicker", autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.OutLetterDate)
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.OutLetterNumber, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        <input type="text" value="@Model.OutLetterNumber" name="OutLetterNumber" class="form-control" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.SendDate, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        <input type="text" value="@Model.SendDate" name="OutLetterNumber" class="form-control" readonly="readonly" />
+                        @Html.ValidationMessageFor(model => model.SendDate)
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    <label class="control-label col-md-4">
+                        <label><strong>امضا کننده</strong></label>
+                    </label>
+                    <div class="col-md-8">
+                        <select id="SignatureUser" name="SignatureUser" class="form-control" required="required">
+                            @foreach (var item in CanSignatureList)
+                            {
+
+                                if (CanSignatureList != null)
+                                {
+                                    if (Model.SignatureUserID == item.ID)
+                                    {
+                                        <option value="@item.ID" selected="selected">@(item.FirstName+" "+item.LastName)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.ID">@(item.FirstName+" "+item.LastName)</option>
+                                    }
+
+                                }
+
+                            }
+
+                        </select>
+                        @Html.ValidationMessageFor(model => model.SignatureUserID)
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.Reciver, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Reciver, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Reciver)
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.Transferee, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.Transferee, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Transferee)
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.LinkedLetters, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.LinkedLetters, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.LinkedLetters)
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.OrginalLetter, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.OrginalLetter, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.OrginalLetter)
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.BoxNumber, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.BoxNumber, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.BoxNumber)
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.Organ, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        <select id="Organ" name="Organ" class="form-control" required="required" multiple="multiple">
+                            @foreach (var item in organs)
+                            {
+                                bool selecetedt = false;
+                                if (ViewBag.OrganList != null)
+                                {
+
+                                    foreach (var item2 in ViewBag.OrganList)
+                                    {
+                                        if (item2.OrganID == item.ID)
+                                        {
+                                            selecetedt = true;
+                                        }
+                                    }
+
+                                }
+
+                                if (selecetedt)
+                                {
+                                    <option value="@item.ID" selected="selected">@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.ID">@item.Name</option>
+                                }
+
+
+                            }
+                        </select>
+                        @* @Html.DropDownList("سازمان", items, "", new { @class = "form-control", required = "required" })*@
+                        @Html.ValidationMessageFor(model => model.Organ)
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    <div class="control-label col-md-4">
+                        <label for="Content">رونوشت</label>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="text" id="rowID" name="rowID" style="display:none" value="@ViewBag.OrganIDCopy" />
+                        <input type="text" id="txtContent" style="display:none" name="txtContent" value="@ViewBag.OrgantxtContent" />
+                        <table class="table  table-responsive " id="reciversTable">
+                            <thead>
+                                <tr>
+                                    <td class="hidden">ID</td>
+                                    <td>شخص/سازمان</td>
+                                    <td>ارسال نامه جهت</td>
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                                <select id="Organ2" name="Organ2" class="form-control" required="required">
+                                                    @foreach (var item in organs)
+                                                    {
+                                                        <option value="@item.ID">@item.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" id="Text_Letter" />
+
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success fontForAllPage" onclick="return addToListOrderDetail();">
+                                            <i class="fa fa-plus"></i>
+
+                                        </button>
+                                        <button type="button" class="btn btn-default fontForAllPage" onclick="return clearCotent();">
+                                            حذف
+
+                                        </button>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="reciversTBody">
+                            </tbody>
+                        </table>
+
+                        <table id="ListItemTbl" class="table table-responsive">
+                            <thead>
+                                <tr>
+                                    <td>ردیف</td>
+                                    <td>سازمان </td>
+                                    <td>متن</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody id="Mytbody">
+                                @{
+                                    string[] OrganNameList = ViewBag.organNameList.Split(',');
+                                    string[] OrgantxtContentList = ViewBag.OrgantxtContent.Split(',');
+                                    int m = 0;
+                                    for (int i = 0; i < OrganNameList.Length; i++)
+                                    {
+                                        m++;
+                                        if (!string.IsNullOrEmpty(OrganNameList[i]))
+                                        {
+                                            <tr>
+                                                <td>@m.ToString()</td>
+                                                <td>@(OrganNameList[i])</td>
+                                                <td>@OrgantxtContentList[i]</td>
+                                            </tr>
+                                        }
+
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    @Html.LabelFor(model => model.ArchiveCode, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-8">
+                        @Html.EditorFor(model => model.ArchiveCode, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ArchiveCode)
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 form-group">
+                    @Html.Label("توضیحات / متن", new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextArea("Comment", Model.Comment, 8, 10, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Comment)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6 form-group form-group">
+                    <div class="col-md-offset-2 col-md-3">
+                        <input type="submit" value="ذخیره" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+
+    function generateCellContent(tagName, text, value, index) {
+        try {
+            debugger;
+
+            var res = "<input type='hidden' value='" + value + "' name=LetterDetails[" + index + "]." + tagName + " id=LetterDetails_" + index + "_" + tagName + " />";
+            res += "<span>" + text + "</span>";
+            return res;
+
+        } catch (e) {
+
+        }
+    }
+
+
+    function addToListOrderDetail() {
+
+        try {
+
+            debugger;
+
+            var count = $("#rowID").val();
+            let position = count.search($("#Organ2").val());
+            if (position != -1) {
+                alert("تکراری است");
+                return 0;
+
+            }
+
+            count += "," + $("#Organ2").val();
+            $("#rowID").val(count);
+
+            //
+
+            var content = $("#txtContent").val();
+            content += "," + $("#Text_Letter").val();
+            $("#txtContent").val(content);
+
+            var table = document.getElementById("ListItemTbl");
+
+
+            var rowId = parseInt(table.rows.length) - 1;
+            var td1Html0 = generateCellContent("OrganID", $("#Organ2 option:selected").text(), $("#Organ2").val(), rowId) + "<input type='hidden' value='" + 0 + "' name=LetterDetails[" + rowId + "]." + "LetterDetailID" + " />";
+            var td1Html1 = generateCellContent("Text_Letter", $("#Text_Letter").val(), $("#Text_Letter").val(), rowId);
+            var td1Html2 = "<a class='fa fa-remove RequiredLabel' onclick='productDelete(this)'> </a>";
+
+            //var newRow = [
+            //    [
+            //        (rowId + 1), td1Html0, td1Html1, td1Html2
+            //    ]
+            //];
+
+            var newRow = [
+                [
+                    (rowId + 1), td1Html0, td1Html1
+                ]
+            ];
+
+
+            AddToTable("ListItemTbl", newRow, null, true);
+
+            //setTotalAllPriceFinal('OrderDetail_TotallPriceStr');
+
+            //Web.StoreProducts_Store.SetPriceProductStore("OrderDetail_ProductID", "OrderDetail_UnitPriceStr");
+
+            //emptyAddToListOrderDetail();
+
+
+
+            return false;
+
+        } catch (e) {
+
+        }
+
+    }
+
+    function clearCotent() {
+        $("#rowID").val('');
+        $("#txtContent").val('');
+        $('#Mytbody').empty();
+    }
+
+    function AddToTable(tblId, arrayList, hiddenCell = null, isTfootElement = false) {
+
+        try {
+
+            var table;
+
+            if (!isTfootElement) table = document.getElementById(tblId);
+            else table = document.getElementById(tblId).getElementsByTagName('tbody')[0];
+
+            var rowId;
+
+            for (var i = 0; i < arrayList.length; i++) {
+                rowId = parseInt(table.rows.length);
+                var row = table.insertRow(rowId);
+                var indexRow = arrayList[i].length;
+                for (var j = 0; j < indexRow; j++) {
+                    var cell1;
+                    if (hiddenCell == j)
+                        table.rows[i + 1].cells[hiddenCell - 1].innerHTML += arrayList[i][j];
+                    else {
+                        cell1 = row.insertCell(j);
+                        cell1.innerHTML = arrayList[i][j];
+                    }
+                }
+            }
+
+        } catch (e) {
+
+        }
+    }
+
+</script>

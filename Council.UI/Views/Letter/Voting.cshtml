@@ -1,0 +1,187 @@
+﻿@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{
+    var letter = ViewBag.Letter as Council.Core.Entities.Letter;
+    ViewBag.Title = "رای گیری";
+    var outLetterSpecs = letter.OutLetter;
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var UserID = _User.UserId;
+    bool isOutLetter = !(outLetterSpecs == null);
+    bool userIsVoted = ViewBag.UserVoted;
+
+}
+@if (isOutLetter)
+{
+    <div class="card">
+        <div class="card-header">
+            نامه دریافتی
+        </div>
+        <div class="card-body">
+            <div class="row marginBottom5">
+                <div class="col-md-3">
+                    نوع نامه :
+                    <span class="blueColor">@(outLetterSpecs.Received ? "دریافتی" : "ارسالی")</span>
+                </div>
+                <div class="col-md-3">
+                    شماره نامه ثبت در دبیرخانه :
+                    <span class="blueColor">@Html.DisplayFor(model => letter.OutLetter.OutLetterNumber)</span>
+                </div>
+                <div class="col-md-3">
+                    @{var reciverOrSender = outLetterSpecs.Received ? outLetterSpecs.Sender : outLetterSpecs.Reciver;}
+                    @(outLetterSpecs.Received ? "ارسال کننده" : "دریافت کننده"):
+                    <span class="blueColor">@reciverOrSender</span>
+                </div>
+                <div class="col-md-3">
+                    @{var transfereeOrBringer = outLetterSpecs.Received ? outLetterSpecs.Bringer : outLetterSpecs.Transferee;}
+                    @(outLetterSpecs.Received ? "آورنده" : "تحویل گیرنده"):
+                    <span class="blueColor">@transfereeOrBringer</span>
+                </div>
+            </div>
+            @if (!String.IsNullOrEmpty(outLetterSpecs.Comment))
+            {
+                <div class="row">
+                    <div class="col-md-3">
+                        موضوع :
+                        <span class="blueColor">@outLetterSpecs.Subject</span>
+                    </div>
+                    <div class="col-md-9">
+
+                        توضیحات :
+                        <span class="blueColor">@outLetterSpecs.Comment</span>
+                    </div>
+                </div>
+            }
+            
+            @if (outLetterSpecs.Uploads != null)
+            {
+                <hr />
+                var counter = 1;
+                foreach (var item in outLetterSpecs.Uploads)
+                {
+
+                    <div class="prewImageDiv">
+                        <a href="@(Url.Content("~" + item.FileAddress))">[ فایل ضمیمه @counter ]</a>
+                        @counter++;
+                        @*<a class="redColor" href="@(Url.Content(item.FileAddress))">
+                        <img class="prewImage" src="@(item.FileAddress!=null?item.FileAddress:"")" alt="" />
+                    </a>*@
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                ارسال کننده :
+                <span id="letterSender" class="blueColor">
+                    @if (isOutLetter)
+                    {
+                        @Html.GetPersonNameWithAppID(letter.LetterRefrences.OrderByDescending(r => r.CreatedOn).First().SenderAppID)
+
+                    }
+                    else
+                    {
+                        @Html.GetPersonNameWithAppID(letter.LetterRefrences.Where(l => l.SenderAppID == UserID || l.Recivers.Any(r => r.ID == UserID)).OrderByDescending(r => r.CreatedOn).First().SenderAppID)
+                    }
+                </span>
+            </div>
+            <div class="col-md-3">
+                شماره نامه ارجاع :
+                <span class="blueColor" id="letterNumber">@Html.DisplayFor(model => letter.LetterNumber)</span>
+            </div>
+            <div class="col-md-3">
+                تاریخ:
+                <span id="letterDate" class="blueColor">@Html.GetPersianDate(letter.CreatedOn)</span>
+            </div>
+
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                موضوع:
+                <strong id="letterSubject" class="blueColor">@Html.DisplayFor(model => letter.Title)</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div id="letterContent" class="col-md-12">
+                @Html.Raw(letter.Content)
+            </div>
+        </div>        
+            @if (!String.IsNullOrEmpty(letter.Files))
+            {
+                <hr />
+                <div class="row">
+                    <div class="prewImageDiv">
+                        <a id="attachment" href="@(Url.Content("~" + letter.Files))">[ فایل ضمیمه  ]</a>
+
+                        @*<a class="redColor" href="@(Url.Content(letter.Files))">
+                            <img class="prewImage" src="@(letter.Files!=null?letter.Files:"")" alt="" />
+                        </a>*@
+                    </div>
+                </div>
+            } 
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        شرح تصمیم
+    </div>
+    <div class="card-body">
+        @Html.Raw(letter.Meeting.Content)
+    </div>
+</div>
+@if (!userIsVoted)
+{
+    <div class="card">
+        <div class="card-header">ثبت رای</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 centerContent">
+                    <form action="~/Letter/DoVoting/">
+                        <div class="form-group">
+                            <label class="control-label">توضیحات</label>
+                            <div>
+                                <textarea name="comment" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <input type="hidden" value="@letter.ID" name="letterID" />
+                        <input type="hidden" value="1" name="votingStatus" />
+                        <input type="submit" class="btn btn-success voteBtn" value="موافق" />
+                    </form>
+                </div>
+                <div class="col-md-4 centerContent">
+                    <form action="~/Letter/DoVoting/">
+                        <div class="form-group">
+                            <label class="control-label">توضیحات</label>
+                            <div>
+                                <textarea name="comment" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <input type="hidden" value="@letter.ID" name="letterID" />
+                        <input type="hidden" value="2" name="votingStatus" />
+                        <input type="submit" class="btn btn-danger voteBtn" value="مخالف" />
+                    </form>
+                </div>
+                <div class="col-md-4 centerContent">
+                    <form action="~/Letter/DoVoting/">
+                        <div class="form-group">
+                            <label class="control-label">توضیحات</label>
+                            <div>
+                                <textarea name="comment" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <input type="hidden" value="@letter.ID" name="letterID" />
+                        <input type="hidden" value="3" name="votingStatus" />
+                        <input type="submit" class="btn btn-primary voteBtn" value="ممتنع" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

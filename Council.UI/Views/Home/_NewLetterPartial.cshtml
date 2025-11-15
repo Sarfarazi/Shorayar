@@ -1,0 +1,117 @@
+﻿@using Council.Core
+@using Council.Core.Enums;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@model List<Council.Core.Entities.Letter>
+
+
+@{  
+    //var letters = ViewBag.MyLetters as IQueryable<Council.Core.Entities.Letter>;
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+    var newLetters = Model.ToList();
+ }
+
+
+@if (newLetters.Count > 0){
+    var rowNumber = -1;
+    foreach (var item in newLetters.ToList())
+    {
+        <tr>
+            <td><span id="rowNumber">@(++rowNumber + Convert.ToInt32(ViewBag.RowNumber))</span></td>
+            <td>@(item.OutLetter != null ? item.OutLetter.OutLetterNumber : item.LetterNumber)</td>
+            <td class="text-right">
+                @(item.Urgency ? "[ اضطراری ]" : "")
+                @if (User.IsInRole("Boss"))
+                {
+                    if (item.LetterStatus != LetterStatus.SendToMember && item.LetterRefrences.Any(m => m.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew)))
+                    {
+                        <i class="newLetter">جدید</i>
+                    }
+                }
+                else
+                {
+                    if (item.LetterRefrences.Any(m => m.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew)))
+                    {
+                        <i class="newLetter">جدید</i>
+                    }
+                }
+                <span class="@( item.LetterRefrences.Any(m => m.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew)) ? "isNewLetter" : "" )">
+                    <a href="@Url.Action("LetterItem","Letter", new { letterID = item.ID})">
+                        @item.Title
+                    </a>
+                </span>
+            </td>
+            <td>
+                @switch (item.LetterStatus)
+                {
+                    case LetterStatus.NormalLetter:
+                        break;
+                    case LetterStatus.SendForBoss:
+                        break;
+                    case LetterStatus.SendInvite:
+                        break;
+                    case LetterStatus.Votting:
+                        break;
+                    case LetterStatus.ReadyForVoting:
+                        break;
+                    case LetterStatus.AllowVotting:
+                        break;
+                    case LetterStatus.End:
+                        break;
+                    case LetterStatus.OutOfVotting:
+                        break;
+                    case LetterStatus.SentToCommision:
+                        <span>ارسال شده به رئیس کمیسیون</span>
+                        break;
+                    case LetterStatus.CommissionVoting:
+                        <span>تنظیمات رای گیری کمیسیون</span>
+                        break;
+                    case LetterStatus.CommissionReadyForVoting:
+                        break;
+                    case LetterStatus.CommissionAllowVotting:
+                        break;
+                    case LetterStatus.CommissionEnd:
+                        break;
+                    case LetterStatus.OutOfCommisionVotting:
+                        break;
+                    case LetterStatus.SendToMember:
+                        <span>ارسال شده به اعضای شورا</span>
+                        break;
+                    default:
+                        break;
+                }
+            </td>
+            <td>
+
+                @if (item.OutLetter.OutLetterStatus == 1)
+                {
+                    <small>نامه</small>
+                }
+                else if (item.OutLetter.OutLetterStatus == 2)
+                {
+                    <small>طرح</small>
+                }
+                else if (item.OutLetter.OutLetterStatus == 4)
+                {
+                    <small>لایحه تک فوریتی</small>
+                }
+                else if (item.OutLetter.OutLetterStatus == 5)
+                {
+                  <small>لایحه دو فوریتی</small>
+                }
+                else if (item.OutLetter.OutLetterStatus == 6)
+                {
+                  <small>لایحه سه فوریتی</small>
+                }
+                <small>/@(item.OutLetter == null ? " داخلی":" دریافتی")</small>
+                    <input id="PageNumber" type="hidden" value="1" />
+                    <input id="AllLettersCount" type="hidden" value="@ViewBag.LettersCount" />
+            </td>
+        </tr>                
+    }
+}
+
+                    
+
+

@@ -1,0 +1,275 @@
+﻿@model Council.Core.Models.FinalMeetingPrint
+@using Council.Core.Enums
+
+@{
+    Layout = null;
+    var bossName = Model.Signers.Where(m => m.UserPosition == (int)UserPosition.CouncilBoss).FirstOrDefault();
+    var helperName = Model.Signers.Where(m => m.UserPosition == (int)UserPosition.CouncilHelper).FirstOrDefault();
+    var writer1Name = Model.Signers.Where(m => m.UserPosition == (int)UserPosition.CouncilWriter1).FirstOrDefault();
+    var writer2Name = Model.Signers.Where(m => m.UserPosition == (int)UserPosition.CouncilWriter2).FirstOrDefault();
+    var curentSetting = ViewBag.Setting as Council.Core.Entities.SystemSettings;
+
+    var Settings = new Council.Core.Models.CurrentSetting
+    {
+        CouncilName = curentSetting != null ? curentSetting.CouncilName : "شورایار",
+        CouncilLogo = curentSetting != null ? curentSetting.CouncilLogo : "default-logo.png",
+        CouncilLoginLogo = curentSetting != null ? curentSetting.CouncilLoginLogo : "default-login-logo.png"
+    };
+
+    List<Council.Core.Entities.MeetingUsers> Users = new List<Council.Core.Entities.MeetingUsers>();
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/Print/paper.css" rel="stylesheet" />
+    <link href="~/Content/PrintA5.css" rel="stylesheet" />
+    <script src="~/Scripts/numtoword.js"></script>
+</head>
+<body>
+    <section style="margin:0 20px 0 20px ;font-size:16px !important">
+        @{
+            var boss = Model.Signers.Where(m => m.UserPosition == (int)Council.Core.Enums.UserPosition.CouncilBoss).FirstOrDefault();
+            <input type="hidden" id="mettingNumber" value="@Model.SessionNumber" />
+
+            @*<section class="sheet padding-10mm">
+
+            </section>*@
+            <div class="row">
+                <table class="text-center fullwidth">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <img src="~/Images/logo/@Settings.CouncilLogo" style="margin:10px 0 0 0;"  />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr />
+                @*<div class="text-center">
+                    (@Settings.NationalBanner)
+                </div>*@
+                <div class="text-justify"><span id="mettingNumberTd2"></span>جلسه رسمی (@Model.SessionType) شورای اسلامی شهر میبد مورخ @Model.RegisterDate که در ساعت @Model.StartTime به ریاست @boss.Gender @boss.Name با حضور شرکت کنندگان ذیل در محل سالن جلسات شورای اسلامی شهر @Council.Core.Statics.Settings.CityName با تلاوت آیاتی چند از کلام اله مجید آغاز گردید.</div>
+                <div class="text-justify"><span>حاضرین جلسه : </span></div>
+                <div>
+                    @foreach (var metting in Model.Meetings.OrderByDescending(m => m.CreatedOn))
+                    {
+                        if (metting.MeetingUsers.Any(m => m.status == 1))
+                        {
+                            foreach (var meetingUser in metting.MeetingUsers)
+                            {
+                                if (meetingUser.status == 1 && !Users.Any(c => c.User.ID == meetingUser.User.ID))
+                                {
+                                    Users.Add(meetingUser);
+                                }
+                            }
+                        }
+                    }
+
+                    @if (Users.Count() > 0)
+                    {
+                        foreach (var meetingUser in Users)
+                        {
+                            @(!meetingUser.User.Gender ? "آقای " : "سرکارخانم ")
+                            <span>&nbsp; @meetingUser.User.FirstName @meetingUser.User.LastName</span>
+                            <span>&nbsp;-&nbsp;</span>
+                        }
+                    }
+                    else
+                    {
+                        <span></span>
+                    }
+                </div>
+                <div><span>غائبین :</span></div>
+                <div class="text-justify">
+                    @foreach (var metting in Model.Meetings.OrderByDescending(m => m.CreatedOn))
+                    {
+                        if (metting.MeetingUsers.Any(m => m.status == 2))
+                        {
+                            foreach (var meetingUser in metting.MeetingUsers)
+                            {
+                                if (meetingUser.status == 2)
+                                {
+                                    @(!meetingUser.User.Gender ? "آقای " : "سرکارخانم ")
+                                    <span>&nbsp; @meetingUser.User.FirstName @meetingUser.User.LastName</span>
+                                    <span>&nbsp;-&nbsp;</span>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <span></span>
+                        }
+                    }
+                </div>
+                <br />
+                <div>
+                    <strong>دستور کار جلسه  :</strong>
+                </div>
+                @{
+                    var row_Number = 1;
+                    foreach (var metting in Model.Meetings.OrderByDescending(m => m.CreatedOn))
+                    {
+                        var letterTitle = Model.LettersSubject.Where(m => m.MeetingId == metting.ID).FirstOrDefault();
+                        if (letterTitle != null)
+                        {
+                            <div>
+                                @(row_Number++) <text> - </text> @(letterTitle.LetterTitle)
+                            </div>
+                        }
+                    }
+                }
+                <br />
+                <div>
+                    <strong>متن مذاکرات :</strong>
+                </div>
+                <div class="contentTxt class=" text-justify"">
+                    @Html.Raw(Model.SessionContent)
+                </div>
+                <br />
+                <table>
+                    <tr>
+                        <td>
+                            @{
+                                if (Model.Signers != null)
+                                {
+                                    <table class="table table-hover table-bordered table-striped">
+                                        <tr>
+                                            @if (bossName != null)
+                                            {
+                                                <td><span>رئیس <br />@(bossName.Name)<br /><img src="@(bossName.Signature)" /> </span></td>
+                                            }
+                                            @if (helperName != null)
+                                            {
+                                                <td><span>نائب رئیس <br />@(helperName.Name)<br /><img src="@(helperName.Signature)" /> </span></td>
+                                            }
+                                            @if (writer1Name != null)
+                                            {
+                                                <td><span>منشی اول<br />@(writer1Name.Name)<br /><img src="@(writer1Name.Signature)" />  </span></td>
+                                            }
+                                            @if (writer2Name != null)
+                                            {
+                                                <td><span>منشی دوم<br />@(writer2Name.Name)<br /><img src="@(writer2Name.Signature)" />  </span></td>
+                                            }
+                                        </tr>
+                                    </table>
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                </table>
+                <br />
+                <strong>مصوبات :</strong>
+                <table>
+                    <tbody>
+                        @{
+                            int rowNumber = 1;
+                            foreach (var metting in Model.Meetings.OrderByDescending(m => m.CreatedOn))
+                            {
+                                <tr class="text-right">
+                                    <td>
+                                        @{
+                                            var letterTitle = Model.LettersSubject.Where(m => m.MeetingId == metting.ID).FirstOrDefault();
+                                            if (letterTitle != null)
+                                            {
+                                                <div>@(rowNumber++) <text> - </text> @(letterTitle.LetterTitle)</div>
+                                                <div class="contentTxt class=" text-justify"">@Html.Raw(metting.Content)</div>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        @{
+                                            if (Model.Meetings != null)
+                                            {
+                                                <table class="table table-hover table-bordered table-striped">
+                                                    <tr>
+                                                        @if (bossName != null)
+                                                        {
+                                                            <td><span>رئیس <br />@(bossName.Name)<br /><img src="@(bossName.Signature)" /> </span></td>
+                                                        }
+                                                        @if (helperName != null)
+                                                        {
+                                                            <td><span>نائب رئیس <br />@(helperName.Name)<br /><img src="@(helperName.Signature)" /> </span></td>
+                                                        }
+                                                        @if (writer1Name != null)
+                                                        {
+                                                            <td><span>منشی اول<br />@(writer1Name.Name)<br /><img src="@(writer1Name.Signature)" />  </span></td>
+                                                        }
+                                                        @if (writer2Name != null)
+                                                        {
+                                                            <td><span>منشی دوم<br />@(writer2Name.Name)<br /><img src="@(writer2Name.Signature)" />  </span></td>
+                                                        }
+                                                    </tr>
+                                                </table>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <br />
+                @{
+                    var memberlist = new List<Council.Core.Entities.MeetingUsers>();
+                    if (Model.Meetings != null)
+                    {
+                        foreach (var meeting in Model.Meetings)
+                        {
+                            foreach (var member in meeting.MeetingUsers)
+                            {
+                                if (memberlist.Count == 0 || !memberlist.Any(m => m.ID == member.ID))
+                                {
+                                    if (member.status == 1)
+                                    {
+                                        memberlist.Add(member);
+                                    }
+                                }
+                            }
+                        }
+                        var trCount = Math.Abs( memberlist.Count() / 4)+1;
+                        <table>
+                            @for (int i = 0; i < trCount; i++)
+                            {
+                            <tr>
+                                @for (int j = 0; j < 4; j++)
+                                {
+                                    if (memberlist.Count > i * 4+j)
+                                    {
+                                        <td><br />@(memberlist[i * 4+j].User.FirstName + ' ' + memberlist[i * 4].User.LastName)<br /> <img src="@(memberlist[i * 4].User.Signature)" /> </td>
+                                    }
+                                    if (j == 3)
+                                    {
+                                        break;
+                                    }
+                                }
+                            </tr>
+                            }
+                        </table>                        
+                    }
+                } 
+           </div> 
+      }   
+</section>
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        var val = $("#mettingNumber").val();
+        var word = wordifyfa(val) 
+
+        $("#mettingNumberTd1").text(word);
+        $("#mettingNumberTd2").text(word);
+    })
+    $(".contentTxt span").css("font-size", "15px");
+    window.print();
+</script>

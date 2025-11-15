@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Council.Core.Entities.Meeting>
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@{
+    var filter = ViewBag.Filter as string;
+    ViewBag.Title = "جستجو :: " + filter;
+}
+
+
+<div class="card">
+    <div class="card-header">
+        جستجو
+    </div>
+    <div class="card-body">
+        @if (Model.Count() == 0)
+        {
+            <h4>جستجوی شما نتیجه ای نداشت !</h4>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <div class="customDiv">
+                    <h4><a href="~/Meeting/MeetingDetails?MeetingID=@item.ID">@item.Subject</a></h4>
+                    <hr />
+                    @if (item.Content != null && item.Content.Contains(filter))
+                    {
+                        var indexOfFilter = item.Content.IndexOf(filter);
+                        var _content = "";
+                        if (indexOfFilter < 300)
+                        {
+                            _content = item.Content;
+                        }
+                        else
+                        {
+                            _content = "..." + item.Content.Substring(indexOfFilter - 200) + "...";
+                        }
+                        @Html.ContentSubstring(_content)
+                    }
+                    else
+                    {
+                        @Html.ContentSubstring(item.Content)
+                    }
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.GetPersianDate(item.CreatedOn)
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+@section scripts{
+<script src="~/Scripts/scripts.js"></script>
+<script>
+    highlight('@filter');
+</script>    
+}

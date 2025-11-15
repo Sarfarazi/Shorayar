@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Council.Core.Entities.OutLetter>
+@using Council.Service.DBServices;
+@using Council.UI.Helpers;
+@using Council.Core.Enums;
+@using Council.Core;
+@using Microsoft.AspNet.Identity;
+@{
+    var comNumber = 0;
+    LetterServices letterService = new LetterServices();
+}
+
+@if (Model.Count() > 0)
+{
+    foreach (var item in Model)
+    {
+        var letter = letterService.All().Where(m => m.OutLetter.ID == item.ID).FirstOrDefault();
+        <tr style="@(letter != null ? "background: #fff3cf;" : "")" >
+            <td class="text-center">
+                <span id="rowNumber">@(++comNumber + Convert.ToInt32(ViewBag.RecivedOutLettersPageNumber))</span>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject)
+                <input id="RecievedOutLetterPageNumber" type="hidden" value="1" />
+                <input id="RecievedOutLetterCount" type="hidden" value="@ViewBag.RecievedOutLetterCount" />
+            </td>
+            <td>
+                @{
+                    if (item.Notes.Any())
+                    {
+                        <a href="javascript:void(0)" onclick="GetOutletterNote('@item.ID')"><span class="fa fa-file" style="color:#5cb85c"></span></a>
+                    }
+                    else
+                    {
+                        <span style="color:#c1c1c1" class="fa fa-file"></span>
+                    }
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutLetterNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SendDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Organ.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegisterNumber)
+            </td>
+            <td>
+                @{
+                    switch (item.OutLetterStatus)
+                    {
+                        case 2:<text>طرح</text>
+                            break;
+                        case 1:<text>نامه</text>
+                            break;
+                        case 4:<text>لایحه</text>
+                            break;
+                        case 5:<text>لایحه</text>
+                            break;
+                        case 6:<text>لایحه</text>
+                            break;
+                    }
+                }
+            </td>
+            <td>
+                <div class="dropdown drp-action">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        عملیات
+                    </button>
+                    <ul class="dropdown-menu">
+                        @{
+                            var letterIdOfOutLetter = Html.LetterIdOfOutLetter(item.ID);
+                        }
+                        <li>
+                            @Html.ActionLink("بایگانی", "MarkOutLetterAsArchived", new { ID = item.ID })
+                        </li>
+                        <li>
+                            @if (letterIdOfOutLetter == null)
+                            {
+                                @Html.ActionLink("ارجاع", "FlowOutLetter", new { ID = item.ID })
+                            }
+                            else
+                            {
+                                @Html.ActionLink("نمایش گردش", "LetterItem", "Letter", new { letterID = letterIdOfOutLetter }, null)
+                            }
+                        </li>
+                        <li>
+                            @Html.ActionLink("چاپ رسید", "RecievedOutLetterPrint", "OutLetter", new { letterId = item.ID }, new { @target = "_blank" })
+                        </li>
+                        <li>
+                            @Html.ActionLink("نمایش", "DisplayReciveLetter", "OutLetter", new { letterID = item.ID }, null)
+                        </li>
+                        <li>
+                            @Html.ActionLink("حذف", "DeleteOutLetter", "OutLetter", new { outLetterId = item.ID }, null)
+                        </li>
+                        <li>
+                            @if (letter != null)
+                            {
+                                if (letter.LetterStatus != LetterStatus.CommissionEnd && letter.LetterStatus != LetterStatus.End)
+                                {
+                                    @Html.ActionLink("ویرایش", "EditReciveLetter", "OutLetter", new { letterID = item.ID }, null)
+                                }
+                            }
+                            else
+                            {
+                                @Html.ActionLink("ویرایش", "EditReciveLetter", "OutLetter", new { letterID = item.ID }, null)
+                            }
+                        </li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+   }
+}

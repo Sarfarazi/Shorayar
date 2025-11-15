@@ -1,0 +1,142 @@
+﻿
+@using Council.Core.Enums;
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "صدور دعوت نامه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var letters = ViewBag.Letters as Council.Core.Models.SessionViewModel;
+    var forCouncil = letters != null ? letters.MyLetters.Where(l => l.LetterStatus == LetterStatus.Votting || l.LetterStatus == LetterStatus.SendToMember).ToList() : null;
+    //var commissionForCouncil = letters != null ? letters.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting
+    //           && letters.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList() : null;
+    var commissionForCouncil = letters != null ? letters.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting).ToList() : null;
+    bool userIsBoss;
+    bool userIsBossHelper;
+    bool userIsSiteManager;
+    bool userIsMember;
+    if (forCouncil != null)
+    {
+        forCouncil.AddRange(commissionForCouncil);
+    }
+    if (letters != null)
+    {
+        userIsBoss = letters.UserIsBoss;
+        userIsBossHelper = letters.UserIsBossHelper;
+        userIsSiteManager = letters.UserIsSiteManager;
+        userIsMember = letters.UserIsMember;
+    }    
+}
+
+<div class="card">
+    <div class="card-header">
+        صدور دعوت نامه
+    </div>
+    <input type="hidden" value="@ViewBag.ActiveSession" id="ActiveSession" />
+        @if (ViewBag.ActiveSession != null && ViewBag.ActiveSession != "-200" && ViewBag.ActiveSession != "")
+        {
+            if (forCouncil != null && forCouncil.Count > 0)
+            {
+                var counter = 1;
+                <div class="card-body">
+                    <div class="row form-group">
+                        <label class="control-label col-lg-12">شماره جلسه : @(ViewBag.ActiveSession) </label>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped allletters">
+                            <thead>
+                                <tr>
+                                    <td class="table-heade-rowNumber">ردیف</td>
+                                    <td>موضوع</td>
+                                    <td>انتخاب</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in forCouncil)
+                                {
+                                    var href = (item.LetterStatus == LetterStatus.Votting) ?
+                                    ("/Letter/ReadyForCouncil?letterID=" + item.ID) :
+                                    ("/Letter/CommissionReadyForCouncil?letterID=" + item.ID);
+                                    bool isCommission = (item.LetterStatus == LetterStatus.CommissionVoting);
+                                    <tr>
+                                        <td>@(counter++)</td>
+                                        <td class="text-right">
+                                            @{if (!String.IsNullOrEmpty(item.CommissionName))
+                                                {
+                                                    <span>[ کمیسیون  @item.CommissionName ]</span>
+                                                }
+                                            }
+                                            <a href='@("/Letter/LetterItem?letterID=" + item.ID)'>
+                                                @item.Title
+                                            </a>
+                                        </td>
+                                        <td style="text-align:center !important ;width:50px">
+                                            <input id="@item.ID" type="checkbox" />
+                                        </td>
+                                    </tr>
+                                 }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button id="btnInvitePrint" type="button" class="btn btn-success">چاپ دعوتنامه برای اعضاء</button>
+                    <button id="btnInviteEmail" type="button" class="btn btn-info">ارسال الکترونیکی دعوتنامه</button>
+                    <button id="btnInviteSMS" type="button" class="btn btn-primary">ارسال از طریق اس ام اس</button>
+                </div>
+            }
+            else
+            {
+                <div class="card-body">
+                    <h4>@ViewBag.Message</h4>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="card-body">
+                <h4>@ViewBag.Message</h4>
+            </div>
+        }
+</div>
+<div style="display:none">
+    @using (Html.BeginForm("InvitePrint", "Meeting", FormMethod.Post, new { id = "inviteForm" }))
+    {
+        <input name="letterIds" value="" type="hidden" />
+        <input name="sessionId" value="" type="hidden" />
+    }
+</div>
+<div class="modal fade" id="SessionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">توجه !</h4>
+            </div>
+            <div class="modal-body">
+                <p>یک جلسه فعال در سیستم وجود دارد ..آیا می خواهید غیر فعال شود؟</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success deactiveSession">بله</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="NoSelectItemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">توجه !</h4>
+            </div>
+            <div class="modal-body">
+                <p>هیچ دستور جلسه ای انتخاب نشده است ، لطفا ردیفی از جدول را برای صدور دعوتنامه انتخاب کنید</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script src="~/Scripts/Meeting/CreateInviteLetter.js"></script>
+}

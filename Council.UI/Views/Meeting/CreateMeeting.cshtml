@@ -1,0 +1,177 @@
+﻿@model List<Council.Core.Entities.MeetingHeader>
+@{
+    ViewBag.Title = "ثبت صورت جلسه";
+    var uniqueNumber = ViewBag.SessionNumber;
+    //var letterID = ViewBag.LetterID;
+
+    var meetings = ViewBag.Sessions as List<Council.Core.Entities.MeetingHeader>;
+    var content = ViewBag.Content as string;
+    var meetingNumber = ViewBag.MeetingNumber as string;
+    var user = ViewBag.User as Council.Core.Entities.User;
+}
+
+<div class="card">
+    <div class="card-header">
+        صورت جلسه های ثبت شده
+    </div>
+    <div class="card-body">
+        @if (meetings != null && meetings.Count() > 0)
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>
+                                شماره جلسه
+                            </td>
+                            <td>نوع جلسه</td>
+                            <td>تعداد دستور کار</td>
+                            <td>جلسه فعال</td>
+                            <td>تاریخ</td>
+                            <td>ساعت شروع</td>
+                            <td>ساعت پایان</td>
+                            <td>
+                                عملیات
+                            </td>
+                        </tr>
+                    </thead>
+
+                    @foreach (var item in meetings)
+                    {
+                        var contentIsNull = Model.Any(m => m.ID == item.ID);
+                        if (!contentIsNull || user.IsManager)
+                        {
+                            <tr>
+                                <td>
+                                    @item.MeetingNumber
+                                </td>
+                                <td>
+                                    @{
+                                        if (item.MeetingType == 1)
+                                        {
+                                            <span>عادی</span>
+                                        }
+                                        else
+                                        {
+                                            <span>فوق العاده</span>
+                                        }
+                                    }
+                                </td>
+                                <td>@(item.Meetings != null ? item.Meetings.Count : 0)</td>
+                                <td>@(item.IsActive ? "فعال" : "اختتام یافته")</td>
+                                <td>@item.RegisterDate</td>
+                                <td>@item.StartTime</td>
+                                <td>@item.EndTime</td>
+                                <td class="text-right">
+                                    @{
+                                        if (user.IsManager)
+                                        {
+                                            if (item.Meetings != null && item.Meetings.Count > 0 && !item.FinalApproved)
+                                            {
+                                                <a href='@("/Meeting/CreateMeeting?SessionNumber=" + item.MeetingNumber)' class="btn btn-info">
+                                                    ویرایش
+                                                </a>
+                                                <a href='@("/Meeting/FinalApproved?id=" + item.ID)' class="btn btn-primary">
+                                                    ثبت نهایی
+                                                </a>
+                                            }
+                                        }
+                                        if (!contentIsNull)
+                                        {
+                                            <a onclick="CheckHasContent('@item.MeetingNumber','@item.ID')" href="javascript:void(0)" class="btn btn-success">
+                                                چاپ
+                                            </a>
+                                            <div style="display:none">
+                                                <a id="@item.ID" href='@("/Meeting/FinalMeetingPrint?SessionNumber=" + item.MeetingNumber)' class="btn btn-success">
+                                                    چاپ
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>صورت جلسه ای ثبت نشده</p>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        ثبت صورت جلسه شورا
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @id = "CreateMeetingForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <div class="row form-group">
+                @Html.Label("شماره جلسه", new { @class = "control-label col-lg-2 col-md-2 col-sm-12 col-12" })
+                <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                    <input name="MeetingNumber" id="MeetingNumber" class="text-box form-control" value="@meetingNumber" disabled="disabled" />
+                    <input name="MeetingNumber" id="MeetingNumber" class="text-box form-control" value="@meetingNumber" type="hidden" />
+                </div>
+            </div>
+            <div class="row form-group">
+                @Html.Label("متن مذاکرات", new { @class = "control-label col-lg-2 col-md-2 col-sm-12 col-12" })
+                <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                    <textarea id="Content" name="Content" class="form-control SampleEditor"></textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-12 text-left">
+                    <button type="button" class="btn btn-success" id="submitFormbtn">ثبت صورتجلسه</button>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-12 redColor">
+                    <label id="messageLbl"></label>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts{
+<script src="~/Plugins/tinymce/tinymce.min.js"></script>
+<script src="~/Scripts/scripts.js"></script>
+<script>
+    var _clickPrintId = '';
+    function CheckHasContent(number, id) {
+
+        _clickPrintId = id;
+        $.ajax({
+            url: "/Meeting/CheckHasContent",
+            type: "Post",
+            data: { meetingNumber: number },
+            success: function (result) {
+                if (result == 'yes') {
+                    $("#" + _clickPrintId)[0].click();
+                } else {
+                    $("#messageLbl").text('لطفا متن مذاکرات را برای جلسه ی انتخابی وارد کنید')
+                }
+            }
+        })
+    }
+
+    $("#submitFormbtn").click(function () {
+        var iframe = $('#Content_ifr');
+        var content = $('#tinymce[data-id="Content"]', iframe.contents()).html();
+
+        if ($("#MeetingNumber").val() != "" && $("#MeetingNumber").val() != undefined && content != "" && content != undefined && content != '<p><br data-mce-bogus="1"></p>') {
+            $("#CreateMeetingForm").submit();
+        } else {
+            $("#messageLbl").text('لطفا مقادیر را درست وارد کنید')
+        }
+    });
+</script>
+}
+

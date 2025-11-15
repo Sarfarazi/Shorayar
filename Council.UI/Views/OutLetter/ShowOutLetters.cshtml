@@ -1,0 +1,256 @@
+﻿@*@model IEnumerable<Council.Core.Entities.OutLetter>*@
+@using Council.UI.Helpers;
+@using Council.Core.Extensions;
+@{
+    ViewBag.Title = "نامه های برون سازمانی";
+    //var Recived = Model.Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits())).ToList();
+    //var Sended = Model.Where(l => !l.Received && !l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits())).ToList();
+    //var Archived = Model.Where(l => l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits()));
+    //var Removed = Model.Where(l => l.Removed).OrderByDescending(o => o.CreatedOn);
+
+    //Correspond.Core.Entities.User user = ViewBag.User;
+    //var tabs = ViewBag.Tabs as List<Council.Core.Entities.LetterTabs>;
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+}
+<div class="card">
+    <div class="card-header">
+        نمایش و مدیریت مکاتبات سازمانی
+    </div>
+    <div class="card-body">
+        @*<div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12 text-center ">
+                    <a href="~/OutLetter/ReciveOutLetter" class="btn btn-default noRadius marginBottom5 padding10">
+                        <i class="fa fa-link"></i>
+                        دریافت مکاتبات-لوایح-طرحها
+                    </a>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-12 text-center">
+                    <a href="~/OutLetter/SendOutLetter" class="btn btn-default noRadius marginBottom5 padding10">
+                        <i class="fa fa-link"></i>
+                        ارسال مکاتبات برون سازمانی
+                    </a>
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="row form-group">
+                    <div class="col-lg-12">
+                        @Html.DropDownList("Organ", new SelectList(organs, "ID", "Name"), " ", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-12 text-left">
+                        <button id="organSearch" class="btn btn-sm btn-primary " type="submit">فیلتر سازمان</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                <form action="~/OutLetter/Search/" method="get">
+                    <div class="search">
+                        <div class="row form-group">
+                            <div class="col-lg-12">
+                                <input type="text" class="form-control" id="query" name="filter" placeholder='فیلتر' required>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-lg-12 text-left">
+                                <button class="btn btn-sm btn-primary" type="submit">جستجو</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#t1" aria-controls="t1" role="tab" data-toggle="tab">
+                        دریافتی
+                        <i class="fa fa-inbox"></i>
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#t2" aria-controls="t2" role="tab" data-toggle="tab">
+                        ارسالی
+                        <i class="fa fa-reply"></i>
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#t3" aria-controls="t3" role="tab" data-toggle="tab">
+                        بایگانی
+                        <i class="fa fa-archive"></i>
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#t4" aria-controls="t4" role="tab" data-toggle="tab">
+                        حذف شده
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="t1">
+                    <div class="form-group"><span style="background: #fff3cf;padding: 5px;display: inline-block;">ارسالی به رئیس  شورا</span></div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>ردیف</td>
+                                    <td>موضوع نامه</td>
+                                    <td>یادداشت </td>
+                                    <td>شماره ثبت </td>
+                                    <td>تاریخ ثبت</td>
+                                    <td>دریافتی از </td>
+                                    <td>شماره وارده</td>
+                                    <td>نوع نامه</td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody class="recievedOutLetter">
+                                @Html.Action("ShowRecivedOutLetters", new { skip = "0", take = "50" })
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="ExtraRecived" class="row text-center">
+                        <div class="col-lg-9 comm-right">
+                            <span> نمایش نامه های دریافتی <span id="AnyRecivedSpan"></span> از <span id="AllRecivedSpan"></span></span>
+                        </div>
+                        <div class="col-lg-3 comm-left">
+                            <span id="ShowRecivedSpan"><a id="MoreRecived" href="#">اطلاعات بیشتر</a> @*/<a id="AllRecivedLink" href="#">نمایش همه</a>*@</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="redColor">@ViewBag.Message</div>
+                <div role="tabpanel" class="tab-pane" id="t2">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>ردیف</td>
+                                    <td>موضوع نامه </td>
+                                    <td>یادداشت</td>
+                                    <td>شماره ثبت در دبیرخانه</td>
+                                    <td>تاریخ</td>
+                                    <td>گیرنده</td>
+                                    @*<td>شماره نامه</td>*@
+                                    <td>کد بایگانی</td>
+                                </tr>
+                            </thead>
+                            <tbody class="sendedOutLetter">
+                                @Html.Action("ShowSendedOutLetters", new { skip = "0", take = "50" })
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="ExtraSended" class="row text-center">
+                        <div class="col-lg-9 comm-right">
+                            <span> نمایش نامه های ارسالی <span id="AnySendedSpan"></span> از <span id="AllSendedSpan"></span></span>
+                        </div>
+                        <div class="col-lg-3 comm-left">
+                            <span id="ShowSendedSpan"><a id="MoreSended" href="#">اطلاعات بیشتر</a> @*/ <a id="AllSendedLink" href="#">نمایش همه</a>*@</span>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="t3">
+                    <div class="row form-group">
+                        <div class="col-lg-12">
+                            <select id="ShowBy" class="form-control" style="max-width:200px;">
+                                <option value="all">همه سازمان ها</option>
+                                @foreach (var item in organs)
+                                {
+                                    <option value="@item.Name">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>ردیف</td>
+                                    <td>سازمان</td>
+                                    <td>موضوع نامه</td>
+                                    <td>شماره نامه</td>
+                                    <td>تاریخ ثبت</td>
+                                    <td>وضعیت</td>
+                                </tr>
+                            </thead>
+                            <tbody class="archivedOutLetter">
+                                @Html.Action("ShowArchivedOutLetters", new { skip = "0", take = "50" })
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="ExtraArchived" class="row text-center">
+                        <div class="col-lg-9 comm-right">
+                            <span> نمایش نامه های بایگانی شده <span id="AnyArchivedSpan"></span> از <span id="AllArchivedSpan"></span></span>
+                        </div>
+                        <div class="col-lg-3 comm-left">
+                            <span id="ShowArchivedSpan"><a id="MoreArchived" href="#">اطلاعات بیشتر</a> @*/ <a id="AllArchivedLink" href="#">نمایش همه</a>*@</span>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="t4">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>ردیف</td>
+                                    <td>موضوع نامه</td>
+                                    <td>شماره نامه</td>
+                                    <td>تاریخ</td>
+                                    <td>وضعیت</td>
+                                </tr>
+                            </thead>
+                            <tbody class="removedOutLetter">
+                                @Html.Action("ShowRemovedOutLetters", new { skip = "0", take = "50" })
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="ExtraRemoved" class="row text-center">
+                        <div class="col-lg-9 comm-right">
+                            <span> نمایش نامه های حذف شده <span id="AnyRemovedSpan"></span> از <span id="AllRemovedSpan"></span></span>
+                        </div>
+                        <div class="col-lg-3 comm-left">
+                            <span id="ShowRemovedSpan"><a id="MoreRemoved" href="#">اطلاعات بیشتر</a> @*/ <a id="AllRemovedLink" href="#">نمایش همه</a>*@</span>
+                        </div>
+                    </div>
+                </div>
+            </div>                
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="NoteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                <h4 class="modal-title" id="myModalLabel">یادداشت ها</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles{
+<link href="~/Plugins/r-tab/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+}
+@section scripts{    
+<script src="~/Plugins/r-tab/jquery.scrolling-tabs.min.js"></script>
+<script src="~/Scripts/OutLetter/ShowOutLetters.js"></script>
+<script>
+    $("#ShowBy").on("change", function () {
+        var value = $(this).val();
+        $('.archivedOutLetter tr').show();
+        if (value != 'all') {
+            $('.archivedOutLetter tr').filter(function () {
+                return $.trim($(this).find('td:eq(1)').text()) !== value;
+            }).hide();
+        }        
+    });
+</script>
+}

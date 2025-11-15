@@ -1,0 +1,138 @@
+﻿@model IEnumerable<Council.Core.Models.RuleModel>
+@using Council.Service;
+
+@{
+    ViewBag.Title = "آخرین مصوبات کمیسیون";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/scripts.js"></script>
+<div class="card">
+    <div class="card-header">
+        مصوبات کمیسیون
+    </div>
+    <div class="card-body">
+        @if (ViewBag.ruleLetterCount > 0)
+        {
+            <div class="row form-group">
+                <div class="col-lg-12 col-md-12">
+                    <div class="showColor isRule">مصوب شده</div>
+                    <div class="showColor isNotRule">مصوب نشده</div>
+                </div>
+            </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-condensed table-hover table-striped text-center">
+                        <thead>
+                            <tr class="text-center">
+                                <th>ردیف</th>
+                                <th>عنوان</th>
+                                <th>شماره نامه</th>
+                                <th>تاریخ ایجاد</th>
+                                <th width="132px"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="ruleletter">
+                            @Html.Action("GetCommisionRule", new { skip = "0", take = "50" })
+                        </tbody>
+                    </table>
+                    <div id="ExtraRuleLetter" class="row text-center">
+                        <div class="col-lg-9 comm-right">
+                            <span> نمایش  <span id="AnyRuleLetterSpan"></span> از <span id="AllRuleLetterSpan"></span></span>
+                        </div>
+                        <div class="col-lg-3 comm-left">
+                            <span id="ShowRuleLetterSpan"><a id="MoreRuleLetter" href="#">اطلاعات بیشتر</a> / <a id="AllRuleLetterLink" href="#">نمایش همه</a></span>
+                        </div>
+                    </div>
+                </div>
+        }
+        else
+        {
+            <div class="emptyData">
+                <text><h5>داده ای برای نمایش وجود ندارد</h5></text>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="ruleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 form-group">
+                        @Html.Label("توضیحات / متن", new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.TextArea("Comment", "", 2, 10, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 form-group">
+                        @Html.ActionLink("مصوب شود", "ChangeRuleLetter", "Rule", new { id = "IsRule", rule = true }, new { @class = "btn btn-default isRule" })
+                        @Html.ActionLink("رد شود", "ChangeRuleLetter", "Rule", new { id = "IsNotRule", rule = false }, new { @class = "btn btn-default isNotRule" })
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" data-dismiss="modal">بستن</a>
+                <a class="btn btn-success doVote" href="javascript:void(0)">
+                    انجام رای گیری
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var ruleLetterPageNumber = 1;
+    $(document).ready(function () {
+        if ($("tbody.ruleletter tr").length == 0) {
+            $("#ExtraRuleLetter").hide();
+            $("tbody.ruleletter").parent().parent().hide();
+        } else {
+            if (Number($("#ruleLetterCount").val()) <= 50)
+                $("#ShowRuleLetterSpan").hide();
+            document.getElementById('AllRuleLetterSpan').innerHTML = ' ' + $("#ruleLetterCount").val();
+            document.getElementById('AnyRuleLetterSpan').innerHTML = ' ' + $("tbody.ruleletter tr").length;
+        }
+    })
+    $("#MoreRuleLetter").click(function () {
+        $.ajax({
+            url: "/Rule/GetRuleLetters",
+            data: { skip: ruleLetterPageNumber * 50, take: 50 },
+            type: "POST",
+            success: function (result) {
+                ruleLetterPageNumber++;
+                $("tbody.ruleletter").append(result);
+                document.getElementById('AllRuleLetterSpan').innerHTML = ' ' + $("#ruleLetterCount").val();
+                document.getElementById('AnyRuleLetterSpan').innerHTML = ' ' + $("tbody.ruleletter tr").length;
+                if ($("tbody.ruleletter tr").length == Number($("#ruleLetterCount").val())) {
+                    $("#ShowRuleLetterSpan").hide()
+                }
+            }
+        })
+    })
+    $("#AllRuleLetterLink").click(function () {
+        $.ajax({
+            url: "/Rule/GetRuleLetters",
+            data: { skip: 0, take: -1 },
+            type: "POST",
+            success: function (result) {
+                $("tbody.ruleletter").empty();
+                $("tbody.ruleletter").append(result);
+                document.getElementById('AllRuleLetterSpan').innerHTML = ' ' + $("#ruleLetterCount").val();
+                document.getElementById('AnyRuleLetterSpan').innerHTML = ' ' + $("tbody.ruleletter tr").length;
+                $("#ShowRuleLetterSpan").hide()
+            }
+
+        })
+    })
+    function ShowModal(id) {
+
+        $("#ruleModal").modal("show");
+    }
+
+</script>

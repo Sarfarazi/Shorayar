@@ -1,0 +1,115 @@
+﻿@model Council.Core.Models.HomePageViewModel
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.Core.Statics;
+@using Council.UI.CustomAuthentication
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var userId = _User.UserId;
+
+
+    ViewBag.Title = "رای گیری های کمیسیون";
+
+    bool userIsBoss = Model != null? Model.UserIsBoss:false;
+    bool userIsBossHelper = Model != null? Model.UserIsBossHelper:false;
+    bool userIsSiteManager = Model != null? Model.UserIsSiteManager:false;
+    bool userIsMember = Model != null? Model.UserIsMember:false;
+
+}
+<div class="card">
+    <div class="card-body">
+        <div id="TopMenu">
+            <div class="row justify-content-center">
+                <div class="col-lg-2 col-md-2 col-sm-4 col-6">
+                    <div class="card">
+                        <div class="card-body process-step">
+                            <a href="/OutLetter/ShowOutLetters" class="btn btn-default btn-circle">
+                                <i class="fa fa-pencil-square-o"></i>
+                            </a>
+                            <p>  دریافتی / ارسالی</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-4 col-6 ">
+                    <div class="card">
+                        <div class="card-body process-step">
+                            <a href="/OutLetter/ShowPlanLawsLetters" class="btn btn-default btn-circle">
+                                <i class="fa fa-list-alt"></i>
+                            </a>
+                            <p>لوایح / طرحها</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-4 col-6 ">
+                    <div class="card">
+                        <div class="card-body process-step">
+                            <a href="/Home/CouncilVoted" class="btn btn-default btn-circle">
+                                <i class="fa fa-check-square-o"></i>
+                            </a>
+                            <p>آخرین رای گیری شورا</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-4 col-6">
+                    <div class="card">
+                        <div class="card-body process-step">
+                            <a href="/Rule/Index?skip=0&take=50" class="btn btn-default btn-circle">
+                                <i class="fa fa-align-center"></i>
+                            </a>
+                            <p>مصوبات</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-4 col-6">
+                    <div class="card">
+                        <div class="card-body process-step">
+                            <a class="btn btn-default btn-circle" id="refreshPage">
+                                <i class="fa fa-refresh"></i>
+                            </a>
+                            <p>بارگزاری مجدد</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        آخرین رای گیری های انجام شده (کمیسیون)
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="NewCommision" class="table table-bordered table-condensed table-hover table-striped allletters">
+                <thead>
+                    <tr>
+                        <td class="text-center table-heade-rowNumber">ردیف</td>
+                        <td>شماره نامه</td>
+                        <td>
+                            موضوع
+                        </td>
+                        <td class="text-center second-width">
+                            نتایج
+                        </td>
+                    </tr>
+                </thead>
+                <tbody class="allCommision">
+                    @Html.Action("GetLastCommisionData", new { skip = "0", take = "50" })
+                </tbody>
+            </table>
+        </div>
+        <div id="ExtraCommision" class="row text-center">
+            <div class="col-lg-9 comm-right">
+                <span> نمایش کمیسیون <span id="AnyCommisionSpan"></span> از <span id="AllCommisionSpan"></span></span>
+            </div>
+            <div class="col-lg-3 comm-left">
+                <span id="ShowCommisionSpan"><a id="MoreCommisions" href="#">اطلاعات بیشتر</a> / <a id="AllCommisionsLink" href="#">نمایش همه</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script src="~/Scripts/Home/CommisionVoted.js"></script>
+}

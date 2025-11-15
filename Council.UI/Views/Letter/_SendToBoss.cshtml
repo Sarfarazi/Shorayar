@@ -1,0 +1,54 @@
+﻿@model string
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">ارسال به رییس/نائب رییس شورا</h5>
+        @using (Html.BeginForm("SendToBoss", "Letter", FormMethod.Post))
+        {
+            <input type="text" name="letterID" id="letterID" class="hidden" value="@Model" />
+            <input type="text" name="recivers" id="recivers" class="hidden" />
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                <div class="row form-group">
+                    <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+                        ارسال به
+                    </div>
+                    <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                        <div class="form-check form-check-inline ml-1">
+                            <input type="radio" value="0" name="SendType" class="form-check-input" checked="">
+                            <label class="form-check-label">رئیس شورا</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" value="1" name="SendType" class="form-check-input">
+                            <label class="form-check-label">نائب رئیس</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" cols="5" data-val="true" id="Transcript1" name="Transcript"></textarea>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal1">
+                            ثبت جمله پیشفرض
+                        </button>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <input type="submit" value="ارسال" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

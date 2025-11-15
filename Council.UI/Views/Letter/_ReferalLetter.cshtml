@@ -1,0 +1,83 @@
+﻿@model Council.Core.Models.LetterItemModel
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.UI.CustomAuthentication;
+
+@{ 
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var userId = _User.UserId;
+}
+
+@if (Model.UserPosition == UserPosition.CurrentCommissionBoss)
+{
+    @Html.Partial("_SendToCommissionMembers", Model.Letter.ID)
+    @Html.Partial("_SendToBoss", Model.Letter.ID)
+}
+else if (Model.LastRefrence.RefrenceType == RefrenceType.SendToBoss && (Model.UserIsBoss || Model.UserIsBossHelper))
+{
+    @Html.Partial("_SendToMembers", Model.Letter.ID)
+    @Html.Partial("_SendToCommission", Model)
+}
+
+    <div class="letter">
+        @if (Model.Letter.LetterRefrences.Any(lr => lr.RefrenceType == RefrenceType.EndOfLetter && (lr.SenderAppID == userId || lr.LetterStatuses.Any(s => s.UserID == userId && s.LetterStatusForUser) )))
+        {
+            <text>  این نامه توسط ایجاد کننده اش اختتام یافته و شما نمی توانید نام را به شخص دیگری ارسال کنید</text>
+        }
+        else if (Model.Letter.LetterRefrences.Any(lr => lr.RefrenceType != RefrenceType.EndOfLetter && lr.SenderAppID == userId || lr.LetterStatuses.Any(s => s.UserID == userId && s.LetterStatusForUser)))
+        {
+            using (Html.BeginForm("AddLetterRefrence", "Letter", FormMethod.Post, new { @id = "addLetterRefrenceForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+
+                    @Html.ValidationSummary(true)
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                        <div class="col-md-10">
+                            <textarea class="form-control" cols="5" data-val="true" id="Transcript5" name="Transcript"></textarea>
+
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#statementsModal5">
+                                ثبت جمله پیشفرض
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="Content">گیرنده ها</label>
+                        <div class="col-md-5">
+                            <table class="table table-bordered table-condensed table-hover table-responsive table-striped" id="reciversTable">
+                                <thead>
+                                    <tr>
+                                        <td class="hidden">ID</td>
+                                        <td>نام و نام خانوادگی</td>
+                                        <td>ارسال نامه جهت</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="reciversTBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-5">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                                ثبت گیرنده
+                            </button>
+                        </div>
+                    </div>
+                    <input type="text" name="letterID" id="letterID" class="hidden" value="@Model.Letter.ID" />
+                    <input type="text" name="recivers" id="recivers" class="hidden" />
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="button" id="btnAddLetterRefrence" value="ارجاع نامه" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+    </div>
+
+@if (Model.Letter.LetterStatus == LetterStatus.CommissionEnd && (Model.UserIsBoss || Model.UserIsBossHelper))
+{
+    @Html.Partial("_SendToMembers", Model.Letter.ID)
+}

@@ -1,0 +1,8 @@
+Enable-Migrations -MigrationsDirectory "MainMigration" -ContextTypeName MainContext
+
+Add-Migration -ConfigurationTypeName Configuration
+
+
+Enable-Migrations -MigrationsDirectory "AccountMigration" -ContextTypeName AccountContext
+
+Add-Migration -ConfigurationTypeName Configuration

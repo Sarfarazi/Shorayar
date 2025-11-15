@@ -1,0 +1,300 @@
+﻿@model Council.Core.Models.SearchLetterModel
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.UI.CustomAuthentication;
+@{
+    ViewBag.Title = "جستجو";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ 
+    var forCouncil = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.Votting).ToList();
+    var readyCouncil = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.ReadyForVoting).ToList();
+    var meetingLetters = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.AllowVotting).ToList();
+
+    // Commission
+    var aa = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting).ToList();
+
+
+    var commissionForCouncil = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting
+               && Model.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList();
+    var commissionReadyCouncil = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionReadyForVoting
+                && Model.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList();
+    var commissionMeetingLetters = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionAllowVotting
+                && Model.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList();
+
+    forCouncil.AddRange(commissionForCouncil);
+    readyCouncil.AddRange(commissionReadyCouncil);
+    meetingLetters.AddRange(commissionMeetingLetters);
+    bool userIsBoss = Model.UserIsBoss;
+    bool userIsBossHelper = Model.UserIsBossHelper;
+    bool userIsSiteManager = Model.UserIsSiteManager;
+    bool userIsMember = Model.UserIsMember;
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+}
+
+<div class="card" id="tempDiv" style="display:none">
+    <div class="card-body">
+        <h5>کاربر گرامی ! برای جستجوی شما نتیجه ای یافت نشد.     <a href="/Home/Index">برگشت به صفحه اصلی</a></h5>
+    </div>
+</div>
+   
+@if (forCouncil.Count > 0)
+{
+    <div class="card">
+        <div class="card-body">
+            <h4>مراحل رای گیری</h4><hr />
+            <div class="letter temp">
+                <h5>مرحله تنظیم خلاصه تصمیمات</h5><hr />
+                <ul>
+                    @foreach (var item in forCouncil)
+                    {
+                        var href = (item.LetterStatus == LetterStatus.Votting) ?
+                        ("/Letter/ReadyForCouncil?letterID=" + item.ID) :
+                        ("/Letter/CommissionReadyForCouncil?letterID=" + item.ID);
+                        bool isCommission = (item.LetterStatus == LetterStatus.CommissionVoting);
+                        <li>
+                            @{if (!String.IsNullOrEmpty(item.CommissionName))
+                                {
+                                    <span>[ کمیسیون  @item.CommissionName ]</span>
+                                }
+                            }
+                            <a href="@("/Letter/LetterItem?letterID=" + item.ID)">
+                                @item.Title
+                            </a>
+                            @if (isCommission)
+                            {
+                                if (Model.MyCommissions.Any(c => c.BossId == UserID && c.CommissionId == item.CommissionId) || User.IsInRole("Writer"))
+                                {
+                                    <a href="@href" class="btn btn-default btn-sm">
+                                        تنظیم خلاصه تصمیمات
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                if (userIsBoss || userIsBossHelper || User.IsInRole("Writer"))
+                                {
+                                    <a href="@href" class="btn btn-default btn-sm">
+                                        تنظیم خلاصه تصمیمات
+                                    </a>
+                                }
+                            }
+                        </li>
+                     }
+                </ul>
+
+            </div>
+        </div>
+    </div>
+}
+
+    <br />
+    @if (readyCouncil.Count > 0)
+    {
+        <div class="letter temp">
+            <h5> مرحله صدور اجازه رای گیری</h5><hr />
+            <ul>
+                @foreach (var item in readyCouncil)
+                {
+                    var href = (item.LetterStatus == LetterStatus.ReadyForVoting) ?
+                        ("/Letter/AllowCouncil?letterID=" + item.ID) :
+                        ("/Letter/CommissionAllowCouncil?letterID=" + item.ID);
+                    bool isCommission = (item.LetterStatus == LetterStatus.CommissionReadyForVoting);
+                    <li>
+                        @{if (!String.IsNullOrEmpty(item.CommissionName))
+                            { <span>[ کمیسیون  @item.CommissionName ]</span>}
+                        }
+                        <a href="@("/Letter/LetterItem?letterID=" + item.ID)">
+
+                            [ @item.Title ]
+                        </a>
+                        @if (isCommission)
+                        {
+                            if (Model.MyCommissions.Any(c => c.BossId == UserID && c.CommissionId == item.CommissionId))
+                            {
+                                <a href="@href" class="btn btn-default btn-sm">
+                                    صدور اجازه رای گیری
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            if (userIsBoss || userIsBossHelper)
+                            {
+                                <a href="@href" class="btn btn-default btn-sm">
+                                    صدور اجازه رای گیری
+                                </a>
+                            }
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+   
+
+    <br />
+    @if (meetingLetters.Count > 0)
+    {
+    <div class="letter temp">
+        <h5>مرحله آماده رای گیری</h5><hr />
+        <ul>
+            @foreach (var item in meetingLetters)
+            {
+                var vottingHref = (item.LetterStatus == LetterStatus.AllowVotting) ?
+                            ("/Letter/Voting?letterID=" + item.ID) :
+                            ("/Letter/CommissionVoting?letterID=" + item.ID);
+                var href = (item.LetterStatus == LetterStatus.AllowVotting) ?
+                            Url.Action("EndMeeting", "Letter", new { letterID = item.ID }) :
+                            Url.Action("CommissionEndMeeting", "Letter", new { letterID = item.ID });
+                bool isCommission = (item.LetterStatus == LetterStatus.CommissionAllowVotting);
+                bool imVottingThis = !Model.MyReadyVotingIds.Any(m => m == item.ID);
+
+                <li>
+                    @{if (!String.IsNullOrEmpty(item.CommissionName))
+                        {<span>[ کمیسیون  @item.CommissionName ]</span>}
+                    }
+                    <a href="@("/Letter/LetterItem?letterID=" + item.ID)">
+                        <span @(imVottingThis ? "class=greenColor" : "")>@item.Title</span>
+                    </a>
+                    @if ((userIsMember || userIsBoss || userIsBossHelper))
+                    {
+                        if (!imVottingThis)
+                        {
+                            if (item.LetterStatus == LetterStatus.AllowVotting)
+                            {
+                                <a href="@vottingHref" class="btn btn-default btn-sm">
+                                    انجام رای گیری
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@vottingHref" class="btn btn-default btn-sm">
+                                    انجام رای گیری
+                                </a>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge">رای گیری انجام شده</span>
+                        }
+                    }
+
+                    @if (isCommission)
+                    {
+                        if (Model.MyCommissions.Any(c => c.BossId == UserID && c.CommissionId == item.CommissionId))
+                        {
+                            <a href="@href" class="btn btn-default btn-sm">
+                                اختتام رای گیری
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        if (userIsBoss || userIsBossHelper)
+                        {
+                            <a href="@href" class="btn btn-default btn-sm">
+                                اختتام رای گیری
+                            </a>
+                        }
+                    }
+                </li>
+                        }
+        </ul>
+    </div>
+    }
+    
+
+<br />
+<div class="row">
+    <div class="letter">
+        <div class="col-md-12">
+            <div class="customDiv">
+                <h4>نامه های جدید من</h4><hr />
+                <ul id="NewLettersUl" style="list-style-type:none">
+                    @Html.Action("SearchNewLetters",new { txt = ViewBag.SearchText })
+                </ul>
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="customDiv">
+                <h4>آخرین رای گیری های انجام شده (شورا)</h4>
+                <div class="table-responsive">
+                    <table id="NewOpinion" class="table table-bordered table-condensed table-hover table-striped allletters">
+                        <thead>
+                            <tr>
+                                <td class="text-center table-heade-rowNumber">ردیف</td>
+                                <td>
+                                    موضوع
+                                </td>
+                                <td class="text-center">
+                                    نتایج
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody class="allOpinion">
+                            @Html.Action("SearchLastOpinionData", new { txt = ViewBag.SearchText })
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="customDiv">
+                <h4>آخرین رای گیری های انجام شده (کمیسیون)</h4>
+                <table id="NewCommision" class="table table-bordered table-condensed table-hover table-responsive table-striped allletters">
+                    <thead>
+                        <tr>
+                            <td class="text-center table-heade-rowNumber">ردیف</td>
+                            <td>
+                                موضوع
+                            </td>
+                            <td class="text-center">
+                                نتایج
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="allCommision">
+                        @Html.Action("SearchLastCommisionData", new { txt = ViewBag.SearchText })
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+        
+    </div>
+</div>
+@*<a href="/Home/Index">برگشت</a>*@
+<script>
+    
+    $(document).ready(function () {
+        if ($(".temp").html() == undefined) {
+            $("#tempDiv").css("display", "block");
+        } else {
+            $("#tempDiv").css("display", "none");
+        }
+        if ($("tbody.allCommision tr").length == 0) {
+            $("#ExtraCommision").hide();
+            $("tbody.allCommision").parent().parent().hide();
+        } 
+        if ($("tbody.allOpinion tr").length == 0) {
+            $("#ExtraOpinion").hide();
+            $("tbody.allOpinion").parent().parent().hide();
+        } 
+        if ($("#NewLettersUl li").length == 0) {
+            $("#MoreLettersDiv").hide();
+            $("#NewLettersUl").parent().hide();
+        } 
+        if ($("#vottingUL li").length == 0) {
+            $("#vottingUL").parent().hide();
+        } else {
+            $("#vottingUL").parent().show();
+        }
+
+    });
+</script>
+

@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Council.Core.Entities.OutLetter>
+@using Council.UI.Helpers;
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@{
+    var comNumber = 0;
+}
+
+@if (Model.Count() > 0)
+{
+    foreach (var item in Model)
+    {
+<tr>
+    <td class="text-center"><span id="rowNumber">@(++comNumber + Convert.ToInt32(ViewBag.RemovedOutLettersPageNumber))</span></td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Subject)
+        <input id="RemivedOutLetterPageNumber" type="hidden" value="1" />
+        <input id="RemovedOutLetterCount" type="hidden" value="@ViewBag.RemovedOutLetterCount" />
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.OutLetterNumber)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.OutLetterDate)
+    </td>
+    <td>
+        @(item.Received ? "دریافتی" : "ارسالی")
+    </td>
+    <td style="width: 72px;">
+        <a class="btn btn-success" href="@Url.Action("UndoOutLetterRemoved", "OutLetter", new { outLetterID = item.ID , @class = "btn btn-success" })" title="بازگردانی">
+            بازگردانی
+        </a>
+    </td>
+</tr>
+    }
+}

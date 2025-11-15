@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Council.Core.Entities.OutLetter>
+@using Council.UI.Helpers;
+@{
+    ViewBag.Title = "جستجو";    
+}
+<div class="customDiv">
+        
+            @if (Model.Count() > 0)
+            {
+                <table class="table table-bordered table-condensed table-hover table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <td>
+                                موضوع نامه
+                            </td>
+                            <td>
+                                شماره نامه
+                            </td>
+                            <td>
+                                تاریخ
+                            </td>
+                            <td>
+                                ارسال کننده
+                            </td>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Subject)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.OutLetterNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.OutLetterDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Sender)
+                                </td>                                
+                                <td>
+                                    @Html.ActionLink("نمایش", "DisplayReciveLetter", "OutLetter", new { letterID = item.ID }, new { @class = "btn btn-default" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <text>نامه ای یافت نشد</text>
+            }
+
+       
+</div>
+

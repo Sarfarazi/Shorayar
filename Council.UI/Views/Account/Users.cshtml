@@ -1,0 +1,370 @@
+﻿@model Council.Core.Entities.RegisterViewModel
+
+@{
+    ViewBag.Title = "مدیریت کاربران";
+    var users = ViewBag.Users as IEnumerable<Council.Core.Entities.User>;
+}
+<div class="card">
+    <div class="card-header">
+        ایجاد کاربر
+    </div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.SelectedTypes)
+        <div class="card-body">
+            @if (TempData["message"] != null)
+            {
+                var message = (Council.Core.Models.ShowMessage)TempData["message"];
+                <div class="row form-group">
+                    <div class="col-lg-7 col-md-7 col-sm-12 col-12">                        
+                        <div class="alert @message.MessageType"><span class="closebtn">×</span>@message.Message</div>
+                    </div>
+                </div>
+            }            
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.SelectedType, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.DropDownListFor(m => m.SelectedType, new SelectList(Model.UserType, "Value", "Text"), new { @class = "form-control" , multiple = "multiple" })
+                                @Html.ValidationMessageFor(model => model.SelectedTypes, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.FirstName, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.LastName, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Mobile, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Mobile, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.NationalCode, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.NationalCode, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.NationalCode, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Gender, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" name="Gender" id="male" type="radio" value="False" checked />
+                                    <label class="form-check-label" for="male">آقا</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" name="Gender" id="female" type="radio" value="True" />
+                                    <label class="form-check-label" for="female">خانم</label>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="row form-group">
+                            @Html.Label("دبیرخانه", new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                <input type="checkbox" class="checkbox" name="Manager" id="Manager" />
+                            </div>
+                        </div>*@
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row form-group">
+                            @Html.LabelFor(m => m.UserName, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(m => m.UserName, new { htmlAttributes = new { @class = "form-control" , autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.UserName, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(m => m.Password, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control" , autocomplete = "off" } })
+                                @Html.ValidationMessageFor(model => model.Password, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(m => m.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.ConfirmPassword, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Email, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Tell, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.Tell, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Tell, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                <a class="btn btn-info" onclick="document.getElementById('inputFile').click(); return false;"> انتخاب امضا</a>
+                                <input type="file" accept="image/png, image/jpeg, image/gif" class="hidden" name="file" id="inputFile" value="انتخاب" />
+                                <div style="display:none"></div>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-12" style="float:left">
+                                    <img id="signatureImage" style="width:199px" src="" alt="" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <input type="submit" value="ثبت" class="btn btn-success" />
+        </div>
+    }
+</div>
+@if (users.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            کاربران
+        </div>
+        <div class="card-body">
+            <div class="row form-group">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="form-check form-check-inline mr-1">
+                        <input class="form-check-input" id="allUser" type="radio" value="2" checked="checked" />
+                        <label class="form-check-label" for="allUser">همه</label>
+                    </div>
+                    <div class="form-check form-check-inline mr-1">
+                        <input class="form-check-input" id="userActive" type="radio" value="0" />
+                        <label class="form-check-label" for="userActive">کاربران فعال</label>
+                    </div>
+                    <div class="form-check form-check-inline mr-1">
+                        <input class="form-check-input" id="userNoActive" type="radio" value="1" />
+                        <label class="form-check-label" for="userNoActive">کاربران غیر فعال</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                    <input type="text" id="usersSearch" class="form-control" placeholder="فیلتر" />
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed table-hover table-striped ">
+                    <thead>
+                        <tr>
+                            <td>نام خانوادگی - نام</td>
+                            <td>نام کاربری</td>
+                            <td>نوع کاربری</td>
+                            <td>تلفن همراه</td>
+                            <td>وضعیت</td>
+                        </tr>
+                    </thead>
+                    <tbody class="userTable">
+                        @foreach (var item in users)
+                        {
+                            <tr>
+                                <td class="userFirstAndLastName">
+                                    @(item.LastName + "- " + item.FirstName)
+                                    @*@if (item.IsCouncilBoss)
+                                    { <span class="blueColor">[ رئیس  شورا ]</span>}
+                                    @if (item.IsWriter1)
+                                    { <span class="redColor">[ منشی شورا یک ]</span>}
+                                    @if (item.IsWriter2)
+                                    { <span class="redColor">[ منشی شورا دو ]</span>}
+                                    @if (item.IsOtherCouncilMember)
+                                    { <span class="otherCouncil">[ عضو علی البدل ]</span>}
+                                    @if (item.BossHelper)
+                                    { <span class="orangeColor">[ نائب رئیس  شورا ]</span>}
+                                    @if (item.IsCouncilGuest)
+                                    { <span class="PostText">[ مهمان ]</span>}*@
+                                    @*@if (item.IsSiteManager)
+                                        { <span class="blueColor">[ مدیر سایت ]</span>}*@
+                                </td>
+                                <td>@item.UserName</td>
+                                <td>
+                                    @if (item.UserRole.Count() > 0)
+	                                {
+		                                <ul class="mb-0">
+                                            @foreach (var role in item.UserRole)
+                                            {
+                                                <li>- @role.Role.RoleDesc</li>
+                                            }
+                                        </ul>
+	                                }                           
+
+                                    @*if (item.IsCouncilMember)
+                                    {
+                                        <span>عضو</span>
+                                    }
+                                    else
+                                    {
+                                        if (item.UserName == "admin")
+                                        {
+                                            <span>مدیر سیستم</span>
+                                        }
+                                        else
+                                        {
+                                            <span>سایر کاربران</span>
+                                        }
+                                    }*@                                    
+                                </td>
+                                <td>@item.Mobile</td>
+                                <td class="userStatusTd">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="greenColor userActive">فعال</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="redColor userDeActive">غیرفعال</span>
+                                    }
+                                </td>
+                                <td>
+
+                                    @*else
+                                        {
+                                            <text>ثبت شده</text>
+                                        }*@
+
+                                    <div class="dropdown drp-action">
+                                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                            عملیات
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @*@if (item.UserName != null && item.IsCouncilMember && item.IsActive && !item.IsCouncilBoss)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("ChangeCouncilBoss", "Account", new { userID = item.ID })" title="">
+                                                        انتخاب بعنوان رئیس شورا
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsCouncilMember && item.IsActive && !item.BossHelper)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("ChangeCouncilBossHelper", "Account", new { userID = item.ID })" title="">
+                                                        انتخاب بعنوان نائب رئیس شورا
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsCouncilMember && item.IsActive && !item.IsWriter1)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("ChangeCouncilWriter1", "Account", new { userID = item.ID })" title="">
+                                                        انتخاب بعنوان منشی جلسه یک
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsCouncilMember && item.IsActive && !item.IsWriter2)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("ChangeCouncilWriter2", "Account", new { userID = item.ID })" title="">
+                                                        انتخاب بعنوان منشی جلسه دو
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsActive && !item.IsCouncilGuest)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("AddGusetCouncilMember", "Account", new { userID = item.ID })" title="">
+                                                        انتخاب بعنوان مهمان
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsActive && item.IsCouncilGuest)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("RemoveGusetCouncilMember", "Account", new { userID = item.ID })" title="">
+                                                        حذف مهمان
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsCouncilMember && item.IsActive && item.IsOtherCouncilMember)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("RemoveOtherCouncilMember", "Account", new { userID = item.ID })" title="">
+                                                        حذف عضو علی البدل
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName != null && item.IsCouncilMember && item.IsActive && !item.IsOtherCouncilMember && !item.IsCouncilBoss && !item.BossHelper)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("AddOtherCouncilMember", "Account", new { userID = item.ID })" title="">
+                                                        انتخاب بعنوان عضو علی البدل
+                                                    </a>
+                                                </li>
+                                            }
+                                            @if (item.UserName == null)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("Register", "Account", new { userID = item.ID })" title="ثبت کاربری">
+                                                        ثبت کاربری
+                                                    </a>
+                                                </li>
+                                            }*@
+                                            @if (item.UserName != null)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("ChangePassword", "Account", new { id = item.ID })" title="تغییر پسورد">
+                                                        تغییر پسورد
+                                                    </a>
+                                                </li>
+                                            }
+                                            <li>
+                                                <a href="@Url.Action("EditUser", "Account", new { id = item.ID })" title="ویرایش">
+                                                    ویرایش
+                                                </a>
+                                            </li>
+                                            @if (item.IsActive)
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("DeActiveUser", "Account", new { userID = item.ID })" title="غیر فعال کردن">
+                                                        غیر فعال کردن
+                                                    </a>
+                                                </li>
+                                            }
+                                            else
+                                            {
+                                                <li>
+                                                    <a href="@Url.Action("ActiveUser", "Account", new { userID = item.ID })" title="فعال کردن">
+                                                        فعال کردن
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                  }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+   }
+@section styles{
+<link href="~/Plugins/multiple-select/multiple-select.css" rel="stylesheet" />
+}                                        
+
+@section Scripts {
+<script src="~/Plugins/multiple-select/multiple-select.js"></script>
+<script src="~/Scripts/Account/Users.js"></script>
+}

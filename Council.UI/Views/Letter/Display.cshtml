@@ -1,0 +1,709 @@
+﻿@model Council.Core.Models.DisplayModel
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.UI.CustomAuthentication;
+@{
+    ViewBag.Title = "نمایش نامه ها";
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var UserID = _User.UserId;
+
+    Council.Core.Entities.User user = ViewBag.User;
+
+    //var allLetters = Model.Where(l => l.LetterRefrences.Any(lr => lr.LetterStatuses.Any(ls => !ls.Archived && !ls.Removed && ls.UserID == UserID) || (lr.SenderAppID == UserID && !lr.SenderArchived && !lr.SenderRemoved))).OrderByDescending(ll => ll.CreatedOn);
+    //var newLetters = Model.Where(l => l.LetterRefrences.Any(r => r.LetterStatuses.Any(s => s.UserID == User.Identity.GetUserId() && s.IsNew)));
+    //var councilLetters = Model.Where(l => (int)l.LetterStatus >= 3 && l.OutLetter != null);
+    //var archivedLetters = Model.Where(l => l.LetterRefrences.Any(lr => lr.LetterStatuses.Any(ls => ls.Archived && ls.UserID == UserID) || (lr.SenderAppID == UserID && lr.SenderArchived))).OrderByDescending(ll => ll.CreatedOn.Ticks);
+    //var removedLetters = Model.Where(l => l.LetterRefrences.Any(lr => lr.LetterStatuses.Any(ls => ls.Removed && ls.UserID == UserID) || (lr.SenderAppID == UserID && lr.SenderRemoved))).OrderByDescending(ll => ll.CreatedOn.Ticks);
+    //var outLetters = Model.Where(l => l.OutLetter != null);
+    var allLetters = Model.AllLetter;
+    var councilLetters = Model.CouncilLetter;
+    var archivedLetters = Model.ArchivedLetter;
+    var removedLetters = Model.RemovedLetter;
+    var outLetters = Model.OutLetter;
+    var outOfReadyForCouncil = Model.OutOfReadyCouncilLetter;
+}
+
+<div class="card">
+    <div class="card-header">
+        نمایش نامه ها
+    </div>
+    <div class="card-body">
+        <div class="row form-group">
+            <div class="col-md-12">
+                <a href="~/Letter/" class="btn btn-default noRadius marginBottom5 padding10">
+                    <i class="glyphicon glyphicon-file"></i>
+                    ایجاد نامه جدید
+                </a>
+            </div>
+        </div>
+
+        <div class="cd-tabs js-cd-tabs">
+            <nav>
+                <ul class="cd-tabs__navigation js-cd-navigation">
+                    <li><a id="MyLettersLink" data-content="t1" class="cd-selected" href="#all"><i class="fa fa-inbox"></i>همه نامه های من</a></li>
+                    <li><a id="MyLettersLink" data-content="t2" href="#out"><i class="fa fa-inbox"></i>مکاتبات سازمانی</a></li>
+                    <li><a id="MyLettersLink" data-content="t3" href="#council"><i class="fa fa-inbox"></i>رای گیری شده</a></li>
+                    <li><a id="MyLettersLink" data-content="t4" href="#outOfCouncil"><i class="fa fa-inbox"></i>نامه های خارج شده از دستورجلسه</a></li>
+                    <li><a id="MyLettersLink" data-content="t5" href="#archived"><i class="fa fa-inbox"></i>نامه های بایگانی شده</a></li>
+                    <li><a id="MyLettersLink" data-content="t6" href="#removed"><i class="fa fa-inbox"></i>نامه های حذف شده</a></li>
+                </ul>
+            </nav>
+            <ul class="cd-tabs__content js-cd-content">
+                <li data-content="t1" class="cd-selected" id="all">
+                    @if (allLetters != null && allLetters.Count() > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped allletters">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>
+                                            موضوع
+                                        </td>
+                                        <td>یادداشت</td>
+                                        <td>
+                                            شماره نامه
+                                        </td>
+                                        <td class="hideOnMobile">
+                                            تاریخ ایجاد
+                                        </td>
+                                        <td>نوع نامه</td>
+                                        <td>
+                                            اضطراری
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="allletters">
+                                    @Html.Partial("~/Views/Letter/_ExtraAllLetters.cshtml", allLetters)
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <text>نامه ای ثبت نشده است</text>
+                    }
+                    <div class="row text-center">
+                        <div class="col-lg-9 comm"><span class="spanshow"> نمایش<span id="AnyAllLetterSpan"></span> از<span id="AllLetterSpan"></span></span></div>
+                        <div class="col-lg-3">
+                            <span id="SpanAllLettersLink"><a id="MoreAllLetters" href="#">اطلاعات بیشتر</a> / <a id="AllLettersLink" href="#"> نمایش همه</a></span>
+                        </div>
+                    </div>
+                </li>
+                <li data-content="t2" id="removed">
+                    @if (removedLetters != null && removedLetters.Count() > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>
+                                            موضوع
+                                        </td>
+                                        <td>
+                                            شماره نامه
+                                        </td>
+                                        <td class="hideOnMobile">
+                                            تاریخ ایجاد
+                                        </td>
+                                        <td>
+                                            اضطراری
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="Removedletters">
+                                    @Html.Partial("~/Views/Letter/_RemovedLetters.cshtml", removedLetters)
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <text>نامه ای ثبت نشده است</text>
+                    }
+                    <div class="row text-center">
+                        <div class="col-lg-9 comm"><span class="spanshow"> نمایش<span id="AnyRemovedLetterSpan"></span> از<span id="RemovedLetterSpan"></span></span></div>
+                        <div class="col-lg-3">
+                            <span id="SpanRemovedLetterLink"><a id="MoreRemovedLetter" href="#">اطلاعات بیشتر</a> / <a id="AllRemovedLetterLink" href="#"> نمایش همه</a></span>
+                        </div>
+                    </div>
+                </li>
+                <li data-content="t3" id="out">
+                    @if (outLetters != null && outLetters.Count() > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>
+                                            موضوع
+                                        </td>
+                                        <td>
+                                            شماره نامه
+                                        </td>
+                                        <td class="hideOnMobile">
+                                            تاریخ ایجاد
+                                        </td>
+                                        <td>
+                                            اضطراری
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="Outletters">
+                                    @Html.Partial("~/Views/Letter/_OutLetters.cshtml", outLetters)
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <text>نامه ای ثبت نشده است</text>
+                    }
+                    <div class="row text-center">
+                        <div class="col-lg-9 comm"><span class="spanshow"> نمایش<span id="AnyOutLettersSpan"></span> از<span id="OutLettersSpan"></span></span></div>
+                        <div class="col-lg-3">
+                            <span id="SpanOutLettersLink"><a id="MoreOutLettersLink" href="#">اطلاعات بیشتر</a> / <a id="AllOutLettersLink" href="#"> نمایش همه</a></span>
+                        </div>
+                    </div>
+                </li>
+                <li data-content="t4" id="archived">
+                    @if (archivedLetters != null && archivedLetters.Count() > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>
+                                            موضوع
+                                        </td>
+                                        <td>
+                                            شماره نامه
+                                        </td>
+                                        <td class="hideOnMobile">
+                                            تاریخ ایجاد
+                                        </td>
+                                        <td>
+                                            اضطراری
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="Archivedletters">
+                                    @Html.Partial("~/Views/Letter/_ArchivedLetters.cshtml", archivedLetters)
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <text>نامه ای ثبت نشده است</text>
+                    }
+                    <div class="row text-center">
+                        <div class="col-lg-9 comm"><span class="spanshow"> نمایش<span id="AnyArchivedLetterSpan"></span> از<span id="ArchivedLetterSpan"></span></span></div>
+                        <div class="col-lg-3">
+                            <span id="SpanArchivedLetterLink"><a id="MoreArchivedLetter" href="#">اطلاعات بیشتر</a> / <a id="AllArchivedLetterLink" href="#"> نمایش همه</a></span>
+                        </div>
+                    </div>
+                </li>
+                <li data-content="t5" id="council">
+                    @if (councilLetters != null && councilLetters.Count() > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>
+                                            موضوع
+                                        </td>
+                                        <td>
+                                            شماره نامه
+                                        </td>
+                                        <td class="hideOnMobile">
+                                            تاریخ ایجاد
+                                        </td>
+                                        <td>
+                                            اضطراری
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="ForCouncilletters">
+                                    @Html.Partial("~/Views/Letter/_ForCouncilLetters.cshtml", councilLetters)
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <text>نامه ای ثبت نشده است</text>
+                    }
+                    <div class="row text-center">
+                        <div class="col-lg-9 comm"><span class="spanshow"> نمایش<span id="AnyCouncilLettersSpan"></span> از<span id="CouncilLettersSpan"></span></span></div>
+                        <div class="col-lg-3">
+                            <span id="SpanCouncilLettersLink"><a id="MoreCouncilLettersLink" href="#">اطلاعات بیشتر</a> / <a id="AllCouncilLettersLink" href="#"> نمایش همه</a></span>
+                        </div>
+                    </div>
+                </li>
+                <li data-content="t6" id="outOfCouncil">
+                    @if (outOfReadyForCouncil != null && outOfReadyForCouncil.Count() > 0)
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed table-hover table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>
+                                            موضوع
+                                        </td>
+                                        <td>
+                                            شماره نامه
+                                        </td>
+                                        <td class="hideOnMobile">
+                                            تاریخ ایجاد
+                                        </td>
+                                        <td>
+                                            اضطراری
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody class="OutOfReadyLetters">
+                                    @Html.Partial("~/Views/Letter/_OutOfReadyForCouncil.cshtml", outOfReadyForCouncil)
+                                </tbody>
+
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <text>نامه ای ثبت نشده است</text>
+                    }
+                    <div class="row text-center">
+                        <div class="col-lg-9 comm"><span class="spanshow"> نمایش<span id="AnyOutOfReadyLettersSpan"></span> از<span id="OutOfReadyLettersSpan"></span></span></div>
+                        <div class="col-lg-3">
+                            <span id="SpanOutOfReadyLettersLink"><a id="MoreOutOfReadyLettersLink" href="#">اطلاعات بیشتر</a> / <a id="AllOutOfReadyLettersLink" href="#"> نمایش همه</a></span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " id="addTab" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">اضافه کردن فولدر</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("AddTab", "Letter", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="tabName">نام فولدر</label>
+                            <div class="col-md-10">
+                                <input class="text-box single-line" data-val="true" id="tabName" name="tabName" type="text" value="">
+                                <span class="field-validation-valid" data-valmsg-for="tabName" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="ثبت" class="btn btn-default">
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="NoteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                <h4 class="modal-title" id="myModalLabel">یادداشت ها</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModalMessage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                <h4 class="modal-title" id="myModalLabel">توجه !</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles{
+    <link href="~/Plugins/tab/style.css" rel="stylesheet" />
+}
+@section scripts{
+    <script src="~/Plugins/tab/main.js"></script>
+    @*<script src="~/Scripts/Home/index.js"></script>*@
+    <script>
+        $('.addToTabbtn').click(function () {
+            $('#addToTabLetterID').attr('value', $(this).attr('id'));
+        });
+        $(document).ready(function () {
+
+            if ($("tbody.OutOfReadyLetters tr").length == 0) {
+                $("#SpanOutOfReadyLettersLink").hide();
+                $("#SpanOutOfReadyLettersLink").parent().parent().children(':first-child').children(':first-child').hide();
+            } else {
+                if ($("tbody.OutOfReadyLetters tr").length < 50)
+                    $("#SpanOutOfReadyLettersLink").parent().hide()
+                document.getElementById('AllOutOfReadyLettersLink').innerHTML = ' ' + $("#OutOfReadyLettersCount").val();
+                document.getElementById('AnyOutOfReadyLettersSpan').innerHTML = ' ' + $("tbody.OutOfReadyLetters tr").length;
+            }
+            if ($("tbody.allletters tr").length == 0) {
+                $("#SpanAllLettersLink").hide();
+                $("#SpanAllLettersLink").parent().parent().children(':first-child').children(':first-child').hide();
+            } else {
+                if ($("tbody.allletters tr").length < 50)
+                    $("#SpanAllLettersLink").parent().hide()
+                document.getElementById('AllLetterSpan').innerHTML = ' ' + $("#AllLettersCount").val();
+                document.getElementById('AnyAllLetterSpan').innerHTML = ' ' + $("tbody.allletters tr").length;
+            }
+            if ($("tbody.Archivedletters tr").length == 0) {
+                $("#SpanArchivedLetterLink").hide();
+                $("#SpanArchivedLetterLink").parent().parent().children(':first-child').children(':first-child').hide();
+            } else {
+                if ($("tbody.allletters tr").length < 50)
+                    $("#SpanArchivedLetterLink").parent().hide()
+                document.getElementById('ArchivedLetterSpan').innerHTML = ' ' + $("#ArchivedCount").val();
+                document.getElementById('AnyArchivedLetterSpan').innerHTML = ' ' + $("tbody.Archivedletters tr").length;
+            }
+            if ($("tbody.Removedletters tr").length == 0) {
+                $("#SpanRemovedLetterLink").hide();
+                $("#SpanRemovedLetterLink").parent().parent().children(':first-child').children(':first-child').hide();
+            } else {
+                if ($("tbody.allletters tr").length < 50)
+                    $("#SpanRemovedLetterLink").parent().hide()
+                document.getElementById('RemovedLetterSpan').innerHTML = ' ' + $("#RemovedCount").val();
+                document.getElementById('AnyRemovedLetterSpan').innerHTML = ' ' + $("tbody.Removedletters tr").length;
+            }
+            if ($("tbody.Outletters tr").length == 0) {
+                $("#SpanOutLettersLink").hide();
+                $("#SpanOutLettersLink").parent().parent().children(':first-child').children(':first-child').hide();
+            } else {
+                if ($("tbody.allletters tr").length < 50)
+                    $("#SpanOutLettersLink").parent().hide()
+                document.getElementById('OutLettersSpan').innerHTML = ' ' + $("#OutLettersCount").val();
+                document.getElementById('AnyOutLettersSpan').innerHTML = ' ' + $("tbody.Outletters tr").length;
+            }
+            if ($("tbody.ForCouncilletters tr").length == 0) {
+                $("#SpanCouncilLettersLink").hide();
+                $("#SpanCouncilLettersLink").parent().parent().children(':first-child').children(':first-child').hide();
+            } else {
+                if ($("tbody.allletters tr").length < 50)
+                    $("#SpanCouncilLettersLink").parent().hide()
+                document.getElementById('CouncilLettersSpan').innerHTML = ' ' + $("#CouncilCount").val();
+                document.getElementById('AnyCouncilLettersSpan').innerHTML = ' ' + $("tbody.ForCouncilletters tr").length;
+            }
+        });
+        $("#MoreOutOfReadyLettersLink").click(function () {
+
+            var pageCount = Number($("#OutOfReadyLettersPageNumber").val());
+            $.ajax({
+                url: "/Letter/DisplayOnlyOutOfReadyLetters",
+                data: { skip: pageCount * 50, take: 50 },
+                type: "POST",
+                success: function (result) {
+
+                    pageCount++;
+                    $("tbody.OutOfReadyLetters").append(result);
+                    $("#OutOfReadyLettersPageNumber").val(pageCount);
+                    document.getElementById('AnyOutOfReadyLettersSpan').innerHTML = ' ' + $("tbody.OutOfReadyLetters tr").length;
+                    if ($("tbody.OutOfReadyLetters tr").length == Number($("#OutOfReadyLettersCount").val())) {
+                        $("#SpanOutOfReadyLettersLink").hide()
+                    }
+                }
+            })
+        })
+        $("#AllOutOfReadyLettersLink").click(function () {
+
+            var pageCount = 1;
+            $.ajax({
+                url: "/Letter/DisplayOnlyOutOfReadyLetters",
+                data: { skip: 0, take: -1 },
+                type: "POST",
+                success: function (result) {
+
+
+                    $("tbody.OutOfReadyLetters ").html("");
+                    $("tbody.OutOfReadyLetters ").append(result);
+                    $("#OutOfReadyLettersPageNumber").val(pageCount);
+                    document.getElementById('AnyOutOfReadyLettersSpan').innerHTML = ' ' + $("tbody.OutOfReadyLetters tr").length;
+                    $("#SpanOutOfReadyLettersLink").hide();
+                }
+            })
+        })
+        $("#MoreAllLetters").click(function () {
+
+            var pageCount = Number($("#AllLettersPageNumber").val());
+            $.ajax({
+                url: "/Letter/GetOnlyAllLetters",
+                data: { skip: pageCount * 50, take: 50 },
+                type: "POST",
+                success: function (result) {
+
+                    pageCount++;
+                    $("tbody.allletters").append(result);
+                    $("#AllLettersPageNumber").val(pageCount);
+                    document.getElementById('AnyAllLetterSpan').innerHTML = ' ' + $("tbody.allletters tr").length;
+                    if ($("tbody.allletters tr").length == Number($("#AllLettersCount").val())) {
+                        $("#SpanAllLettersLink").hide()
+                    }
+                }
+            })
+        })
+        $("#AllLettersLink").click(function () {
+
+            var pageCount = 1;
+            $.ajax({
+                url: "/Letter/GetOnlyAllLetters",
+                data: { skip: 0, take: -1 },
+                type: "POST",
+                success: function (result) {
+
+
+                    $("tbody.allletters ").html("");
+                    $("tbody.allletters ").append(result);
+                    $("#AllLettersPageNumber").val(pageCount);
+                    document.getElementById('AnyAllLetterSpan').innerHTML = ' ' + $("tbody.allletters tr").length;
+                    $("#SpanAllLettersLink").hide();
+                }
+            })
+        })
+
+        $("#MoreArchivedLetter").click(function () {
+
+            var pageCount = Number($("#ArchivedPageNumber").val());
+            $.ajax({
+                url: "/Letter/DisplayOnlyArchivedLetters",
+                data: { skip: pageCount * 50, take: 50 },
+                type: "POST",
+                success: function (result) {
+
+                    pageCount++;
+                    $("tbody.Archivedletters ").append(result);
+                    $("#ArchivedPageNumber").val(pageCount);
+                    document.getElementById('AnyArchivedLetterSpan').innerHTML = ' ' + $("tbody.Archivedletters tr").length;
+                    if ($("tbody.Archivedletters tr").length == Number($("#ArchivedCount").val())) {
+                        $("#SpanArchivedLetterLink").hide()
+                    }
+                }
+            })
+        })
+        $("#AllArchivedLetterLink").click(function () {
+
+            var pageCount = 1;
+            $.ajax({
+                url: "/Letter/DisplayOnlyArchivedLetters",
+                data: { skip: 0, take: -1 },
+                type: "POST",
+                success: function (result) {
+
+                    $("tbody.Archivedletters ").html("");
+                    $("tbody.Archivedletters ").append(result);
+                    $("#ArchivedPageNumber").val(pageCount);
+                    document.getElementById('AnyArchivedLetterSpan').innerHTML = ' ' + $("tbody.Archivedletters tr").length;
+                    $("#SpanArchivedLetterLink").hide();
+                }
+            })
+        })
+
+        $("#MoreRemovedLetter").click(function () {
+
+            var pageCount = Number($("#ArchivedPageNumber").val());
+            $.ajax({
+                url: "/Letter/DisplayOnlyRemovedLetters",
+                data: { skip: pageCount * 50, take: 50 },
+                type: "POST",
+                success: function (result) {
+
+                    pageCount++;
+                    $("tbody.Removedletters ").append(result);
+                    $("#RemovedPageNumber").val(pageCount);
+                    document.getElementById('AnyRemovedLetterSpan').innerHTML = ' ' + $("tbody.Removedletters tr").length;
+                    if ($("tbody.Removedletters tr").length == Number($("#RemovedCount").val())) {
+                        $("#SpanRemovedLetterLink").hide()
+                    }
+                }
+            })
+        })
+        $("#AllRemovedLetterLink").click(function () {
+
+            var pageCount = 1;
+            $.ajax({
+                url: "/Letter/DisplayOnlyRemovedLetters",
+                data: { skip: 0, take: -1 },
+                type: "POST",
+                success: function (result) {
+
+                    $("tbody.Removedletters ").html("");
+                    $("tbody.Removedletters ").append(result);
+                    $("#RemovedPageNumber").val(pageCount);
+                    document.getElementById('AnyRemovedLetterSpan').innerHTML = ' ' + $("tbody.Removedletters tr").length;
+                    $("#SpanRemovedLetterLink").hide();
+                }
+            })
+        })
+
+        $("#MoreOutLettersLink").click(function () {
+
+            var pageCount = Number($("#OutLettersPageNumber").val());
+            $.ajax({
+                url: "/Letter/DisplayOnlyOutLetters",
+                data: { skip: pageCount * 50, take: 50 },
+                type: "POST",
+                success: function (result) {
+
+                    pageCount++;
+                    $("tbody.Outletters ").append(result);
+                    $("#OutLettersPageNumber").val(pageCount);
+                    document.getElementById('AnyOutLettersSpan').innerHTML = ' ' + $("tbody.Outletters tr").length;
+                    if ($("tbody.Outletters tr").length == Number($("#OutLettersCount").val())) {
+                        $("#SpanOutLettersLink").hide()
+                    }
+                }
+            })
+        })
+        $("#AllOutLettersLink").click(function () {
+
+            var pageCount = 1;
+            $.ajax({
+                url: "/Letter/DisplayOnlyOutLetters",
+                data: { skip: 0, take: -1 },
+                type: "POST",
+                success: function (result) {
+
+                    $("tbody.Outletters ").html("");
+                    $("tbody.Outletters ").append(result);
+                    $("#OutLettersPageNumber").val(pageCount);
+                    document.getElementById('AnyOutLettersSpan').innerHTML = ' ' + $("tbody.Outletters tr").length;
+                    $("#SpanOutLettersLink").hide();
+                }
+            })
+        })
+
+        $("#MoreCouncilLettersLink").click(function () {
+
+            var pageCount = Number($("#CouncilPageNumber").val());
+            $.ajax({
+                url: "/Letter/DisplayOnlyCouncilLetters",
+                data: { skip: pageCount * 50, take: 50 },
+                type: "POST",
+                success: function (result) {
+
+                    pageCount++;
+                    $("tbody.ForCouncilletters ").append(result);
+                    $("#CouncilPageNumber").val(pageCount);
+                    document.getElementById('AnyCouncilLettersSpan').innerHTML = ' ' + $("tbody.ForCouncilletters tr").length;
+                    if ($("tbody.ForCouncilletters tr").length == Number($("#OutLettersCount").val())) {
+                        $("#SpanCouncilLettersLink").hide()
+                    }
+                }
+            })
+        })
+        $("#AllCouncilLettersLink").click(function () {
+
+            var pageCount = 1;
+            $.ajax({
+                url: "/Letter/DisplayOnlyCouncilLetters",
+                data: { skip: 0, take: -1 },
+                type: "POST",
+                success: function (result) {
+
+                    $("tbody.ForCouncilletters ").html("");
+                    $("tbody.ForCouncilletters ").append(result);
+                    $("#CouncilPageNumber").val(pageCount);
+                    document.getElementById('AnyCouncilLettersSpan').innerHTML = ' ' + $("tbody.ForCouncilletters tr").length;
+                    $("#SpanCouncilLettersLink").hide();
+                }
+            })
+        })
+        function GetOutletterNote(Id) {
+
+            $.ajax({
+                url: "/OutLetter/GetOutletterNote",
+                data: { letterId: Id },
+                type: "POST",
+                dataType: "Json",
+                success: function (result) {
+
+                    $("#NoteModal .modal-body").empty();
+                    $("#NoteModal .modal-body").append(result);
+                    $("#NoteModal").modal("show")
+                }
+            })
+        }
+        function GetletterNote(Id) {
+            $.ajax({
+                url: "/Letter/GetletterNote",
+                data: { letterId: Id },
+                type: "POST",
+                dataType: "Json",
+                success: function (result) {
+
+                    $("#NoteModal .modal-body").empty();
+                    $("#NoteModal .modal-body").append(result);
+                    $("#NoteModal").modal("show")
+                }
+            })
+        }
+        function CanDeleteLetter(letterid) {
+            $.ajax({
+                url: '/Letter/CheckDeliverLetter',
+                data: { letterId: letterid },
+                type: 'Post',
+                success: function (result) {
+                    if (result == 'true') {
+                        $.ajax({
+                            url: '/Letter/DeleteLetter',
+                            data: { letterId: letterid },
+                            type: 'Post',
+                            success: function (result) {
+                                $("#showAllLetter a")[0].click();
+                            }
+                        })
+                    } else {
+                        $("#NoteModal .modal-body").empty();
+                        $("#NoteModal .modal-body").append('این نامه گردش پیدا کرده و مشاهده شده .امکان پاک کردن آن نیست');
+                        $("#NoteModal").modal("show")
+                    }
+
+                }
+            })
+        }
+    </script>
+}
+

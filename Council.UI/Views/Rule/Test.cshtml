@@ -1,0 +1,136 @@
+﻿
+<!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en">
+<!--<![endif]-->
+<head>
+
+    <link href="~/Content/jquery.idealforms.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <meta charset=utf-8 />
+    
+    
+</head>
+<body>
+    
+    <h1 style="margin-top:150px;" align="center">jQuery Ideal Forms 3 Example</h1>
+    <div class="stepcontent">
+        <div class="idealsteps-container">
+            <nav class="idealsteps-nav"></nav>
+            <div class="idealforms">
+                <div class="idealsteps-wrap">
+
+                    <!-- Step 1 -->
+
+                    <section class="idealsteps-step">                      
+                        <div class="field buttons">
+                            <label class="main">&nbsp;</label>
+                            <button type="button" class="next">Next &raquo;</button>
+                        </div>
+                    </section>
+
+                    <!-- Step 2 -->
+
+                    <section class="idealsteps-step">                       
+                        <div class="field buttons">
+                            <label class="main">&nbsp;</label>
+                            <button type="button" class="prev">&laquo; Prev</button>
+                            <button type="button" class="next">Next &raquo;</button>
+                        </div>
+                    </section>
+
+                    <!-- Step 3 -->
+
+                    <section class="idealsteps-step">                       
+                        <div class="field buttons">
+                            <label class="main">&nbsp;</label>
+                            <button type="button" class="prev">&laquo; Prev</button>
+                            <button type="submit" class="submit">Submit</button>
+                        </div>
+                    </section>
+                    <section class="idealsteps-step">
+                        <div class="field buttons">
+                            <label class="main">&nbsp;</label>
+                            <button type="button" class="prev">&laquo; Prev</button>
+                            <button type="submit" class="submit">Submit</button>
+                        </div>
+                    </section>
+                    <section class="idealsteps-step">
+                        <div class="field buttons">
+                            <label class="main">&nbsp;</label>
+                            <button type="button" class="prev">&laquo; Prev</button>
+                            <button type="submit" class="submit">Submit</button>
+                        </div>
+                    </section>
+                </div>
+                <span id="invalid"></span>
+            </div>
+        </div>
+    </div>
+    
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/jquery.idealforms.min.js"></script>
+    <script>
+    $('div.idealforms').idealforms();
+    //$('div.idealforms').idealforms({
+
+    //  silentLoad: false,
+
+    //  rules: {
+    //    'username': 'required username ajax',
+    //    'email': 'required email',
+    //    'password': 'required pass',
+    //    'confirmpass': 'required equalto:password',
+    //    'date': 'required date',
+    //    'picture': 'required extension:jpg:png',
+    //    'website': 'url',
+    //    'hobbies[]': 'minoption:2 maxoption:3',
+    //    'phone': 'required phone',
+    //    'zip': 'required zip',
+    //    'options': 'select:default',
+    //  },
+
+    //  errors: {
+    //    'username': {
+    //      ajaxError: 'Username not available'
+    //    }
+    //  },
+
+    //  onSubmit: function(invalid, e) {
+    //    e.preventDefault();
+    //    $('#invalid')
+    //      .show()
+    //      .toggleClass('valid', ! invalid)
+    //      .text(invalid ? (invalid +' invalid fields') : 'All good!');
+    //  }
+    //});
+
+
+
+    //$('div.idealforms').find('input, select, textarea').on('change keyup', function() {
+    //  $('#invalid').hide();
+    //});
+
+    //$('div.idealforms').idealforms('addRules', {
+    //  'comments': 'required minmax:50:200'
+    //});
+
+    $('.prev').click(function(){
+      $('.prev').show();
+      $('div.idealforms').idealforms('prevStep');
+    });
+    $('.next').click(function(){
+      $('.next').show();
+      $('div.idealforms').idealforms('nextStep');
+    });
+    //$.each($(".idealsteps-nav li a"), function (index,val) {
+    //    $(".idealsteps-nav li a")[0].text = 'کارتابل من';
+    //})
+    </script>
+</body>
+</html>

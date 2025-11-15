@@ -1,0 +1,86 @@
+﻿@model Council.Core.Models.LetterModels
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/Print/paper.css" rel="stylesheet" />
+    <link href="~/Content/PrintA5.css" rel="stylesheet" />
+    <style>
+        @@font-face {
+            font-family: 'BNazaninBold';
+            src: url(../../fonts/BNazaninBold.ttf);
+            src: url(../../fonts/BNazaninBold.eot?#iefix) format("embedded-opentype"), url(../../fonts/BNazaninBold.woff) format("woff"), url(../../fonts/fdn.fontcdn.ir/Fonts/BNazaninBold.ttf) format("truetype");
+            font-weight: 400;
+            font-style: normal;
+        }
+        table, tr, th, td, div {
+            font-family: BNazaninBold;
+        }
+        .Detail{
+            font-size:13px;
+        }
+    </style>
+</head>
+<body class="A5" style="font-size:18px !important;">
+    <section class="sheet padding-10mm" >
+        <div class="print-Recieved-part ">
+            <div class="row">
+                <table class="table table-hover table-striped">
+                    <tr>
+                        <td class="text-right">
+                            <img src="~/Images/logo/@ViewBag.logo" style="width:85px" />
+                        </td>
+                        <td class="text-left marginTop10 Detail">
+                            <div ><span class="Detail">شماره نامه در دبیرخانه :@Model.OutLetterNumber</span> </div>
+                            <div>  تاریخ ثبت : @Model.SendDate</div>
+                           
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">رسید دریافت نامه</td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div class="row text-right marginTop10">
+                <table class="table table-bordered table-hover table-striped text-right" style="width:100%">
+                    <tr>
+                        <td height="50" colspan="2">
+                            موضوع : @Model.Subject
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="50" colspan="2">
+                            تحویل دهنده : @Model.Bringer
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2">
+                            سازمان : @Model.Organ
+                        </td>
+                    </tr>
+                    <tr class="Detail">
+                        <td width="50%" style="margin-left:40px">شماره وارده :@Model.RegisterNumber</td>
+                        <td class="text-left">
+                            <div>تاریخ وارده :@Model.OutLetterDate</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+        
+</body>
+</html>
+<script>
+            window.print();
+</script>

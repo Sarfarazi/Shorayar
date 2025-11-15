@@ -1,0 +1,655 @@
+﻿@model Council.Core.Models.LetterItemModel
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{
+    ViewBag.Title = "جزییات نامه";
+    var outLetterSpecs = Model.Letter.OutLetter;
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var UserID = _User.UserId;
+    bool isOutLetter = !(outLetterSpecs == null);
+}
+
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#show" aria-controls="home" role="tab" data-toggle="tab">نمایش جزییات نامه</a></li>
+        <li role="presentation"><a href="#addRefrence" aria-controls="messages" role="tab" data-toggle="tab">ارجاع نامه</a></li>
+        <li role="presentation"><a href="#history" aria-controls="messages" role="tab" data-toggle="tab">گردش نامه</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="show">
+            @if (isOutLetter)
+            {
+                <div class="letter marginBottom5">
+                    <h4>نامه دریافتی میباشد</h4><hr />
+                    <div class="row marginBottom5">
+                        <div class="col-md-3">
+                            نوع نامه :<br />
+                            <span class="blueColor">@(outLetterSpecs.Received ? "دریافتی" : "ارسالی")</span>
+                        </div>
+                        <div class="col-md-3">
+                            شماره ثبت در دبیرخانه : <br />
+                            <span class="blueColor">@Html.DisplayFor(model => model.Letter.OutLetter.OutLetterNumber)</span>
+                        </div>
+                        <div class="col-md-3">
+                            @{var reciverOrSender = outLetterSpecs.Received ? outLetterSpecs.Sender : outLetterSpecs.Reciver;}
+                            @(outLetterSpecs.Received ? "ارسال کننده" : "دریافت کننده"):<br />
+                            <span class="blueColor">@reciverOrSender</span>
+                        </div>
+                        <div class="col-md-3">
+                            @{var transfereeOrBringer = outLetterSpecs.Received ? outLetterSpecs.Bringer : outLetterSpecs.Transferee;}
+                            @(outLetterSpecs.Received ? "آورنده" : "تحویل گیرنده"):<br />
+                            <span class="blueColor">@transfereeOrBringer</span>
+                        </div>
+                    </div>
+                    @if (!String.IsNullOrEmpty(outLetterSpecs.Comment))
+                    {
+                        <div class="row">
+                            <div class="col-md-3">
+                                موضوع : <br />
+                                <span class="blueColor">@outLetterSpecs.Subject</span>
+                            </div>
+                            <div class="col-md-9">
+
+                                توضیحات : <br />
+                                <span class="blueColor">@outLetterSpecs.Comment</span>
+                            </div>
+                        </div>
+                    }
+                    @*@if (!String.IsNullOrEmpty(outLetterSpecs.Files))
+                        {
+                            <hr />
+                            <a class="redColor" href="@(Url.Content(outLetterSpecs.Files))">فایل ضمیمه</a>
+                        }*@
+                    @{
+                        var haveHR = false;
+                    }
+                    @if (outLetterSpecs.Files != "" || outLetterSpecs.Uploads != null)
+                    {
+                        haveHR = true;
+                        <hr />
+                        var counter = 1;
+                        if (outLetterSpecs.Files != "")
+                        {
+                            <a id="attachment" href="@(Url.Content("~" + outLetterSpecs.Files))">[ فایل ضمیمه @counter ]</a>
+                            counter++;
+                        }
+                        foreach (var item in outLetterSpecs.Uploads)
+                        {
+                            <a href="@(Url.Content("~" + item.FileAddress))">[ فایل ضمیمه @counter ]</a>
+                            counter++;
+                        }
+                    }
+                    @if ((int)Model.Letter.LetterStatus == 6)
+                    {
+                        if (!haveHR)
+                        {
+                            <hr />
+                        }
+                        <a class="btn btn-default" href="@Url.Action("MeetingResult", "Letter", new { letterID = Model.Letter.ID })" title="نمایش">نمایش نتایج رای گیری</a>
+                    }
+                </div>
+                        }
+            <div class="letter">
+                <div class="row">
+                    <div class="col-md-4">
+                        ارسال کننده :<br />
+                        <span id="letterSender" class="blueColor">
+                            @if (isOutLetter)
+                            {
+                                @Html.GetPersonNameWithAppID(Model.Letter.LetterRefrences.OrderByDescending(r => r.CreatedOn).First().SenderAppID)
+
+                            }
+                            else
+                            {
+                                @Html.GetPersonNameWithAppID(Model.Letter.LetterRefrences.Where(l => l.SenderAppID == UserID || l.Recivers.Any(r => r.ID == UserID)).OrderByDescending(r => r.CreatedOn).First().SenderAppID)
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        شماره نامه ارجاع : <br />
+                        <span class="blueColor" id="letterNumber">@Html.DisplayFor(model => model.Letter.LetterNumber)</span>
+                    </div>
+                    <div class="col-md-4">
+                        تاریخ:<br />
+                        <span id="letterDate" class="blueColor">@Html.GetPersianDate(Model.Letter.CreatedOn)</span>
+                    </div>
+
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        موضوع:
+                        <strong id="letterSubject">@Html.DisplayFor(model => model.Letter.Title)</strong>
+                        <br />
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="letterContent" class="col-md-12">
+                        @Html.Raw(Model.Letter.Content)
+                    </div>
+                </div>
+                @if (Model.Letter.Files != "" || Model.Letter.Uploads != null)
+                {
+                    <hr />
+                    var counter = 1;
+                    if (Model.Letter.Files != "")
+                    {
+                        <a id="attachment" href="@(Url.Content("~" + Model.Letter.Files))">[ فایل ضمیمه @counter ]</a>
+                        counter++;
+                    }
+                    foreach (var item in Model.Letter.Uploads)
+                    {
+                        <a href="@(Url.Content("~" + item.FileAddress))">[ فایل ضمیمه @counter ]</a>
+                        counter++;
+                    }
+                }
+
+
+            </div>
+            <input type="button" id="printLetter" value="چاپ نامه" class="btn btn-default">
+            <input type="button" id="printLetterWithRefrences" value="چاپ نامه همراه ارجاع ها" class="btn btn-default">
+        </div>
+        <div role="tabpanel" class="tab-pane fade " id="addRefrence">
+            @if (Model.LastReciverID == UserID && (int)Model.Letter.LetterStatus < 5)
+            {
+                using (Html.BeginForm("SendToMembers", "Letter", FormMethod.Post, new { @id = "addLetterRefrenceForm" }))
+                {
+                    <div class="letter">
+                        <h4>ارسال به جلسه شورا </h4><hr />
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                            <div class="col-md-10">
+                                <textarea class="form-control" cols="5" data-val="true" id="Transcript3" name="Transcript"></textarea>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal3">
+                                    ثبت جمله پیشفرض
+                                </button>
+                            </div>
+                        </div>
+                        <input type="text" name="letterID" id="letterID" class="hidden" value="@Model.Letter.ID" />
+                        <input type="submit" class="btn btn-primary" value="ارسال">
+                    </div>
+                    <br />
+                }
+                if (!Model.UserIsBoss && !Model.UserIsBossHelper)
+                {
+                    <div class="letter">
+                        <h4>ارسال به رییس شورا</h4><hr />
+                        @if (Model.Letter.LetterRefrences.Any(lr => lr.SenderAppID == UserID || lr.LetterStatuses.Any(s => s.UserID == UserID && s.LetterStatusForUser)))
+                        {
+                            using (Html.BeginForm("SendToBoss", "Letter", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <div class="form-horizontal">
+
+                                    @Html.ValidationSummary(true)
+                                    <div class="form-group">
+                                        <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                                        <div class="col-md-10">
+                                            <textarea class="form-control" cols="5" data-val="true" id="Transcript1" name="Transcript"></textarea>
+
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal1">
+                                                ثبت جمله پیشفرض
+                                            </button>
+
+                                        </div>
+                                    </div>
+                                    <input type="text" name="letterID" id="letterID" class="hidden" value="@Model.Letter.ID" />
+                                    <input type="text" name="recivers" id="recivers" class="hidden" />
+                                    <div class="form-group">
+                                        <div class="col-md-offset-2 col-md-10">
+                                            <input type="submit" value="ارسال برای رییس شورا" class="btn btn-default" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        }
+                    </div><br />
+                }
+                <div class="letter">
+                    <h4>ارسال به کمیسیون</h4><hr />
+                    @if (Model.Letter.LetterRefrences.Any(lr => lr.SenderAppID == UserID || lr.LetterStatuses.Any(s => s.UserID == UserID && s.LetterStatusForUser)))
+                    {
+                        using (Html.BeginForm("SendToCommision", "Letter", FormMethod.Post, new { @id = "addLetterRefrenceForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-horizontal">
+
+                                @Html.ValidationSummary(true)
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                                    <div class="col-md-10">
+                                        <textarea class="form-control" cols="5" data-val="true" id="Transcript2" name="Transcript"></textarea>
+
+                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal2">
+                                            ثبت جمله پیشفرض
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-2" for="Transcript">انتخاب کمیسیون</label>
+                                    <div class="col-md-10">
+                                        <select name="commisionID" class="form-control">
+                                            @foreach (var item in Model.Commisions)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <input type="text" name="letterID" id="letterID" class="hidden" value="@Model.Letter.ID" />
+                                <input type="text" name="recivers" id="recivers" class="hidden" />
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="ارسال به کمیسیون" class="btn btn-default" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                </div>
+                //SendToMembers
+            }
+            @if ((int)Model.Letter.LetterStatus < 3 || ((Model.UserIsBoss || Model.UserIsBossHelper) && Model.LastReciverID == UserID))
+            {<br />
+            <div class="letter">
+                <h4>ارسال به سایر</h4><hr />
+                @if (Model.Letter.LetterRefrences.Any(lr => lr.SenderAppID == UserID || lr.LetterStatuses.Any(s => s.UserID == UserID && s.LetterStatusForUser)))
+                {
+                    using (Html.BeginForm("AddLetterRefrence", "Letter", FormMethod.Post, new { @id = "addLetterRefrenceForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+
+                            @Html.ValidationSummary(true)
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                                <div class="col-md-10">
+                                    <textarea class="form-control" cols="5" data-val="true" id="Transcript4" name="Transcript"></textarea>
+
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal4">
+                                        ثبت جمله پیشفرض
+                                    </button>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="Content">گیرنده ها</label>
+                                <div class="col-md-5">
+                                    <table class="table table-bordered table-condensed table-hover table-responsive table-striped" id="reciversTable">
+                                        <thead>
+                                            <tr>
+                                                <td class="hidden">ID</td>
+                                                <td>نام و نام خانوادگی</td>
+                                                <td>ارسال نامه جهت</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="reciversTBody"></tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-5">
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                                        ثبت گیرنده
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="text" name="letterID" id="letterID" class="hidden" value="@Model.Letter.ID" />
+                            <input type="text" name="recivers" id="recivers" class="hidden" />
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="button" id="btnAddLetterRefrence" value="ارجاع نامه" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                }
+            </div>
+            }
+
+
+        </div>
+        <div role="tabpanel" class="tab-pane fade " id="history">
+            <div class="customDiv darkBackground">
+                <div class="container">
+                    <div class="row">
+                        <div class="timeline-centered">
+
+                            @{
+                                bool left = false;
+                                var firstItem = Model.Letter.LetterRefrences.OrderBy(l => l.CreatedOn).First();
+                                foreach (var item in Model.Letter.LetterRefrences.OrderBy(l => l.CreatedOn))
+                                {
+                                    string bgColor = item == firstItem ? "bg-secondary" : "bg-info";
+                                    <article class="timeline-entry @(left?" left-aligned":"")">
+                                        <div class="timeline-entry-inner">
+                                            <time class="timeline-time" datetime="2014-01-10T03:45">
+                                                <span class="date">@Html.GetPersianDate(item.CreateOn)</span>
+                                                <span class="LTRDirection">@(item.CreateOn.Hour + " : " + item.CreateOn.Minute)</span>
+                                            </time>
+
+                                            <div class="timeline-icon @(bgColor)">
+                                                <i class="entypo-feather"></i>
+                                            </div>
+
+                                            <div class="timeline-label">
+                                                <h2>
+                                                    @if (item == firstItem)
+                                                    {
+                                                        <span>ایجاد نامه توسط : </span>
+                                                        <span class="sender">@Html.GetPersonNameWithAppID(item.SenderAppID)</span>
+                                                        <br />
+                                                        <span> گیرنده ها : </span>
+                                                        <ul>
+                                                            @foreach (var user in item.Recivers)
+                                                            {
+                                                                <li>
+                                                                    <span class="reciver">@(user.FirstName + " " + user.LastName)</span>
+                                                                    <span class="smallFontSize">
+                                                                        [ @(item.LetterStatuses.Any(s => s.LetterStatusForUser && s.UserID == user.ID) ? "جهت اقدام" : "جهت اطلاع") ]
+                                                                        @if (item.LetterStatuses.Any(s => s.UserID == user.ID && s.IsNew))
+                                                                        {
+                                                                            <span class="redColor">[ خوانده نشده ]</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="greenColor">[ خوانده شده ]</span>
+                                                                        }
+                                                                    </span>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>ارجاع نامه توسط : </span>
+                                                        <span class="sender">@Html.GetPersonNameWithAppID(item.SenderAppID)</span>
+                                                        <br />
+                                                        <span> گیرنده ها : </span>
+                                                        <ul>
+                                                            @foreach (var user in item.Recivers)
+                                                            {
+                                                                <li>
+                                                                    <span class="reciver">@(user.FirstName + " " + user.LastName)</span>
+                                                                    <span class="smallFontSize">
+                                                                        [ @(item.LetterStatuses.Any(s => s.LetterStatusForUser && s.UserID == user.ID) ? "جهت اقدام" : "جهت اطلاع") ]
+                                                                        @if (item.LetterStatuses.Any(s => s.UserID == user.ID && s.IsNew))
+                                                                        {
+                                                                            <span class="redColor">[ خوانده نشده ]</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="greenColor">[ خوانده شده ]</span>
+                                                                        }
+                                                                    </span>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    <span></span>
+                                                </h2>
+                                                @if (!(item == firstItem))
+                                                {     <div class="customDiv">
+                                                    رونوشت
+                                                    <hr />
+                                                    <span class="Transcript">@(item.Transcript == "" ? "بدون رونوشت" : item.Transcript)</span>
+                                                </div>}
+
+                                            </div>
+                                        </div>
+
+                                    </article>
+                                    left = !left;
+                                }
+                            }
+
+
+                            <article class="timeline-entry begin">
+
+                                <div class="timeline-entry-inner">
+
+                                    <div class="timeline-icon" style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);">
+                                        <i class="entypo-flight"></i>
+                                    </div>
+
+                                </div>
+
+                            </article>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب گیرنده ها</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="input-group left-addon searchInput">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control" placeholder="فیلتر..." id="filterRecivers" />
+                </div>
+                <table class="table-bordered table-condensed table table-hover table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <td>نام و نام خانوادگی</td>
+                            <td>انتخاب</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Recivers as List
+                        <Council.Core.Entities.User>
+                            )
+                        {
+                            if ((item.IsActive) && !(item.ID == UserID))
+                            {
+                                <tr>
+                                    <td id="@("firstAndLastName" + item.ID)" class="firstAndLastName">@(item.FirstName + " " + item.LastName)</td>
+                                    <td>
+
+                                        <a id="@item.ID" class="btn btn-primary addReciver">انتخاب</a>
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <table class="table  table-bordered table-condensed table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <td>جمله</td>
+                                <td>ثبت</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Statements)
+                            {
+                                <tr>
+                                    <td id="statement@(item.ID)">@item.Statement</td>
+                                    <td>
+                                        <a class="btn btn-default addStatement1" data-dismiss="modal" id="@item.ID">
+                                            ثبت
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <table class="table  table-bordered table-condensed table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <td>جمله</td>
+                                <td>ثبت</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Statements)
+                            {
+                                <tr>
+                                    <td id="statement@(item.ID)">@item.Statement</td>
+                                    <td>
+                                        <a class="btn btn-default addStatement2" data-dismiss="modal" id="@item.ID">
+                                            ثبت
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <table class="table  table-bordered table-condensed table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <td>جمله</td>
+                                <td>ثبت</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Statements)
+                            {
+                                <tr>
+                                    <td id="statement@(item.ID)">@item.Statement</td>
+                                    <td>
+                                        <a class="btn btn-default addStatement3" data-dismiss="modal" id="@item.ID">
+                                            ثبت
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <table class="table  table-bordered table-condensed table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <td>جمله</td>
+                                <td>ثبت</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Statements)
+                            {
+                                <tr>
+                                    <td id="statement@(item.ID)">@item.Statement</td>
+                                    <td>
+                                        <a class="btn btn-default addStatement4" data-dismiss="modal" id="@item.ID">
+                                            ثبت
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/scripts.js"></script>
+<script>
+    letterStart();
+</script>

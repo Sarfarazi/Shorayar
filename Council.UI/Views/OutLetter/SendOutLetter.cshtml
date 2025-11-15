@@ -1,0 +1,506 @@
+﻿@model Council.Core.Entities.OutLetter
+@using Council.UI.Helpers;
+@{
+    ViewBag.Title = "ارسال نامه دریافتی";
+    var uniqueNumber = ViewBag.UniqueNumber;
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+    var CanSignatureList = ViewBag.CanSignatureList as List<Council.Core.Entities.User>;
+}
+<style>
+    table,td,tr, th{
+        background-color:white;
+        color:black;
+    }
+</style>
+@*<script src="~/Content/tinymce/tinymce.min.js"></script>
+
+<script src="~/Scripts/bootstrap-tagsinput.js"></script>
+<link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" />
+<script type="text/javascript">
+    tinymce.init({
+        selector: "textarea",
+        setup: function (ed) {
+            ed.on('init', function () {
+                this.execCommand("fontSize", false, "18px");
+            });
+        },
+        directionality: 'rtl',
+        theme: "modern",
+        theme_modern_font_sizes: ["6px,7px,8px,9px,10px,11px,12px,13px,14px,15px,16px,17px,18px,19px,20px,21px,22px,23px,24px,25px,26px,27px,28px,29px,30px,31px,32px,36px,38px,40px"],
+        theme_advanced_buttons1: "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor",
+        theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen",
+
+        plugins: [
+            "advlist autolink lists link image charmap print preview anchor",
+            "searchreplace visualblocks code fullscreen",
+            "insertdatetime media table contextmenu paste"
+        ],
+        toolbar: "forecolor backcolor | insertfile undo redo | fontsizeselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+    });
+</script>*@
+
+<div class="card">
+    <div class="card-header">
+        ارسال مکاتبات برون سازمانی
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm("SendOutLetter", "OutLetter", FormMethod.Post, new { enctype = "multipart/form-data", @id = "letterForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <input name="letterType" type="hidden" value="0" />
+
+            @*<div class="row">
+                <div class="col-md-2">
+                    <label class="radio-inline control-label">
+                        <input type="radio" name="radioLetter" checked="checked"><span>نامه&nbsp;&nbsp;</span>
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label class="radio-inline control-label">
+                        <input type="radio" name="radioRule"><span>طرح</span>
+                    </label>
+                </div>
+            </div>*@
+
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Subject, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12", required = "required" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Subject, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.OutLetterNumber, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12", required = "required" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.OutLetterNumber, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                            @Html.ValidationMessageFor(model => model.OutLetterNumber, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    @*<div class="row">
+                        @Html.LabelFor(model => model.RegisterNumber, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.RegisterNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.RegisterNumber, null, new { @class = "text-danger" })
+                        </div>
+                    </div>*@
+                    <div class="row">
+                        <label class="control-label col-lg-4 col-md-4 col-sm-12 col-12">امضا کننده</label>
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            <select id="SignatureUser" name="SignatureUser" class="form-control" required="required">
+                                @foreach (var item in CanSignatureList)
+                                {
+                                    <option value="@item.ID">@(item.FirstName+" "+item.LastName)</option>
+                                }
+                            </select>
+                        </div>
+                        @*<div class="col-lg-8 col-md-8 col-sm-12 col-12">
+
+                            <input type="text" class="text-box single-line form-control" disabled="disabled" value="@councilBossName" />
+                        </div>*@
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="control-label col-lg-4 col-md-4 col-sm-12 col-12">
+                            <label>تاریخ صادره نامه:</label>
+                        </div>
+
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.OutLetterDate, new { htmlAttributes = new { @class = "form-control text-box allowDatePicker" } })
+                            @Html.ValidationMessageFor(model => model.OutLetterDate, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Transferee, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.Transferee, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Transferee, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Reciver, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.Reciver, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Reciver, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="row form-group">
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.LinkedLetters, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.LinkedLetters, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LinkedLetters, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.BoxNumber, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.BoxNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.BoxNumber, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <!--<div class="row">
+        <label class="control-label col-lg-4 col-md-4 col-sm-12 col-12">رونوشت</label>
+        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+            <input type="text" value="" data-role="tagsinput" id="tags" name="CopyTo" class="form-control">
+        </div>-->
+                    @*@Html.LabelFor(model => model.SendDate, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12", required = "required" })
+        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+            @Html.EditorFor(model => model.SendDate, new { htmlAttributes = new { @class = "form-control text-box allowDatePicker" } })
+            @Html.ValidationMessageFor(model => model.SendDate, null, new { @class = "text-danger" })
+        </div>*@
+                    <!--</div>-->
+                </div>
+            </div>
+            <div class="row form-group">
+                
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.ArchiveCode, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.ArchiveCode, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ArchiveCode, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.Label("به سازمان", htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            <select id="Organ" name="Organ" class="form-control" required="required" multiple="multiple">
+                                @foreach (var item in organs)
+                                {
+                                    <option value="@item.ID">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="control-label col-lg-4 col-md-4 col-sm-12 col-12">
+                            <label for="Content">رونوشت</label>
+                        </div>
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            <input type="text" id="rowID" name="rowID" style="display:none" />
+                            <input type="text" id="txtContent" name="txtContent" style="display:none"/>
+                            <table class="table  table-responsive " id="reciversTable">
+                                <thead>
+                                    <tr>
+                                        <td class="hidden">ID</td>
+                                        <td>شخص/سازمان</td>
+                                        <td>ارسال نامه جهت</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                                    <select id="Organ2" name="Organ2" class="form-control" required="required">
+                                                        @foreach (var item in organs)
+                                                        {
+                                                            <option value="@item.ID">@item.Name</option>
+                                                        }
+                                                    </select><br />
+                                                    <input type="text" class="form-control" id="Text_Letter" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                       
+                                        <td>
+                                            <button class="btn btn-success fontForAllPage" onclick="return addToListOrderDetail();">
+                                                <i class="fa fa-plus"></i>
+                                                
+                                            </button>
+                                            <button class="btn btn-default fontForAllPage" onclick="return clearCotent();">
+                                               حذف
+                                                
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody id="reciversTBody"></tbody>
+                            </table>
+
+                            <table id="ListItemTbl" class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <td>ردیف</td>
+                                        <td>سازمان </td>
+                                        <td>متن</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody id="Mytbody">
+
+                                </tbody>
+                                
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row form-group">
+                @Html.Label("توضیحات / متن", new { @class = "control-label col-lg-2 col-md-2 col-sm-12 col-12" })
+                <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                    @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control SampleEditor" } })
+                    @Html.ValidationMessageFor(model => model.Comment, null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row form-group">
+                @Html.Label("یادداشت", new { @class = "control-label col-lg-2 col-md-2 col-sm-12 col-12" })
+                <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                    <input type="text" name="Note" class="form-control text-box" />
+                </div>
+            </div>
+
+            <div class="row">
+                @*<div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    @Html.LabelFor(model => model.BeforeNumber, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                        @Html.EditorFor(model => model.BeforeNumber)
+                        @Html.ValidationMessageFor(model => model.BeforeNumber)
+                    </div>
+                </div>*@
+                @*<div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    @Html.LabelFor(model => model.NextNumber, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                        @Html.EditorFor(model => model.NextNumber)
+                        @Html.ValidationMessageFor(model => model.NextNumber)
+                    </div>
+                </div>*@
+                @*<div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    @Html.LabelFor(model => model.OrginalLetter, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                    <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                        @Html.EditorFor(model => model.OrginalLetter)
+                        @Html.ValidationMessageFor(model => model.OrginalLetter)
+                    </div>
+                </div>*@
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="error-red-color" id="errorMessage"></label>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-2 col-md-2 col-sm-12 col-12"></div>
+                <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                    <a class="btn btn-info" onclick="document.getElementById('inputFile').click(); return false;"> انتخاب فایل ضمیمه</a>
+                    <input type="file" accept="image/png, image/jpeg, image/gif" class="hidden" name="file" id="inputFile" value="انتخاب" />
+                    <span></span>
+                    <div id="uploads">
+                    </div>
+                    <span class="btn btn-default" id="addNewUpload"><i class="fa fa-plus"></i></span>
+                    <div class="redColor">@ViewBag.ErrorMessage</div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-12 text-left">
+                    <div class="dropdown drp-action">
+                        <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown">
+                            ثبت نامه
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><div id="sendLetter">ثبت برای چاپ</div></li>
+                            <li><div id="sendECELetter">ارسال بصورت ECE</div></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Plugins/tinymce/tinymce.min.js"></script>
+    <script src="~/Scripts/scripts.js"></script>
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+    <script>
+        $("#Subject").addClass("textBox-overwidth");
+        //$("textarea").css("height", "250px");
+        //$("textarea").css("width", "85%");
+        $(document).ready(function () {
+            $("#errorMessage").text('');
+            
+        })
+        $("#sendLetter").click(function () {
+            
+            //if ($("select[name=Organ]").val() == '') {
+            //    $("#errorMessage").text('لطفا سازمان را انتخاب کنید')
+            //} else {
+            //    if($("input[name='radioRule']").prop("checked"))
+            //        $("input[name='letterType']").val('2');
+            //    else
+            //        $("input[name='letterType']").val('0');
+                $("#letterForm").submit();
+            //}
+        })
+        $("#sendECELetter").click(function () {
+            
+            //if ($("select[name=Organ]").val() == '') {
+            //    $("#errorMessage").text('لطفا سازمان را انتخاب کنید')
+            //} else {
+            //    $("input[name='letterType']").val('ECE');
+            //    $("#letterForm").submit();
+            //}
+        })
+        $("input[name='radioLetter']").click(function () {
+            $("input[name='radioRule']").prop("checked", false);
+        });
+        $("input[name='radioRule']").click(function () {
+            $("input[name='radioLetter']").prop("checked", false);
+        });
+        //======================================
+
+    
+
+        function generateCellContent(tagName, text, value, index) {
+            try {
+                debugger;
+
+                var res = "<input type='hidden' value='" + value + "' name=LetterDetails[" + index + "]." + tagName + " id=LetterDetails_" + index + "_" + tagName + " />";
+                res += "<span>" + text + "</span>";
+                return res;
+
+            } catch (e) {
+
+            }
+        }
+
+
+        function addToListOrderDetail() {
+
+            try {
+
+                debugger;
+
+                var count = $("#rowID").val();
+                let position = count.search($("#Organ2").val());
+                if (position != -1) {
+                    alert("تکراری است");
+                    return 0;
+
+                }
+
+                count += "," + $("#Organ2").val();
+                $("#rowID").val(count);
+
+                //
+
+                var content = $("#txtContent").val();
+                content += "," + $("#Text_Letter").val();
+                $("#txtContent").val(content);
+
+                var table = document.getElementById("ListItemTbl");
+                
+
+                var rowId = parseInt(table.rows.length) - 1;
+                var td1Html0 = generateCellContent("OrganID", $("#Organ2 option:selected").text(), $("#Organ2").val(), rowId) + "<input type='hidden' value='" + 0 + "' name=LetterDetails[" + rowId + "]." + "LetterDetailID" + " />";
+                var td1Html1 = generateCellContent("Text_Letter", $("#Text_Letter").val(), $("#Text_Letter").val() , rowId);
+                var td1Html2 = "<a class='fa fa-remove RequiredLabel' onclick='productDelete(this)'> </a>";
+
+                //var newRow = [
+                //    [
+                //        (rowId + 1), td1Html0, td1Html1, td1Html2
+                //    ]
+                //];
+
+                var newRow = [
+                    [
+                       (rowId + 1), td1Html0, td1Html1
+                   ]
+                ];
+
+
+                AddToTable("ListItemTbl", newRow, null, true);
+
+                    //setTotalAllPriceFinal('OrderDetail_TotallPriceStr');
+
+                    //Web.StoreProducts_Store.SetPriceProductStore("OrderDetail_ProductID", "OrderDetail_UnitPriceStr");
+
+                    //emptyAddToListOrderDetail();
+
+
+
+                return false;
+
+            } catch (e) {
+
+            }
+
+        }
+
+        function clearCotent() {
+            $("#rowID").val('');
+            $("#txtContent").val('');
+            $('#Mytbody').empty();
+        }
+
+        function AddToTable(tblId, arrayList, hiddenCell = null, isTfootElement = false) {
+
+            try {
+
+                var table;
+
+                if (!isTfootElement) table = document.getElementById(tblId);
+                else table = document.getElementById(tblId).getElementsByTagName('tbody')[0];
+
+                var rowId;
+
+                for (var i = 0; i < arrayList.length; i++) {
+                    rowId = parseInt(table.rows.length);
+                    var row = table.insertRow(rowId);
+                    var indexRow = arrayList[i].length;
+                    for (var j = 0; j < indexRow; j++) {
+                        var cell1;
+                        if (hiddenCell == j)
+                            table.rows[i + 1].cells[hiddenCell - 1].innerHTML += arrayList[i][j];
+                        else {
+                            cell1 = row.insertCell(j);
+                            cell1.innerHTML = arrayList[i][j];
+                        }
+                    }
+                }
+
+            } catch (e) {
+
+            }
+        }
+
+        
+    </script>
+}

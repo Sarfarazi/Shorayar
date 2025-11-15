@@ -1,0 +1,302 @@
+﻿@model IEnumerable<Council.Core.Entities.OutLetter>
+@using Council.UI.Helpers;
+@{
+    ViewBag.Title = "جستجو";
+    var Recived = Model.Where(l => l.Received && !l.Archived && !l.Removed).ToList();
+    var Sended = Model.Where(l => !l.Received && !l.Archived && !l.Removed).ToList();
+    var archived = Model.Where(l => l.Archived && !l.Removed).ToList();
+}
+
+
+<div class="card">
+    <div class="card-header">
+        @*@Html.ActionLink("بازگشت", "ShowOutLetters", "OutLetter", null, new { @class = "btn btn-sm btn-primary" })*@
+    </div>
+    <div class="card-body">
+        <div class="cd-tabs js-cd-tabs">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#t1" aria-controls="t1" role="tab" data-toggle="tab">
+                            دریافتی
+                            <i class="fa fa-inbox"></i>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#t2" aria-controls="t2" role="tab" data-toggle="tab">
+                            ارسالی
+                            <i class="fa fa-reply"></i>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#t3" aria-controls="t3" role="tab" data-toggle="tab">
+                            بایگانی
+                            <i class="fa fa-archive"></i>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="t1">
+                        <div class="form-group"><span style="background: #fff3cf;padding: 5px;display: inline-block;">ارسالی به رئیس شورا</span></div>
+                        <div id="recived">
+                            @if (Recived.Count() > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <td>
+                                                    موضوع نامه
+                                                </td>
+                                                <td>
+                                                    شماره نامه
+                                                </td>
+                                                <td>
+                                                    تاریخ
+                                                </td>
+                                                <td>
+                                                    ارسال کننده
+                                                </td>
+                                                <td>آورنده</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @foreach (var item in Recived)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Subject)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.OutLetterNumber)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.OutLetterDate)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Sender)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Bringer)
+                                                    </td>
+                                                    <td>
+                                                        <div class="dropdown drp-action">
+                                                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                                                <span class="caret"></span>
+                                                                عملیات
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                @{
+                                                                    var letterIdOfOutLetter = Html.LetterIdOfOutLetter(item.ID);
+                                                                }
+                                                                <li>
+                                                                    @Html.ActionLink("بایگانی", "MarkOutLetterAsArchived", new { ID = item.ID }, null)
+                                                                </li>
+                                                                <li>
+                                                                    @Html.ActionLink("ویرایش", "EditReciveLetter", "OutLetter", new { letterID = item.ID }, null)
+                                                                </li>
+                                                                <li>
+                                                                    @Html.ActionLink("نمایش", "DisplayReciveLetter", "OutLetter", new { letterID = item.ID }, null)
+                                                                </li>
+                                                                <li>
+                                                                    @if (letterIdOfOutLetter == null)
+                                                                    {
+                                                                        @Html.ActionLink("گردش", "FlowOutLetter", new { ID = item.ID }, null)
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @Html.ActionLink("نمایش گردش", "LetterItem", "Letter", new { letterID = letterIdOfOutLetter } , null)
+                                                                    }
+                                                                </li>
+                                                                <li>
+                                                                    <a href="@Url.Action("DeleteOutLetter", "OutLetter", new { outLetterId = item.ID })" title="حذف">
+                                                                        حذف
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        @*<a class="btn btn-default addToTabbtn" title="اضافه کردن به فولدر" id="@item.ID" data-toggle="modal" data-target="#addToTab">
+                                            اضافه در فولدر
+                                        </a>*@
+                                                    </td>
+                                                </tr>
+                                              }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                }
+                                else
+                                {
+                                    <text>نامه ای یافت نشد</text>
+                                }
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="t2">
+                        <div id="sended">
+                            @if (Sended.Count() > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <td>
+                                                    موضوع نامه
+                                                </td>
+                                                <td>
+                                                    شماره نامه
+                                                </td>
+                                                <td>
+                                                    تاریخ
+                                                </td>
+                                                <td>
+                                                    گیرنده
+                                                </td>
+                                                <td>
+                                                    تحویل دهنده
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Sended)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Subject)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.OutLetterNumber)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.OutLetterDate)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Reciver)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Transferee)
+                                                    </td>
+                                                    <td>
+                                                        @Html.ActionLink("ویرایش", "EditReciveLetter", "OutLetter", new { letterID = item.ID }, new { @class = "btn btn-default" })
+                                                        @Html.ActionLink("نمایش", "DisplayReciveLetter", "OutLetter", new { letterID = item.ID }, new { @class = "btn btn-default" })
+                                                        @*<a class="btn btn-default addToTabbtn" title="اضافه کردن به فولدر" id="@item.ID" data-toggle="modal" data-target="#addToTab">
+                                                            اضافه در فولدر
+                                                        </a>*@
+                                                        @Html.ActionLink("بایگانی", "MarkOutLetterAsArchived", new { ID = item.ID }, new { @class = "btn btn-default" })
+                                                        @{
+                                                            var letterIdOfOutLetter = Html.LetterIdOfOutLetter(item.ID);
+                                                        }
+                                                        @if (letterIdOfOutLetter == null)
+                                                        {
+                                                            @Html.ActionLink("گردش", "FlowOutLetter", new { ID = item.ID }, new { @class = "btn btn-default btn-width" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("نمایش گردش", "LetterItem", "Letter", new { letterID = letterIdOfOutLetter }, new { @class = "btn btn-default btn-width" })
+                                                        }
+                                                        <a class="btn btn-danger" href="@Url.Action("DeleteOutLetter", "OutLetter", new { outLetterId = item.ID })" title="حذف">
+                                                            حذف
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <text>نامه ای یافت نشد</text>
+                            }
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="t3">
+                        <div id="archived">
+                            @if (archived.Count() > 0)
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-condensed table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <td>
+                                                    موضوع نامه
+                                                </td>
+                                                <td>
+                                                    شماره نامه
+                                                </td>
+                                                <td>
+                                                    تاریخ
+                                                </td>
+                                                <td>
+                                                    گیرنده
+                                                </td>
+                                                <td>
+                                                    تحویل دهنده
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in archived)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Subject)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.OutLetterNumber)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.OutLetterDate)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Reciver)
+                                                    </td>
+                                                    <td>
+                                                        @Html.DisplayFor(modelItem => item.Transferee)
+                                                    </td>
+                                                    <td>
+                                                        @Html.ActionLink("ویرایش", "EditReciveLetter", "OutLetter", new { letterID = item.ID }, new { @class = "btn btn-default" })
+                                                        @Html.ActionLink("نمایش", "DisplayReciveLetter", "OutLetter", new { letterID = item.ID }, new { @class = "btn btn-default" })
+
+
+                                                        @*<a class="btn btn-default addToTabbtn" title="اضافه کردن به فولدر" id="@item.ID" data-toggle="modal" data-target="#addToTab">
+                                            اضافه در فولدر
+                                        </a>*@
+                                                        @Html.ActionLink("بایگانی", "MarkOutLetterAsArchived", new { ID = item.ID }, new { @class = "btn btn-default" })
+                                                        @{
+                                                            var letterIdOfOutLetter = Html.LetterIdOfOutLetter(item.ID);
+                                                        }
+                                                        @if (letterIdOfOutLetter == null)
+                                                        {
+                                                            @Html.ActionLink("گردش", "FlowOutLetter", new { ID = item.ID }, new { @class = "btn btn-default btn-width" })
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.ActionLink("نمایش گردش", "LetterItem", "Letter", new { letterID = letterIdOfOutLetter }, new { @class = "btn btn-default btn-width" })
+                                                        }
+                                                        <a class="btn btn-danger" href="@Url.Action("DeleteOutLetter", "OutLetter", new { outLetterId = item.ID })" title="حذف">
+                                                            حذف
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <text>نامه ای یافت نشد</text>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{    
+<link href="~/Plugins/r-tab/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+<script src="~/Plugins/r-tab/jquery.scrolling-tabs.min.js"></script>
+}

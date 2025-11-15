@@ -1,0 +1,57 @@
+﻿@model  Council.Core.Models.LastOpinionModel
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@{
+    var commisions= ViewBag.Commisions as List<Council.Core.Models.CommisionNames>;
+ }
+
+
+@if (Model!=null &&  Model.Finished.Count > 0)
+{
+    var opNumber = 0;
+    foreach (var item in Model.Finished)
+    {
+        string _commisionId = "";
+        string _commisionName = "";
+        var lastrefrence = item.LetterRefrences.Where(l => l.CommissionId != null).OrderByDescending(m => m.CreatedOn).FirstOrDefault();
+
+        if (lastrefrence != null)
+        {
+            _commisionId = lastrefrence.CommissionId;
+            _commisionName = commisions.Where(m => m.Id == _commisionId).Select(m => m.Name).SingleOrDefault();
+        }
+
+        <tr class="temp">
+            <td class="text-center">
+                <input id="OpinionPageNumber" type="hidden" value="1" />
+                <input id="OpinionCount" type="hidden" value="@ViewBag.OpinionCount" />
+            <span id="rowNumber">@(++opNumber + Convert.ToInt32(ViewBag.OpinPageNumber))</span></td>
+            <td>@(item.OutLetter != null ? item.OutLetter.OutLetterNumber : item.LetterNumber)</td>
+            <td class="text-right">
+                <a href="@Url.Action("LetterItem","Letter", new { letterID =item.ID })">
+                    @{
+                        if (!string.IsNullOrEmpty(_commisionId) && !string.IsNullOrEmpty(_commisionName))
+                        {
+                            <span class="redColor">[کمیسیون @_commisionName]</span>
+                        }
+                    }&nbsp;&nbsp;
+                 @item.Title 
+                </a>
+            </td>                       
+            <td class="@((Model.UserIsBoss || Model.UserIsBossHelper ? "" : "table-heade")) text-right">
+             <a href="@Url.Action("MeetingResult","Letter" , new { letterID = item.ID})" target="_blank" class="btn btn-default btn-sm">نمایش نتایج</a>
+                @if (item.LetterStatus == Council.Core.Enums.LetterStatus.End && string.IsNullOrEmpty(item.Meeting.Content) && (Model.UserIsBoss || Model.UserIsBossHelper))
+                {
+                    <a href="@Url.Action("ReVoting","Letter", new {letterID = item.ID})" class="btn btn-default btn-sm">ابطال و رای گیری مجدد</a>
+                }               
+            </td>
+        </tr>
+    }
+}
+else
+{
+     <tr>
+         <td colspan="4">داده ای برای نمایش وجود ندارد </td>
+     </tr>
+}
+    

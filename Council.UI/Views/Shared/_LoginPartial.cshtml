@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNet.Identity
+@using Council.Service.DBServices
+@using Council.UI.Helpers;
+@using Council.UI.CustomAuthentication;
+
+@*@using Correspond.UI.Helpers;*@
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var id = _User.UserId;
+    //var isManager = User.IsInRole("Manager");
+    //var isAdmin = User.IsInRole("Admin");
+    //UserServices userService = new UserServices();
+    //CommissionServices commServices = new CommissionServices();
+    //var user = userService.All().Where(m => m.ID == id).FirstOrDefault();
+    //var isCommisionBoss = commServices.All().Where(m => m.CommissionChairman.ID == user.ID).FirstOrDefault();
+    //var commName = isCommisionBoss != null ? isCommisionBoss.Name : "";
+
+}
+@if (Request.IsAuthenticated)
+{
+    <div class="dropdown user-menu">
+        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                @Html.CurrentUserFullName(id)
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="@Url.Action("EditUser", "Account" , new { id = id})">پروفایل کاربری</a></li>
+                <li><a href="@Url.Action("ChangePassword", "Account" , new { id = id })">تغییر رمز عبور</a></li>
+                <li><a id="logoutLink" href="javascript:document.getElementById('logoutForm').submit()">خروج</a></li>
+            </ul>
+        }
+    </div>
+}

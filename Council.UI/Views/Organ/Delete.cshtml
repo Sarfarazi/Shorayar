@@ -1,0 +1,43 @@
+﻿@model Council.Core.Entities.Organ
+@{
+    ViewBag.Title = "حذف سازمان";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        حذف سازمان
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <p>از حذف این سازمان اطمینان دارید؟ </p>
+            @using (Html.BeginForm("Delete", "Organ", new { id = Model.ID }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <input type="submit" class="btn btn-sm btn-danger" value="حذف" />
+                @Html.ActionLink("انصراف", "Index", new { @class = "btn btn-sm btn-primary" })
+            }
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-condensed table-hover table-striped organTable ">
+                <tr>
+                    <td>نام سازمان</td>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <td>کد سازمان</td>
+                    <td>@Model.Code</td>
+                </tr>
+                <tr>
+                    <td>ایمیل</td>
+                    <td>@Model.Email</td>
+                </tr>
+                <tr>
+                    <td>آدرس</td>
+                    <td>@Model.Address</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,88 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECE", "ECE\ECE.csproj", "{59134DF4-00F0-49FC-9752-C5EDC7BF3992}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Council.Core", "Council.Core\Council.Core.csproj", "{6916EDA1-CF48-4F9C-BF63-109C9205F436}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Council.Data", "Council.Data\Council.Data.csproj", "{E8C39396-E7F1-4131-8A48-03BB4638869C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Council.Service", "Council.Service\Council.Service.csproj", "{93B58139-E313-4988-BAE2-7A54BBAC6A72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Council.UI", "Council.UI\Council.UI.csproj", "{4C38E5AD-17EF-4EB4-AD1E-EA3D151702C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Council.Utility", "Council.Utility\Council.Utility.csproj", "{CDA4D567-C5AE-49B1-981A-F156BF036257}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScan", "WebScan\WebScan.csproj", "{10A4AF7D-B37C-4244-A4E8-4DE7495E51EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59134DF4-00F0-49FC-9752-C5EDC7BF3992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59134DF4-00F0-49FC-9752-C5EDC7BF3992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59134DF4-00F0-49FC-9752-C5EDC7BF3992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59134DF4-00F0-49FC-9752-C5EDC7BF3992}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6916EDA1-CF48-4F9C-BF63-109C9205F436}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6916EDA1-CF48-4F9C-BF63-109C9205F436}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6916EDA1-CF48-4F9C-BF63-109C9205F436}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6916EDA1-CF48-4F9C-BF63-109C9205F436}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8C39396-E7F1-4131-8A48-03BB4638869C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C39396-E7F1-4131-8A48-03BB4638869C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C39396-E7F1-4131-8A48-03BB4638869C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C39396-E7F1-4131-8A48-03BB4638869C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B58139-E313-4988-BAE2-7A54BBAC6A72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B58139-E313-4988-BAE2-7A54BBAC6A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B58139-E313-4988-BAE2-7A54BBAC6A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B58139-E313-4988-BAE2-7A54BBAC6A72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C38E5AD-17EF-4EB4-AD1E-EA3D151702C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C38E5AD-17EF-4EB4-AD1E-EA3D151702C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C38E5AD-17EF-4EB4-AD1E-EA3D151702C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C38E5AD-17EF-4EB4-AD1E-EA3D151702C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDA4D567-C5AE-49B1-981A-F156BF036257}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDA4D567-C5AE-49B1-981A-F156BF036257}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDA4D567-C5AE-49B1-981A-F156BF036257}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDA4D567-C5AE-49B1-981A-F156BF036257}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10A4AF7D-B37C-4244-A4E8-4DE7495E51EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10A4AF7D-B37C-4244-A4E8-4DE7495E51EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10A4AF7D-B37C-4244-A4E8-4DE7495E51EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10A4AF7D-B37C-4244-A4E8-4DE7495E51EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {55B099BC-55CE-41EA-988E-85E056C10790}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/sarfarazi
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Council.Core\\Council.Core.csproj
+		SccProjectName1 = Council.Core
+		SccLocalPath1 = Council.Core
+		SccProjectUniqueName2 = Council.Data\\Council.Data.csproj
+		SccProjectName2 = Council.Data
+		SccLocalPath2 = Council.Data
+		SccProjectUniqueName3 = Council.Service\\Council.Service.csproj
+		SccProjectName3 = Council.Service
+		SccLocalPath3 = Council.Service
+		SccProjectUniqueName4 = Council.UI\\Council.UI.csproj
+		SccProjectName4 = Council.UI
+		SccLocalPath4 = Council.UI
+		SccProjectUniqueName5 = Council.Utility\\Council.Utility.csproj
+		SccProjectName5 = Council.Utility
+		SccLocalPath5 = Council.Utility
+		SccProjectUniqueName6 = ECE\\ECE.csproj
+		SccProjectName6 = ECE
+		SccLocalPath6 = ECE
+		SccProjectUniqueName7 = WebScan\\WebScan.csproj
+		SccProjectName7 = WebScan
+		SccLocalPath7 = WebScan
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,89 @@
+﻿@model Council.Core.Models.InvitePrintModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <link href="~/Content/Print/paper.css" rel="stylesheet" />
+    <link href="~/Content/PrintA5.css" rel="stylesheet" />
+</head>
+<body class="A5" style="font-size:18px !important;">
+    @{
+        if (Model.Members != null && Model.Members.Count > 0)
+        {
+            foreach (var item in Model.Members)
+            {
+                <section class="sheet padding-10mm">
+                    <div class="print-Recieved-part ">
+                        <div class="row">
+                            <table class="table table-hover table-striped no-border">
+                                <tbody>
+                                    <tr>
+                                        <td>دعوتنامه</td>
+                                    </tr>
+                                    <tr class="text-right">
+                                        <td>عضو محترم شورای اسلامی شهر میبد</td>
+                                    </tr>
+                                    <tr class="text-right">
+                                        <td>
+                                            @{
+                                                if (item.IsFemale)
+                                                {
+                                                    <span>سرکار خانم </span>
+                                                }
+                                                else
+                                                {
+                                                    <span>جناب آقای </span>
+                                                }
+                                            }
+                                            @item.Name
+                                        </td>
+                                    </tr>
+                                    <tr class="text-right">
+                                        <td>از جنابعالی در تاریخ @Model.SessionDate از ساعت @Model.SesionFromTime تا ساعت @Model.SessionToTime جهت بررسی موارد ذیل دعوت بعمل می آید.جزئیات مربوط به دستور جلسه از طریق سیستم شورایار قبلا برای شما ارسال شده است</td>
+                                    </tr>
+                                    @{
+                                        var count = 1;
+                                        foreach (var meeting in Model.Meeting)
+                                        {
+                                            <tr class="text-right">
+                                                <td>
+                                                    @(count++)
+                                                    @{ 
+                                                        if (meeting.IsCommision)
+                                                        {
+                                                            <span>[ کمیسیون  @meeting.CommisionName ]</span>
+                                                        }
+                                                    }
+                                                    @meeting.Title
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    <tr class="text-left">
+                                        <td>
+                                            با احترام دبیر جلسه - @Model.Writer1.FirstName  @Model.Writer1.LastName  <span><img src="@Model.Writer1.Signature" style="max-height:50px" title="امضا" /></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            }
+        }
+    }
+</body>
+</html>
+
+<script>
+    window.print();
+    $("table.no-border td").css("border", "none");
+</script>

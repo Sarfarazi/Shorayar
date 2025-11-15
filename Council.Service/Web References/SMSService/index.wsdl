@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="Http://services.shahrenovin.com" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="Http://services.shahrenovin.com" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="Http://services.shahrenovin.com">
+      <s:element name="singleSMS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PortalCode" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PassWord" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Mobile" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="ServerType" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="singleSMSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="singleSMSResult" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="PortalCode" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="PassWord" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="returnType" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="getStatusResult" type="s:long" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="singleSMSSoapIn">
+    <wsdl:part name="parameters" element="tns:singleSMS" />
+  </wsdl:message>
+  <wsdl:message name="singleSMSSoapOut">
+    <wsdl:part name="parameters" element="tns:singleSMSResponse" />
+  </wsdl:message>
+  <wsdl:message name="getStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:getStatus" />
+  </wsdl:message>
+  <wsdl:message name="getStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:getStatusResponse" />
+  </wsdl:message>
+  <wsdl:portType name="services_smsSoap">
+    <wsdl:operation name="singleSMS">
+      <wsdl:input message="tns:singleSMSSoapIn" />
+      <wsdl:output message="tns:singleSMSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getStatus">
+      <wsdl:input message="tns:getStatusSoapIn" />
+      <wsdl:output message="tns:getStatusSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="services_smsSoap" type="tns:services_smsSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="singleSMS">
+      <soap:operation soapAction="Http://services.shahrenovin.com/singleSMS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStatus">
+      <soap:operation soapAction="Http://services.shahrenovin.com/getStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="services_smsSoap12" type="tns:services_smsSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="singleSMS">
+      <soap12:operation soapAction="Http://services.shahrenovin.com/singleSMS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getStatus">
+      <soap12:operation soapAction="Http://services.shahrenovin.com/getStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="services_sms">
+    <wsdl:port name="services_smsSoap" binding="tns:services_smsSoap">
+      <soap:address location="https://dev.homais.com/services/sms/index.asmx" />
+    </wsdl:port>
+    <wsdl:port name="services_smsSoap12" binding="tns:services_smsSoap12">
+      <soap12:address location="https://dev.homais.com/services/sms/index.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

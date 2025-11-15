@@ -1,0 +1,184 @@
+﻿@model Council.Core.Entities.MeetingHeader
+@using Council.Core.Enums;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.Helpers;
+@{  
+    ViewBag.Title = "ایجاد جلسه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //var forCouncil = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.Votting).ToList();
+    //var commissionForCouncil = Model.MyLetters.Where(l => l.LetterStatus == LetterStatus.CommissionVoting
+    //           && Model.MyCommissions.Any(mc => mc.CommissionId == l.CommissionId)).ToList();
+    var session = ViewBag.Sessions as List<Council.Core.Entities.MeetingHeader>;
+}
+
+<div class="card">
+    <div class="card-header">
+        ایجاد جلسه
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <label class="redColor" id="errorMessagelbl"></label>
+            
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.MeetingType, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            <select id="MeetingType" name="MeetingType" class="form-control">
+                                <option value="1">عادی</option>
+                                <option value="2">فوق العاده</option>
+                            </select>
+                            @Html.ValidationMessageFor(model => model.MeetingType, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.RegisterDate, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.RegisterDate, new { htmlAttributes = new { @class = "form-control text-box allowDatePicker", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.RegisterDate, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12", required = "required" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.StartTime, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.EndTime, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12", required = "required" })
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.EndTime, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.EndTime, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="row form-group">
+                <div class="col-lg-12 col-md-12 text-left">
+                    <input type="submit" value="ثبت" class="btn_Custome btn-success" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+ 
+<div class="card">
+    <div class="card-header">
+        جلسات
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            @if (session != null && session.Count() > 0)
+            {
+                var counter = 1;
+                <table class="table table-bordered table-condensed table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <td>ردیف</td>
+                            <td>شماره جلسه</td>
+                            <td>تاریخ ایجاد</td>
+                            <td>ساعت شروع</td>
+                            <td>ساعت خاتمه</td>
+                            <td>وضعیت</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in session)
+                        {
+                            <tr>
+                                <td>@(counter++)</td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MeetingNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.RegisterDate)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.StartTime)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.EndTime)
+                                </td>
+                                <td>@(item.IsActive ? "فعال" : "غیر فعال") </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>داده ای برای نمایش وجود ندارد</p>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="SessionModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                <h4 class="modal-title" id="myModalLabel">توجه !</h4>
+            </div>
+            <div class="modal-body">
+                   <p></p>            
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-success deactiveSession" >بله</button>*@                
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        if(@ViewBag.DuplicateSession==1){
+            $("#SessionModal .modal-body p").empty();
+            $("#SessionModal .modal-body p").text('شماره جلسه نمی تواند تکراری باشد');            
+            $("#SessionModal").modal("show");
+        }
+            
+        if(@ViewBag.DuplicateSession==2){
+            $("#SessionModal .modal-body p").empty();
+            $("#SessionModal .modal-body p").text('کاربر گرامی ،در حال حاضر جلسه قبلی فعال می باشد ، قبل از ایجاد جلسه جدید باید جلسه قبلی پایان یافته باشد .');
+            $("#SessionModal").modal("show");
+        }            
+    })
+    $(".deactiveSession").click(function(){
+        $.ajax({
+            url: "/Meeting/DeActiveAllSession",
+            type: "Post",
+            success: function (result) {
+
+                if(result=="true"){
+                    $("#SessionModal").modal("hide");
+
+                    $("#errorMessagelbl").text('تمام جلسات قبلی غیر فعال شدند')
+                }else
+                    if(result=="false"){
+
+                    $("#errorMessagelbl").text('در غیر فعال کردن جلسات قبلی مشکلی بوجود آمده است')
+                }
+            }
+
+        })
+    })
+</script>
+
+
+

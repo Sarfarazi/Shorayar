@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Council.Core.Entities.OutLetter>
+@using Council.UI.Helpers;
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@{
+    var comNumber = 0;
+}
+
+@if (Model.Count() > 0)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-center">
+                <span id="rowNumber">@(++comNumber + Convert.ToInt32(ViewBag.ArchivedPageNumber))</span>        
+            </td>
+            <td>
+                @if (item.Received == true)
+                {
+                    @item.Organ.Name
+                }
+                else
+                {
+                <p> در حال به روز رسانی</p>;
+                }
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject)
+                <input id="ArchivedOutLetterPageNumber" type="hidden" value="1" />
+                <input id="ArchivedOutLetterCount" type="hidden" value="@ViewBag.ArchivedOutLetterCount" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutLetterNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutLetterDate)
+            </td>
+            <td>
+                @(item.Received ? "دریافتی" : "ارسالی")
+            </td>
+            <td style="width: 91px;">
+                <div class="dropdown drp-action">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        عملیات
+                    </button>
+                    @{var letterIdOfOutLetter = Html.LetterIdOfOutLetter(item.ID);}
+                <ul class="dropdown-menu">
+                    <li>
+                        @Html.ActionLink("عدم بایگانی", "MarkOutLetterAsUnArchived", new { ID = item.ID })
+                    </li>
+                    <li>
+                        @if (letterIdOfOutLetter == null)
+                        {
+                            @Html.ActionLink("گردش", "FlowOutLetter", new { ID = item.ID })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("نمایش گردش", "LetterItem", "Letter", new { letterID = letterIdOfOutLetter }, null)
+                        }
+                    </li>
+                  
+       
+                </ul>
+                </div>
+                @*<a class="btn btn-default addToTabbtn" title="اضافه کردن به فولدر" id="@item.ID" data-toggle="modal" data-target="#addToTab">
+                        اضافه در فولدر
+                    </a>*@
+            </td>
+        </tr>
+    }
+}

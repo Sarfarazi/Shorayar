@@ -1,0 +1,94 @@
+﻿
+@using Council.Service;
+
+@{
+    ViewBag.Title = "رد / تصویب دستور جلسه";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        رد / تصویب دستور جلسه به شماره جلسه [<span class="PostText">@ViewBag.MeetingNumber</span>] به موضوع [ <sapan class="PostText">@ViewBag.TitleLetter</sapan> ] <span></span>
+    </div>
+    <div class="card-body">
+        <div class="row form-group">
+            <div class="col-sm-12">
+                <a href="@Url.Action("CommisionRules", "Rule")" class="btn btn-sm btn-primary">بازگشت</a>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-lg-3"><label>شماره نامه</label> :</div>
+            <div class="col-lg-9">
+                <label>@ViewBag.LetterNumber</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-lg-3">
+                <label>تاریخ ثبت</label> :
+            </div>
+            <div class="col-lg-9">
+                <label>@ViewBag.RegisterDate</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-lg-3">
+                <label>تاریخ ارسال</label> :
+            </div>
+            <div class="col-lg-9">
+                <label>@ViewBag.SendOutletterDate</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-9"></div>
+        </div>
+
+        @using (Html.BeginForm("ChangeCommisionRuleLetter", "Rule", FormMethod.Post, new { enctype = "multipart/form-data", @id = "ChangeRuleValForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@ViewBag.LetterId" />
+            <input type="hidden" name="rule" value="" />
+
+            <div class="row form-group">
+                @Html.Label("توضیحات / متن", new { @class = "control-label col-lg-3" })
+                <div class="col-lg-9">
+                    <textarea id="Comment" name="Comment" class="form-control SampleEditor"></textarea>
+                </div>
+            </div>
+        }
+
+        <div class="row form-group">
+            <div class="col-lg-3"></div>
+            <div class="col-lg-9">
+                <ul>
+                    <li><span class="greenColor"> رای موافق :@ViewBag.Voted</span></li>
+                    <li><span class="redColor">رای مخالف : @ViewBag.NoVoted</span></li>
+                    <li><span class="orangeColor2"> رای ممتنع : @ViewBag.CancelVoted</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <input type="button" class="btn btn-sm btn-primary is_rule" value="مصوب شود">
+        <input type="button" class="btn btn-sm btn-info isNot_rule" value="رد شود">
+        <a href="/rule/index" class="btn btn-sm btn-success showRule">نمایش مصوبات</a>
+    </div>
+</div>
+
+@section scripts{    
+<script src="~/Plugins/tinymce/tinymce.min.js"></script>
+<script src="~/Scripts/scripts.js"></script>
+<script>
+    $("input.is_rule").click(function () {
+
+        $("input[name='rule']").val('true');
+        $("#ChangeRuleValForm").submit();
+
+    })
+    $("input.isNot_rule").click(function () {
+
+        $("input[name='rule']").val('false');
+        $("#ChangeRuleValForm").submit();
+    })
+</script>
+}

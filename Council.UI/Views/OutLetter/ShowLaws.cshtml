@@ -1,0 +1,151 @@
+﻿@model IEnumerable<Council.Core.Entities.OutLetter>
+@using Council.UI.Helpers;
+@using Council.Core.Extensions;
+@{
+    ViewBag.Title = "نامه های برون سازمانی";
+    //var Recived = Model.Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits())).ToList();
+    //var Sended = Model.Where(l => !l.Received && !l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits())).ToList();
+    //var Archived = Model.Where(l => l.Archived && !l.Removed).OrderByDescending(o => int.Parse(o.RegisterNumber.GetDigits()));
+    //var Removed = Model.Where(l => l.Removed).OrderByDescending(o => o.CreatedOn);
+
+    //Correspond.Core.Entities.User user = ViewBag.User;
+    //var tabs = ViewBag.Tabs as List<Council.Core.Entities.LetterTabs>;
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+}
+<div class="customDiv">@{
+    if (ViewBag.LawOutLetterCount > 0)
+    {
+    <div class="marginTopDiv">
+        <div class="row">           
+            <div class="col-lg-9 col-md-9 ">
+                @Html.DropDownList("Organ", new SelectList(organs, "ID", "Name")," ", new { @class = "form-control drop-height"})
+                <button id="organSearch" class="btn btn-default" type="submit">فیلتر سازمان</button>
+            </div> 
+            <div class="col-lg-3 col-md-3">
+                <form action="~/OutLetter/SearchLawLetter/" method="get">
+                    <div class="search">
+                        <input type="text" class="form-control" id="query" name="filter" placeholder='فیلتر' required>
+                        <span>
+                            <button class="btn btn-default" type="submit">جستجو</button>
+                        </span>
+                    </div>
+                </form>
+            </div>          
+        </div>
+    </div>    
+    <hr />
+    <div class="marginTopDiv">
+        
+                <table class="table table-bordered table-condensed table-hover table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <td>
+                                ردیف
+                            </td>
+                            <td>
+                                موضوع نامه
+                            </td>
+                            <td>
+                                شماره نامه
+                            </td>
+                            <td>
+                                تاریخ
+                            </td>
+                            <td>
+                                ارسال کننده
+                            </td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody class="LawOutLetter">
+                        @Html.Action("LawOutLetters", new { skip = "0", take = "50" })
+                    </tbody>
+                </table>
+                <div id="ExtraLaw" class="row text-center">
+                    <div class="col-lg-9 comm-right">
+                        <span> نمایش نامه های دریافتی <span id="AnyLawSpan"></span> از <span id="AllLawSpan"></span></span>
+                    </div>
+                    <div class="col-lg-3 comm-left">
+                        <span id="ShowLawSpan"><a id="MoreLaw" href="#">اطلاعات بیشتر</a> @*/ <a id="AllRecivedLink" href="#">نمایش همه</a>*@</span>
+                    </div>
+                </div>
+            
+        
+    </div>
+    }
+    else
+    {
+        <div class="emptyData">
+            <text><h5>داده ای برای نمایش وجود ندارد</h5></text>
+        </div>
+    }
+}
+</div>
+<script>
+        
+    var Law_PageNumber = 1;
+    $(document).ready(function () {
+        if ($("tbody.LawOutLetter tr").length == 0) {
+            $("#ExtraLaw").hide();
+            $("tbody.LawOutLetter").parent().parent().hide();
+        } else {
+            if (Number($("#LawOutLetterCount").val()) <= 50 || $("tbody.LawOutLetter tr").length == Number($("#LawOutLetterCount").val()))
+                $("#ShowLawSpan").hide();
+            document.getElementById('AllLawSpan').innerHTML = ' ' + $("#LawOutLetterCount").val();
+            document.getElementById('AnyLawSpan').innerHTML = ' ' + $("tbody.LawOutLetter tr").length;
+        }
+    })
+       
+        $("#MoreLaw").click(function () {
+            //var pageCount = Number($("#RecievedOutLetterPageNumber").val());
+            $.ajax({
+                url: "/OutLetter/ExtraLawOutLetters",
+                data: { skip: recievedPageNumber * 50, take: 50, organId: $("select[name=Organ]").val() },
+                type: "POST",
+                success: function (result) {
+                    
+                    $("tbody.LawOutLetter").append(result);                    
+                    Law_PageNumber++;
+                    // $("#RecievedOutLetterPageNumber").val(pageCount);
+                    if ($("tbody.LawOutLetter tr").length > 0) {
+                        $("#ExtraLaw").show();
+                        $("tbody.LawOutLetter").parent().parent().show();
+                        document.getElementById('AllLawSpan').innerHTML = ' ' + $("#LawOutLetterCount").val();
+                        document.getElementById('AnyLawSpan').innerHTML = ' ' + $("tbody.LawOutLetter tr").length;
+                    } else if ($("tbody.LawOutLetter tr").length == 0) {
+                        $("#ExtraLaw").hide();
+                        $("tbody.LawOutLetter").parent().parent().hide();
+                    }else if ($("tbody.LawOutLetter tr").length == Number($("#LawOutLetterCount").val()) || Number($("#LawOutLetterCount").val()) <= 50) {
+                        $("#ShowLawSpan").hide();
+                    }
+                }
+
+            })
+        })        
+
+        $("#organSearch").click(function () {
+            $.ajax({
+                url: "/OutLetter/SearchLawOrganLetters",
+                data: { skip:0, take: 50, organId: $("select[name=Organ]").val() },
+                type: "POST",
+                success: function (result) {
+                    
+                    $("tbody.LawOutLetter").html(result.Data);
+                    document.getElementById('AllLawSpan').innerHTML = ' ' + $("#LawOutLetterCount").val();
+                    document.getElementById('AnyLawSpan').innerHTML = ' ' + $("tbody.LawOutLetter tr").length;
+                    Law_PageNumber++;
+                    if ($("tbody.LawOutLetter tr").length > 0) {
+                        $("#ExtraLaw").show();
+                        $("tbody.LawOutLetter").parent().parent().show();
+                    } else if ($("tbody.LawOutLetter tr").length == 0) {
+                        $("#ExtraLaw").hide();
+                        $("tbody.LawOutLetter").parent().parent().hide();
+                    }
+                    if ($("tbody.LawOutLetter tr").length == Number($("#LawOutLetterCount").val()) || Number($("#LawOutLetterCount").val()) <= 50) {
+                        $("#ShowLawSpan").hide();
+                    }
+                    
+                }
+            })
+        })
+</script>

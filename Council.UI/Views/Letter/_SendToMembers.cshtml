@@ -1,0 +1,66 @@
+﻿@model string
+@using (Html.BeginForm("SendToMembers", "Letter", FormMethod.Post, new { @id = "SendToMemberForm" }))
+{
+    <input type="text" name="letterID" id="letterID" class="hidden" value="@Model" />
+    <div class="card">
+        <div class="card-body">
+        <h5 class="card-title">ارسال به جلسه شورا</h5>
+            <div class="row form-group">
+                <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                <div class="col-md-10">
+                    <textarea class="form-control" cols="5" data-val="true" id="Transcript3" name="Transcript"></textarea>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal3">
+                        ثبت جمله پیشفرض
+                    </button>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <input type="button" class="btn btn-success sendToMember" value="ارسال">
+                </div>
+            </div>
+            
+        </div>
+    </div>
+}
+<div class="modal fade" id="SendToMemberModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                <h4 class="modal-title" id="myModalLabel">توجه !</h4>
+            </div>
+            <div class="modal-body">
+                <h4>کاربر گرامی ! </h4>
+                <p>برای این کمیسیون مصوبه ای ثبت نشده است ، قبل از ارسال به صحن شورا لطفا مصوبه توسط رئیس کمیسیون ثبت شود </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $("input.sendToMember").click(function () {
+        var letterid=$("#letterID").val();
+        $.ajax({
+            url: '/Letter/HasMettingContent',
+            type: "POST",
+            data: { letterID: letterid },
+            success: function (result) {
+                
+                if (result == 'ok') {
+                    $("#SendToMemberForm").submit();
+                } else {
+                    $("#SendToMemberModal").modal('show');
+                }
+            }
+        })
+    })
+</script>

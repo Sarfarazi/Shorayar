@@ -1,0 +1,84 @@
+﻿@model  Council.Core.Models.HomePageViewModel
+@using Council.Core
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+ }
+
+@*<h4 class="card-title">کارتابل من</h4>*@
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed table-hover table-striped allletters">
+        <thead>
+            <tr>
+                <td class="table-heade-rowNumber">ردیف</td>
+                <td>شماره نامه</td>
+                <td>موضوع</td>
+                <td>وضعیت</td>
+                <td class="third-width">نوع نامه</td>
+            </tr>
+        </thead>
+        <tbody class="NewLettersUl">
+            @Html.Action("GetNewLetters")
+        </tbody>
+    </table>
+</div>
+<div id="ExtraLetters" class="row text-center">
+    <div class="col-lg-9 comm"><span> نمایش <span id="AnyLetterSpan"></span> از <span id="AllLetterSpan"></span></span></div>
+    <div class="col-lg-3 comm-left">
+        <span id="SpanAllLettersLink"><a id="MoreLetters" href="#">اطلاعات بیشتر</a> / <a id="AllLettersLink" href="#">نمایش همه</a></span>
+    </div>
+</div>
+<script>
+    if ($("tbody.NewLettersUl tr").length == 0) {
+        $("#ExtraLetters").hide();
+        $("tbody.NewLettersUl").parent().parent().parent().hide()
+        //$("tbody.NewLettersUl").parent().parent().hide();
+    } else {
+        if (Number($("#AllLettersCount").val()) <= 50)
+            $("#SpanAllLettersLink").hide();
+        document.getElementById('AllLetterSpan').innerHTML = ' ' + $("#AllLettersCount").val();
+        document.getElementById('AnyLetterSpan').innerHTML = ' ' + $("tbody.NewLettersUl tr").length;
+    }
+
+    $("#MoreLetters").click(function () {
+        //var pageCount =Number($("#PageNumber").val());
+        $.ajax({
+            url: "/Home/GetExtraLetters",
+            data: { skip: allLetterPageNumber * 50, take: 50 },
+            type: "POST",
+            success: function (result) {
+
+                //pageCount++;
+                allLetterPageNumber++;
+                $("tbody.NewLettersUl").append(result);
+                //$("#PageNumber").val(pageCount);
+                document.getElementById('AllLetterSpan').innerHTML = ' ' + $("#AllLettersCount").val();
+                document.getElementById('AnyLetterSpan').innerHTML = ' ' + $("tbody.NewLettersUl tr").length;
+                if ($("tbody.NewLettersUl tr").length == Number($("#LettersCount").val())) {
+                    $("#SpanAllLettersLink").hide()
+                }
+            }
+        })
+    })
+
+
+    $("#AllLettersLink").click(function () {
+        //var pageCount = Number($("#PageNumber").val());
+        $.ajax({
+            url: "/Home/GetExtraLetters",
+            data: { skip: allLetterPageNumber * 50, take: -1 },
+            type: "POST",
+            success: function (result) {
+
+                allLetterPageNumber++;
+                $("tbody.NewLettersUl").append(result);
+                //$("#PageNumber").val(pageCount);
+                document.getElementById('AllLetterSpan').innerHTML = ' ' + $("#AllLettersCount").val();
+                document.getElementById('AnyLetterSpan').innerHTML = ' ' + $("tbody.NewLettersUl tr").length;
+                $("#SpanAllLettersLink").hide();
+            }
+        })
+    })
+</script>

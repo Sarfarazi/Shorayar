@@ -1,0 +1,101 @@
+﻿@model Council.Core.Entities.Meeting
+@{
+    ViewBag.Title = "تنظیم خلاصه تصمیمات جهت رای گیری";
+    var uniqueNumber = ViewBag.UniqueNumber;
+    var letterID = ViewBag.LetterID;
+    var users = ViewBag.Users as List<Council.Core.Entities.User>;
+}
+
+<div class="card">
+    <div class="card-header">
+        توضیحات جلسه
+    </div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @id = "letterForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <input type="text" name="meetingMembers" id="meetingMembers" class="hidden" value="" />
+        <input type="text" name="letterID" id="letterID" class="hidden" value="@letterID" />
+
+        <div class="card-body">
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                <div class="row form-group">
+                    @Html.LabelFor(model => model.MeetingNumber, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" id="MeetingNumber" name="MeetingNumber" value="@ViewBag.SessionNumber" class = "form-control" readonly />
+                        @Html.ValidationMessageFor(model => model.MeetingNumber)
+                    </div>
+                </div>
+                <div class="row form-group">
+                    @Html.Label("دستور جلسه", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" class="text-box form-control" name="Title" value="@ViewBag.LetterTitle" disabled="disabled" />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    @Html.LabelFor(model => model.HiddenVoting, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.CheckBoxFor(m => m.HiddenVoting)
+                        @Html.ValidationMessageFor(model => model.HiddenVoting, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                @*<div class="form-group">
+                @Html.Label("متن", new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Content, new { htmlAttributes = new {required = "required" } })
+                    @Html.ValidationMessageFor(model => model.Content)
+                </div>
+            </div>*@
+                <div class="row form-group">
+                    @Html.Label("افراد", new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.Peoples , new { htmlAttributes = new { @class="form-control SampleEditor"} })
+                        @Html.ValidationMessageFor(model => model.Peoples, null, new { @class="text-danger"})
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-md-2" for="Name">اعضای شورا</label>
+                    <div class="col-md-10" id="usersContetn">
+                        @foreach (var item in users)
+                        {
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <span class="blueColor bold"> @(item.FirstName + " " + item.LastName) </span>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="form-check form-check-inline mr-1">
+                                        <input class="form-check-input" id="@("inline-radio1"+item.ID)" type="radio" name="@item.ID" value="1" checked="checked">
+                                        <label class="form-check-label" for="@("inline-radio1"+item.ID)">حاضر</label>
+                                    </div>
+                                    <div class="form-check form-check-inline mr-1">
+                                        <input class="form-check-input" id="@("inline-radio2"+item.ID)" type="radio" name="@item.ID" value="0">
+                                        <label class="form-check-label" for="@("inline-radio2"+item.ID)">غایب</label>
+                                    </div>
+                                    <div class="form-check form-check-inline mr-1">
+                                        <input class="form-check-input" id="@("inline-radio3"+item.ID)" type="radio" name="@item.ID" value="2">
+                                        <label class="form-check-label" for="@("inline-radio3"+item.ID)">مرخصی/ ماموریت</label>
+                                    </div>
+
+                                    @*<input type="radio" name="@item.ID" value="1" checked="checked">حاضر
+                                    | <input type="radio" name="@item.ID" value="0">غایب
+                                    | <input type="radio" name="@item.ID" value="2">مرخصی/ماموریت*@
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-default" id="submitFormbtn">ثبت تنظیمات</button>
+        </div>
+    }
+</div>
+
+@section scripts{    
+<script src="~/Scripts/scripts.js"></script>
+<script src="~/Plugins/tinymce/tinymce.min.js"></script>
+<script>
+    readyFotCouncil();
+</script>
+}

@@ -1,0 +1,606 @@
+﻿@model Council.Core.Models.LetterItemModel
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication
+@using Council.Service;
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var userId = _User.UserId;
+    ViewBag.Title = "جزییات نامه";
+    var outLetterSpecs = Model.Letter.OutLetter;
+    var recivers = Model.Recivers;
+    bool isOutLetter = !(outLetterSpecs == null);
+    var counter = 1;
+    var publicMethod = new PublicMetods();
+}
+
+<div class="card">
+    <div class="card-header">
+        جزییات نامه
+    </div>
+    <div class="card-body">
+        <div class="row form-group">
+            <div class="col-sm-12">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-sm btn-primary">بازگشت</a>
+            </div>
+        </div>
+        @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember"))
+        {
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#t1" aria-controls="t1" role="tab" data-toggle="tab">
+                            نمایش جزییات نامه
+                            <i class="fa fa-inbox"></i>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#t2" aria-controls="t2" role="tab" data-toggle="tab">
+                            ارجاع نامه
+                            <i class="fa fa-reply"></i>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#t3" aria-controls="t3" role="tab" data-toggle="tab">
+                            گردش نامه
+                            <i class="fa fa-archive"></i>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#t4" aria-controls="t4" role="tab" data-toggle="tab">
+                            افزودن یادداشت
+                            <i class="fa fa-sticky-note"></i>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="t1">
+                        @Html.Partial("_OutLetterOfLetterItem")
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        ارجاع دهنده :<br />
+                                        <span id="letterSender" class="blueColor">
+                                            @if (isOutLetter)
+                                            {
+                                                @Html.GetPersonNameWithAppID(Model.Letter.LetterRefrences.OrderByDescending(r => r.CreatedOn).First().SenderAppID)
+                                            }
+                                            else
+                                            {
+                                                @Html.GetPersonNameWithAppID(Model.Letter.LetterRefrences.Where(l => l.SenderAppID == userId || l.Recivers.Any(r => r.ID == userId)).OrderByDescending(r => r.CreatedOn).First().SenderAppID)
+                                            }
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4">
+                                       شماره نامه ارجاع : <br />
+                                        <span class="blueColor" id="letterNumber">@Html.DisplayFor(model => model.Letter.LetterNumber)</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        تاریخ ارجاع:<br />
+                                        <span id="letterDate" class="blueColor">@Html.GetPersianDate(Model.Letter.CreatedOn)</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        موضوع ارجاع:
+                                        <strong id="letterSubject">@Html.DisplayFor(model => model.Letter.Title)</strong>
+                                        <br />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="letterContent" class="col-md-12">
+                                        @Html.Raw(Model.Letter.Content)
+                                    </div>
+                                </div>
+                            </div>
+                            @if (Model.Letter.Files != "" || Model.Letter.Uploads.Count() > 0)
+                            {
+                                <div class="card-footer">
+                                    @if (Model.Letter.Files != "")
+                                    {
+                                        <a id="attachment" href="@(Url.Content("~" + Model.Letter.Files))">[ فایل ضمیمه @counter ]</a>
+                                        counter++;
+                                    }
+                                    @if (Model.Letter.Uploads.Count() > 0)
+                                    {
+                                        foreach (var item in Model.Letter.Uploads)
+                                        {
+                                            <a href="@(Url.Content("~" + item.FileAddress))">[ فایل ضمیمه @counter ]</a>
+                                            counter++;
+                                        }
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="t2">
+                        @Html.Partial("_ReferalLetter", Model)
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="t3">
+                        <div class="customDiv darkBackground">
+                            <div class="timeline-centered">
+                                @{
+                                    bool left = false;
+                                    var firstItem = Model.Letter.LetterRefrences.OrderBy(l => l.CreatedOn).First();
+                                    foreach (var item in Model.Letter.LetterRefrences.OrderBy(l => l.CreatedOn))
+                                    {
+                                        string bgColor = item == firstItem ? "bg-secondary" : "bg-info";
+                                        <article class="timeline-entry @(left ? " left-aligned" : "")">
+                                            <div class="timeline-entry-inner">
+                                                <time class="timeline-time" datetime="2014-01-10T03:45">
+                                                    <span class="date">@Html.GetPersianDate(item.CreateOn)</span>
+                                                    <span class="LTRDirection">@(item.CreateOn.Hour + " : " + item.CreateOn.Minute)</span>
+                                                </time>
+                                                <div class="timeline-icon @(bgColor)">
+                                                    <i class="entypo-feather"></i>
+                                                </div>
+                                                <div class="timeline-label">
+                                                    @if (item == firstItem)
+                                                    {
+                                                        <h2>
+                                                            <span>ایجاد نامه توسط : </span>
+                                                            <span class="sender">@Html.GetPersonNameWithAppID(item.SenderAppID)</span>
+                                                        </h2>
+                                                        <p><strong>گیرنده ها :</strong></p>
+                                                        <ul>
+                                                            @foreach (var user in item.Recivers)
+                                                            {
+                                                                <li>
+                                                                    <span class="reciver">@(user.FirstName + " " + user.LastName)</span>
+                                                                    <span class="PostText">
+                                                                        @{
+                                                                            if (user.IsCouncilBoss)
+                                                                            {
+                                                                                <text >[رئیس شورا] </text>
+                                                                            }
+                                                                            else if (user.BossHelper)
+                                                                            {
+                                                                                <text>[نائب رئیس] </text>
+                                                                            }
+                                                                            else if (user.IsWriter1)
+                                                                            {
+                                                                                <text>[دبیر جلسه یک] </text>
+                                                                            }
+                                                                            else if (user.IsWriter2)
+                                                                            {
+                                                                                <text>[دبیر جلسه دو] </text>
+                                                                            }
+                                                                            else if (user.IsOtherCouncilMember)
+                                                                            {
+                                                                                <text>[عضو علی البدل] </text>
+                                                                            }
+                                                                            else if (user.IsCouncilMember)
+                                                                            {
+                                                                                <text>[عضو شورا] </text>
+                                                                            }
+                                                                        }
+                                                                    </span>
+
+                                                                    <span class="smallFontSize">
+                                                                        [ @(item.LetterStatuses.Any(s => s.LetterStatusForUser && s.UserID == user.ID) ? "جهت اقدام" : "جهت اطلاع") ]
+                                                                        @if (item.LetterStatuses.Any(s => s.UserID == user.ID && s.IsNew))
+                                                                        {
+                                                                            <span class="redColor">[ خوانده نشده ]</span>
+                                                                        }
+                                                                        else
+                                                                        {
+
+                                                                            <span class="greenColor">
+                                                                                [ @Html.GetPersianDate(item.LetterStatuses.Where(o => o.UserID == user.ID).FirstOrDefault().ReadTime)
+                                                                                &nbsp; &nbsp;@(item.LetterStatuses.Where(o => o.UserID == user.ID).FirstOrDefault().ReadTime.Hour.ToString() + ':' + item.LetterStatuses.Where(o => o.UserID == user.ID).FirstOrDefault().ReadTime.Minute.ToString())  ]
+                                                                            </span>
+
+                                                                        }
+                                                                    </span>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>ارجاع نامه توسط : </span>
+                                                        <span class="sender">@Html.GetPersonNameWithAppID(item.SenderAppID)</span>
+                                                        <br />
+                                                        <span> گیرنده ها : </span>
+                                                        <ul>
+                                                            @foreach (var user in item.Recivers)
+                                                            {
+                                                                if (user.IsActive)
+                                                                {
+                                                                    <li>
+                                                                        <span class="reciver">@(user.FirstName + " " + user.LastName)</span>
+                                                                        <span class="PostText">
+                                                                            @{
+                                                                                if (user.IsCouncilBoss)
+                                                                                {
+                                                                                    <text >[رئیس شورا] </text>
+                                                                                }
+                                                                                else if (user.BossHelper)
+                                                                                {
+                                                                                    <text>[نائب رئیس] </text>
+                                                                                }
+                                                                                else if (user.IsWriter1)
+                                                                                {
+                                                                                    <text>[منشی شورا یک] </text>
+                                                                                }
+                                                                                else if (user.IsWriter2)
+                                                                                {
+                                                                                    <text>[منشی شورا دو] </text>
+                                                                                }
+                                                                                else if (user.IsOtherCouncilMember)
+                                                                                {
+                                                                                    <text>[عضو علی البدل] </text>
+                                                                                }
+                                                                                else if (user.IsCouncilMember)
+                                                                                {
+                                                                                    <text>[عضو شورا] </text>
+                                                                                }
+                                                                            }
+                                                                        </span>
+                                                                        <span class="smallFontSize">
+                                                                            [ @(item.LetterStatuses.Any(s => s.LetterStatusForUser && s.UserID == user.ID) ? "جهت اقدام" : "جهت اطلاع") ]
+                                                                            @if (item.LetterStatuses.Any(s => s.UserID == user.ID && s.IsNew))
+                                                                            {
+                                                                                <span class="redColor">[ خوانده نشده ]</span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span >[ خوانده شده ]</span>
+                                                                                <span class="greenColor">[ @Html.GetPersianDate(item.LetterStatuses.Where(o => o.UserID == user.ID).FirstOrDefault().ReadTime) 
+                                                                                &nbsp; &nbsp;@(item.LetterStatuses.Where(o => o.UserID == user.ID).FirstOrDefault().ReadTime.Hour.ToString() + ':' + item.LetterStatuses.Where(o => o.UserID == user.ID).FirstOrDefault().ReadTime.Minute.ToString())  ]</span> 
+
+                                                                            }
+                                                                        </span>
+                                                                    </li>
+                                                                }
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    <span></span>
+                                                    @if (!(item == firstItem))
+                                                    {
+                                                        <div class="customDiv">
+                                                            رونوشت
+                                                            <hr />
+                                                            <span class="Transcript">@(item.Transcript == "" ? "بدون رونوشت" : item.Transcript)</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </article>
+                                        left = !left;
+                                    }
+                                    if (Model.Letter.LetterRefrences.Any(m => m.RefrenceType == Council.Core.Enums.RefrenceType.EndOfLetter))
+                                    {
+                                        var item = Model.Letter.LetterRefrences.Where(m => m.RefrenceType == Council.Core.Enums.RefrenceType.EndOfLetter).FirstOrDefault();
+                                        <article class="timeline-entry @(left ? " left-aligned" : "")">
+                                            <div class="timeline-entry-inner">
+                                                <time class="timeline-time" datetime="2014-01-10T03:45">
+                                                    <span>اختتام نامه</span>
+                                                </time>
+
+                                                <div class="timeline-icon bg-secondary">
+                                                    <i class="entypo-feather"></i>
+                                                </div>
+
+                                                <div class="timeline-label">
+                                                    <h2>
+                                                        <span>اختتام نامه توسط : </span>
+                                                        <span class="sender"> @Html.GetPersonNameWithAppID(item.SenderAppID)</span>
+                                                    </h2>
+
+                                                </div>
+                                            </div>
+                                        </article>
+                                    }
+                                    else
+                                    {
+                                        <article class="timeline-entry begin">
+                                            <div class="timeline-entry-inner">
+                                                <div class="timeline-icon" style="-webkit-transform: rotate(-90deg); -moz-transform: rotate(-90deg);">
+                                                    <i class="entypo-flight"></i>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="t4">
+                        @using (Html.BeginForm("AddNote", "Letter", FormMethod.Post, new { enctype = "multipart/form-data", @id = "AddNoteForm" }))
+                        {
+                            <input type="hidden" name="letterId" value=@Model.Letter.ID />
+                            @Html.Label("یادداشت", new { @class = "control-label" })
+                            <input type="text" name="Note" class="form-control form-group" style="width:100% !important;" />
+                            <input type="submit" class="btn_Custome btn-success" value="ثبت" />
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب گیرنده ها</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="input-group left-addon searchInput">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control" placeholder="فیلتر..." id="filterRecivers" />
+                </div>
+                <table class="table-bordered table-condensed table table-hover table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <td>نام و نام خانوادگی</td>
+                            <td>انتخاب</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Recivers)
+                        {
+                            if ((item.IsActive) && !(item.ID == _User.UserId))
+                            {
+                                <tr>
+                                    <td id="@("firstAndLastName" + item.ID)" class="firstAndLastName">@(item.FirstName + " " + item.LastName)</td>
+                                    <td>
+                                        <a id="@item.ID" class="btn btn-primary addReciver">انتخاب</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <table class="table  table-bordered table-condensed table-hover table-responsive table-striped">
+                        <thead>
+                            <tr>
+                                <td>جمله</td>
+                                <td>ثبت</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Statements)
+                            {
+                                <tr>
+                                    <td id="statement@(item.ID)">@item.Statement</td>
+                                    <td>
+                                        <a class="btn btn-default addStatement1" data-dismiss="modal" id="@item.ID">
+                                            ثبت
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table  table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>جمله</td>
+                                    <td>ثبت</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Statements)
+                                {
+                                    <tr>
+                                        <td id="statement@(item.ID)">@item.Statement</td>
+                                        <td>
+                                            <a class="btn btn-default addStatement2" data-dismiss="modal" id="@item.ID">
+                                                ثبت
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table  table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>جمله</td>
+                                    <td>ثبت</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Statements)
+                                {
+                                    <tr>
+                                        <td id="statement@(item.ID)">@item.Statement</td>
+                                        <td>
+                                            <a class="btn btn-default addStatement3" data-dismiss="modal" id="@item.ID">
+                                                ثبت
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal4" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table  table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>جمله</td>
+                                    <td>ثبت</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Statements)
+                                {
+                                    <tr>
+                                        <td id="statement@(item.ID)">@item.Statement</td>
+                                        <td>
+                                            <a class="btn btn-default addStatement4" data-dismiss="modal" id="@item.ID">
+                                                ثبت
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="statementsModal5" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب جمله</h4>
+            </div>
+            <div class="modal-body">
+                @if (Model.Statements.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table  table-bordered table-condensed table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <td>جمله</td>
+                                    <td>ثبت</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Statements)
+                                {
+                                    <tr>
+                                        <td id="statement@(item.ID)">@item.Statement</td>
+                                        <td>
+                                            <a class="btn btn-default addStatement5" data-dismiss="modal" id="@item.ID">
+                                                ثبت
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <text>جمله ای ثبت نشده است</text>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section styles{
+    <link href="~/Plugins/r-tab/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+}
+@section scripts{
+    <script src="~/Scripts/scripts.js"></script>
+    <script src="~/Plugins/r-tab/jquery.scrolling-tabs.min.js"></script>
+    <script>
+        letterStart();
+    </script>
+}

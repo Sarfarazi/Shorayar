@@ -1,0 +1,391 @@
+﻿@using Council.UI.CustomAuthentication;
+@using Council.Service.DBServices;
+@{ 
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    //var Settings = JsonConvert.DeserializeObject<CurrentSetting>(Request.Cookies["cs"].Value);
+
+    SystemSettingsService settingsService = new SystemSettingsService();
+    var curentSetting = settingsService.All().FirstOrDefault(m => m.Used);
+    var Settings = new Council.Core.Models.CurrentSetting
+    {
+        CouncilName = curentSetting != null ? curentSetting.CouncilName : "شورایار",
+        CouncilLogo = curentSetting != null ? curentSetting.CouncilLogo : "default-logo.png",
+        CouncilLoginLogo = curentSetting != null ? curentSetting.CouncilLoginLogo : "default-login-logo.png"
+    };
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - شورای شهر میبد </title>
+    @*<link href="/Content/bootstrap.css" rel="stylesheet" />*@
+
+    <link href="~/Content/MdBootstrapPersianDateTimePicker/jquery.Bootstrap-PersianDateTimePicker.min.css" rel="stylesheet" />
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryOnUbtrusive")
+
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/SiteStyle.css" rel="stylesheet" />
+    <link href="/Content/site.css" rel="stylesheet" />
+    @RenderSection("styles", false)
+    <script src="~/Scripts/responsive-tabs.js"></script>
+    <script src="~/Scripts/MdBootstrapPersianDateTimePicker/calendar.min.js"></script>
+    <script src="~/Scripts/MdBootstrapPersianDateTimePicker/jquery.Bootstrap-PersianDateTimePicker.min.js"></script>
+    <script src="~/Scripts/scripts.js"></script>
+</head>
+<body class="app header-fixed sidebar-fixed aside-menu-fixed pace-done sidebar-lg-show">
+    <header class="app-header navbar">
+        <div class="M-right">
+            <button class="navbar-toggler sidebar-toggler d-lg-none" type="button" data-toggle="sidebar-show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img class="navbar-brand-full" src="~/Images/logo/@Settings.CouncilLogo" height="45" alt="شورایار">
+                @*<img class="navbar-brand-minimized" src="~/Images/mini-logo.png" width="30" height="30" alt="CoreUI Logo">*@
+            </a>
+            <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="M-left">
+            @Html.Partial("_LoginPartial")
+        </div>
+    </header>
+    <div class="app-body">
+        <div class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index","Home")">
+                            <i class="nav-icon fa fa-tachometer"></i> داشبورد
+                        </a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#">
+                                <i class="nav-icon fa fa-th"></i> ساختار سیستم
+                            </a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a href="~/Account/Users" class="nav-link">
+                                        <i class="nav-icon fa fa-angle-left"></i>مدیریت کاربران
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/Commission/" class="nav-link">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        مدیریت کمیسیون ها
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/CouncilPeriod/" class="nav-link">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        مدیریت دوره ها
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/Organ/Index" class="nav-link">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        مدیریت سازمان/شخص
+                                    </a>
+                                </li>
+
+                                @*<li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fa fa-angle-left"></i>
+                            تعریف جدول حق جلسه اعضا
+                        </a>
+                    </li>*@
+                                <li class="nav-item">
+                                    <a href="~/Home/DefaultStatements" class="nav-link">
+                                        <i class="nav-icon fa fa-angle-left"></i>جملات پیشفرض
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="~/SystemSettings/Index" class="nav-link">
+                                        <i class="nav-icon fa fa-angle-left"></i>تنظیمات سیستم
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    <li class="nav-item nav-dropdown">
+                        <a class="nav-link nav-dropdown-toggle" href="#">
+                            <i class="nav-icon fa fa-cog"></i> سیستم مکاتبات شورا
+                        </a>
+                        <ul class="nav-dropdown-items">
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/OutLetter/ReciveOutLetter">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        ثبت مکاتبات، لوایح، طرحها
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/OutLetter/ShowOutLetters">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        نمایش و مدیریت مکاتبات سازمانی
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/OutLetter/SendOutLetter">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        ارسال مکاتبات به سازمانها
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("Manager") || User.IsInRole("Writer1")
+                                || User.IsInRole("Writer2") || User.IsInRole("CouncilMember") || User.IsInRole("Guest"))
+                            {
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/OutLetter/ShowPlanLawsLetters">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        لوایح / طرحها
+                                    </a>
+                                </li>
+
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index","ECE")">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        دریافت بصورت ECE
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("Manager"))
+                    {
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#">
+                                <i class="nav-icon fa fa-file-o"></i>تعریف دستور جلسه و دعوت نامه
+                            </a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Meeting/CreateSession">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        ایجاد جلسه جدید
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Meeting/CreateInviteLetter">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        صدور دعوت نامه
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+
+                    <li class="nav-item nav-dropdown">
+                        <a class="nav-link nav-dropdown-toggle" href="#">
+                            <i class="nav-icon fa fa-cog"></i> مدیریت مصوبات
+                        </a>
+                        <ul class="nav-dropdown-items">
+                            @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Home/CouncilVoted">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        آخرین رای گیری های شورا
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Home/CommisionVoted">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        آخرین رای گیری های کمیسیون
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Rule/Index">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        مدیریت مصوبات شورا
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("Manager") || User.IsInRole("Writer1")
+|| User.IsInRole("Writer2") || User.IsInRole("CouncilMember") || User.IsInRole("Guest"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Rule/CouncilRule">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        نمایش مصوبات شورا
+                                    </a>
+                                </li>
+                                @*<li class="nav-item">
+                                    <a class="nav-link" href="~/OutLetter/ShowPlanLawsLetters">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        لوایح / طرحها
+                                    </a>
+                                </li>*@
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Rule/ShowCommisionRules">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        نمایش مصوبات کمیسیون
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Rule/CommisionRules">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        مدیریت مصوبات کمیسیون
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("Manager"))
+                    {
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#">
+                                <i class="nav-icon fa fa-file-text"></i> صورت جلسه ها
+                            </a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="~/Meeting/CreateMeeting">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        ثبت صورت جلسه شورا
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager"))
+                    {
+                        <li class="nav-item nav-dropdown">
+                            <a class="nav-link nav-dropdown-toggle" href="#">
+                                <i class="nav-icon fa fa-book"></i> گزارشات
+                            </a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        گزارش محاسبه حق جلسه اعضا
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        گزارش طرحهای ارسالی به سازمانها و نهادها
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">
+                                        <i class="nav-icon fa fa-angle-left"></i>
+                                        گزارش حضور و غیاب اعضا به تفکیک تاریخ و جلسات
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </nav>
+            @*<button class="sidebar-minimizer brand-minimizer" type="button"></button>*@
+        </div>
+        <main class="main">
+            <div class="system-title">
+                <div class="row">
+                    <div class="col-lg-8 col-md-6 col-sm-6">
+                        <p>@string.Format("سیستم اتوماسیون و رای گیری {0}", Settings.CouncilName)</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-sm-6" style="direction:ltr">
+                        @using (Html.BeginForm("SearchResult", "Home", FormMethod.Post))
+                        {
+                            <div id="searchDiv">
+                                <input id="searchText" type="text" name="searchTxt" required="required" placeholder="جستجو در سایت">
+                                <button type="submit" class="btn btn-default" style="height: 30px;"><span class='fa fa-search'></span></button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div id="ui-view">
+                    @RenderBody()
+                </div>
+            </div>
+        </main>
+
+    </div>
+    <div id="loader"></div>
+    @*<div id="Loading">
+            <img src="~/Images/loading.gif" />
+        </div>*@
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/AllPage")
+    <script src="~/Scripts/coreui.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+
+        (function ($) {
+            jQuery('.allowDatePicker').MdPersianDateTimePicker({
+                Placement: 'bottom', // default is 'bottom'
+                Trigger: 'focus', // default is 'focus',
+                EnableTimePicker: false, // default is true,
+                TargetSelector: '', // default is empty,
+                GroupId: '', // default is empty,
+                ToDate: false, // default is false,
+                FromDate: false, // default is false,
+            });
+            fakewaffle.responsiveTabs(['xs', 'sm']);
+        })(jQuery);
+
+        //window.onbeforeunload = function (e) {
+
+        //
+        //    e.preventDefault();
+
+        //$.ajax({
+        //    url: "/Account/AjaxLogOff",
+        //    data: { LetterID: id },
+        //    type: "POST",
+        //    dataType: "Json",
+        //    success: function (result) {
+        //
+        //        if (result == "ok") {
+        //            var item = 0;
+        //        }
+        //    }
+        //})
+        //return true;
+
+
+        //if (document.cookie && document.cookie != '') {
+        //    var theCookies = document.cookie.split(';');
+        //    document.cookie = ".AspNet.ApplicationCookie; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/";
+        //}
+        //$("#logoutLink")[0].click();
+        //window.location.href = window.location.origin + '/Account/Login';
+        //    return true;
+
+
+        //};
+        //function DetectBrowserExit() {
+        //    alert('Execute task which do you want before exit');
+        //}
+
+        //window.close = function () { DetectBrowserExit(); }
+    </script>
+</body>
+</html>

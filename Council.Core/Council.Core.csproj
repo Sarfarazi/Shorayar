@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6916EDA1-CF48-4F9C-BF63-109C9205F436}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Council.Core</RootNamespace>
+    <AssemblyName>Council.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Entities\CopyToLetter.cs" />
+    <Compile Include="Entities\SystemSettings.cs" />
+    <Compile Include="HelperClasses\ToConcatenatedString.cs" />
+    <Compile Include="Interfaces\ICopyToLetter.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Entities\BaseEntity.cs" />
+    <Compile Include="Entities\Commission.cs" />
+    <Compile Include="Entities\CouncilPeriod.cs" />
+    <Compile Include="Entities\DefaultStatement.cs" />
+    <Compile Include="Entities\Draft.cs" />
+    <Compile Include="Entities\EmailInfo.cs" />
+    <Compile Include="Entities\Letter.cs" />
+    <Compile Include="Entities\LetterRefrences.cs" />
+    <Compile Include="Entities\LetterStatuses.cs" />
+    <Compile Include="Entities\MeetingHeader.cs" />
+    <Compile Include="Entities\MeetingUsers.cs" />
+    <Compile Include="Entities\Note.cs" />
+    <Compile Include="Entities\Organ.cs" />
+    <Compile Include="Entities\OutLetter.cs" />
+    <Compile Include="Entities\PrintOutLetter.cs" />
+    <Compile Include="Entities\Role.cs" />
+    <Compile Include="Entities\SMSDeliversLog.cs" />
+    <Compile Include="Entities\SMSErrorCode.cs" />
+    <Compile Include="Entities\SMSToken.cs" />
+    <Compile Include="Entities\UniqueNumber.cs" />
+    <Compile Include="Entities\Upload.cs" />
+    <Compile Include="Entities\User.cs" />
+    <Compile Include="Entities\UserRole.cs" />
+    <Compile Include="Entities\Voting.cs" />
+    <Compile Include="Entities\Meeting.cs" />
+    <Compile Include="Enums\LetterStatus.cs" />
+    <Compile Include="Enums\RefrenceType.cs" />
+    <Compile Include="Enums\ResultType.cs" />
+    <Compile Include="Enums\UserPosation.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Interfaces\ICommission.cs" />
+    <Compile Include="Interfaces\ICouncilPeriod.cs" />
+    <Compile Include="Interfaces\ICRUD.cs" />
+    <Compile Include="Interfaces\IDefaultStatement.cs" />
+    <Compile Include="Interfaces\IDraft.cs" />
+    <Compile Include="Interfaces\IEmailInfo.cs" />
+    <Compile Include="Interfaces\ILetter.cs" />
+    <Compile Include="Interfaces\ILetterRefrences.cs" />
+    <Compile Include="Interfaces\ILetterStatuses.cs" />
+    <Compile Include="Interfaces\IMeetingHeader.cs" />
+    <Compile Include="Interfaces\IMeeting.cs" />
+    <Compile Include="Interfaces\INote.cs" />
+    <Compile Include="Interfaces\IOrgan.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Interfaces\ISMSDeliversLog.cs" />
+    <Compile Include="Interfaces\ISmsErrorCode.cs" />
+    <Compile Include="Interfaces\ISmsToken.cs" />
+    <Compile Include="Interfaces\IUniqueNumber.cs" />
+    <Compile Include="Interfaces\IUser.cs" />
+    <Compile Include="Interfaces\IOutLetter.cs" />
+    <Compile Include="Interfaces\IVoting.cs" />
+    <Compile Include="Models\CommissionModels.cs" />
+    <Compile Include="Models\ECEViewModel.cs" />
+    <Compile Include="Models\HomePageViewModel.cs" />
+    <Compile Include="Models\OutLetterModels.cs" />
+    <Compile Include="Models\LetterModels.cs" />
+    <Compile Include="Models\MeetingResult.cs" />
+    <Compile Include="Models\MeetingViewModel.cs" />
+    <Compile Include="Models\NoteLetterViewModel.cs" />
+    <Compile Include="Models\PaginationViewModels.cs" />
+    <Compile Include="Models\POPEmail.cs" />
+    <Compile Include="Models\PrintModel.cs" />
+    <Compile Include="Models\Reciver.cs" />
+    <Compile Include="Models\RuleModel.cs" />
+    <Compile Include="Models\ShowMessage.cs" />
+    <Compile Include="Models\SystemSettingsViewModel.cs" />
+    <Compile Include="Models\UserViewModels.cs" />
+    <Compile Include="Models\ViewModels.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statics\Settings.cs" />
+    <Compile Include="Validators\FileUploadValidator.cs" />
+    <Compile Include="Validators\MaximumFileSizeValidator.cs" />
+    <Compile Include="Validators\MinimumFileSizeValidator.cs" />
+    <Compile Include="Validators\ValidFileTypeValidator.cs" />
+    <Compile Include="Values\Values.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ECE\ECE.csproj">
+      <Project>{59134DF4-00F0-49FC-9752-C5EDC7BF3992}</Project>
+      <Name>ECE</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

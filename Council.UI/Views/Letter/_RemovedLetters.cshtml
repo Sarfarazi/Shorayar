@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Council.Core.Models.MyLetter>
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+    var rowNumber = -1;
+}
+@foreach (var item in Model.OrderByDescending(l => l.CreatedOn))
+{
+    <tr>
+        <td> @(++rowNumber + Convert.ToInt32(ViewBag.RemovedRowNumber))</td>
+        <td>
+
+            @Html.DisplayFor(modelItem => item.Title)
+            <input id="RemovedPageNumber" type="hidden" value="1" />
+            <input id="RemovedCount" type="hidden" value="@ViewBag.RemovedLetters" />
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LetterNumber)
+        </td>
+        <td class="hideOnMobile">
+            @Html.GetPersianDate(item.CreatedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Urgency)
+        </td>
+        <td class="btns-td text-right width-152">
+            @*@Html.ActionLink("نمایش", "LetterItem", new { letterID = item.ID })*@
+            <a class="btn btn-success" href="@Url.Action("UndoRemoved", "Letter", new { letterID = item.ID })" title="نمایش">
+                بازگردانی
+            </a>
+            @{
+                if (UserID == item.SenderAppID)
+                {
+                    <a class="btn btn-danger" onclick="CanDeleteLetter('@item.ID')" href="javascript:void(0)" title="نمایش">
+                        حذف
+                    </a>
+                }
+            }
+
+        </td>
+    </tr>
+}

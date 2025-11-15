@@ -1,0 +1,552 @@
+﻿@model Council.Core.Entities.OutLetter
+@using Council.UI.Helpers;
+@{
+    ViewBag.Title = "دریافت مکاتبات-لوایح-طرحها";
+    var uniqueNumber = ViewBag.UniqueNumber;
+
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+}
+
+<div class="card">
+    <div class="card-header">
+        ثبت مکاتبات، لوایح، طرحها
+    </div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @id = "letterForm" }))
+    {
+        <div class="card-body">
+            <input name="letterType" type="hidden" value="1" />
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="radioLetter" checked="checked">
+                        <label class="form-check-label radio-inline control-label">نامه</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="radioPlan">
+                        <label class="form-check-label radio-inline control-label">طرح</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="radioRule">
+                        <label class="form-check-label radio-inline control-label">لایحه</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <div id="forceDiv" style="display:none">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="oneForce" checked="checked">
+                            <label class="form-check-label radio-inline control-label">تک فوریتی</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="twoForce">
+                            <label class="form-check-label radio-inline control-label">دو فوریتی</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="threeForce">
+                            <label class="form-check-label radio-inline control-label"> سه فوریتی</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Subject, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-lg-8 col-md-8 col-sm-12 col-12 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.Subject, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Subject, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.OutLetterNumber, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-lg-8 col-md-8 col-sm-12 col-12 col-sm-12 col-12">
+                            <input type="text" value="@uniqueNumber" name="OutLetterNumber" class="form-control" readonly="readonly" />    
+                            @*@Html.EditorFor(model => model.OutLetterNumber, new { htmlAttributes = new { @class = "form-control" } })*@
+                            @Html.ValidationMessageFor(model => model.OutLetterNumber, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.RegisterNumber, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.RegisterNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.RegisterNumber, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="control-label col-lg-4 col-md-4 col-sm-12 col-12">
+                            <label>تاریخ نامه وارده</label>
+                        </div>                      
+                       
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.OutLetterDate, new { htmlAttributes = new { @class = "form-control text-box allowDatePicker", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.OutLetterDate, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Sender, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.Sender, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Sender, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Bringer, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.Bringer, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Bringer, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.LinkedLetters, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.LinkedLetters, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LinkedLetters, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.OrginalLetter, new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.OrginalLetter, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.OrginalLetter, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.BoxNumber, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.BoxNumber, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.BoxNumber, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.ArchiveCode, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.ArchiveCode, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.ArchiveCode, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.Organ, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            <select id="Organ" name="Organ" class="form-control" required="required">
+                                @foreach (var item in organs)
+                                {
+                                    <option value="@item.ID" @(item.Name=="شهرداری" ? "selected" : "" )>@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        @Html.LabelFor(model => model.SendDate, htmlAttributes: new { @class = "control-label col-lg-4 col-md-4 col-sm-12 col-12" })
+                        <div class="col-lg-8 col-md-8 col-sm-12 col-12">
+                            @Html.EditorFor(model => model.SendDate, new { htmlAttributes = new { @class = "form-control text-box allowDatePicker", autocomplete = "off" } })
+                            @Html.ValidationMessageFor(model => model.SendDate, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+            <div class="row form-group">
+                @Html.Label("توضیحات / متن", new { @class = "control-label col-lg-2 col-md-2 col-sm-6 col-12" })
+                <div class="col-lg-10 col-md-10 col-sm-6 col-12">
+                    @Html.EditorFor(model => model.Comment, new { htmlAttributes = new { @class = "form-control SampleEditor" } })
+                    @Html.ValidationMessageFor(model => model.Comment, null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row form-group">
+                @Html.Label("یادداشت", new { @class = "control-label col-lg-2 col-md-2 col-sm-6 col-12" })
+                <div class="col-lg-10 col-md-10 col-sm-6 col-12">
+                    <input type="text" name="Note" class="form-control text-box" style="width:100% !important;" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="error-red-color" id="errorMessage"></label>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+                    ضمایم
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-6 col-12">
+                    <select id="AttachmentType" name="AttachmentType" class="form-control">
+                        <option value="filesystem">ارسال ضمیمه از روی سیستم</option>
+                        <option value="scanner">دریافت از اسکنر</option>
+                    </select>
+                </div>
+            </div>
+            <div id="ScanBox">
+                <input type="hidden" id="ScanedFile" name="ScanedFile" />
+                <div id="ScannerMessage" class="row form-group">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-12"></div>
+                    <div class="col-lg-10 col-md-10 col-sm-6 col-12">
+                        <p>ارتباط سیستم با اسکنر برقرار نیست</p>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-12"></div>
+                    <div class="col-lg-10 col-md-10 col-sm-6 col-12">
+                        <div class="form-group">
+                            <button type="button" onclick="scanImage();" class="btn btn-primary">اسکن</button>
+                            <button type="button" class="btn btn-success" id="btnpdf">ثبت فایل اسکن</button>
+                        </div>
+                        <span id="ScanedFileSpan"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-12"></div>
+                    <div class="col-lg-10 col-md-10 col-sm-6 col-12">
+                        <div id="selectedFiles" class="row" style="padding: 3px"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="FilesystemBox">
+                <div class="row form-group">
+                    <div class="col-lg-2 col-md-2 col-sm-6 col-12"></div>
+                    <div class="col-lg-10 col-md-10 col-sm-6 col-12">
+                        <a class="btn btn-info" onclick="document.getElementById('inputFile').click(); return false;"> انتخاب فایل ضمیمه</a>
+                        <input type="file" class="hidden" name="file" id="inputFile" value="انتخاب" />
+                        <span></span>
+                        <div id="uploads">
+                        </div>
+                        <span class="btn btn-sm btn-default" id="addNewUpload"><i class="fa fa-plus"></i></span>
+                        <div class="redColor">@ViewBag.ErrorMessage</div>
+                        <br />
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div class="card-footer">
+        <input type="submit" value="ثبت نامه" class="btn btn-success" id="submitLetter">
+    </div>
+   }
+</div>
+<div class="modal fade scandetail" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div style="max-height:1200px;overflow:scroll;">
+                <canvas id="myCanvas" style="max-width:100%;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script src="~/Scripts/scripts.js"></script>
+<script src="~/Plugins/tinymce/tinymce.min.js"></script>
+    <script>
+
+        //$("#Subject").addClass("textBox-overwidth");
+        //$("textarea").css("height", "60px");
+        //$("textarea").css("width", "85%");
+        //if ($("input[name='radioRule']").prop("checked")) {
+        //    $("input[name='oneForce']").prop("checked", true)
+        //    $("input[name='letterType']").val('4');
+        //    if ($("input[name='oneForce']").prop("checked"))
+        //        $("input[name='letterType']").val('4');
+        //    if ($("input[name='twoForce']").prop("checked"))
+        //        $("input[name='letterType']").val('5');
+        //    if ($("input[name='threeForce']").prop("checked"))
+        //        $("input[name='letterType']").val('6');
+        //}
+        //if ($("input[name='radioPlan']").prop("checked")) {
+        //    $("input[name='letterType']").val('2');
+        //}
+        //$("#submitLetter").click(function () {
+        //
+        //    var erroMessage = "";
+        //    if ($("select[name=Organ]").val() == '' || $("select[name=Subject]").val()=='' || $("select[name=OutLetterNumber]").val()=='' || $("select[name=OutLetterDate]").val()=='' || $("select[name=SendDate]").val()=='') {
+        //        if ($("select[name=Organ]").val() == '' || $("select[name=Organ]").val() == undefined)
+        //            erroMessage += 'لطفا سازمان را انتخاب کنید' + '\n';
+        //        if ($("select[name=Subject]").val() == '' || $("select[name=Subject]").val() == undefined)
+        //            erroMessage += 'لطفا موضوع نامه را وارد کنید' + '\n';
+        //        if ($("select[name=OutLetterNumber]").val() == '' || $("select[name=OutLetterNumber]").val() == undefined)
+        //            erroMessage += 'لطفا شماره نامه را وارد کنید' + '\n';
+        //        if ($("select[name=OutLetterDate]").val() == '' || $("select[name=OutLetterDate]").val() == undefined)
+        //            erroMessage += 'لطفا تاریخ نامه را وارد کنید' + '\n';
+        //        if ($("select[name=SendDate]").val() == '' || $("select[name=SendDate]").val() == undefined)
+        //            erroMessage += 'لطفا تاریخ ثبت نامه را وارد کنید' + '\n';
+        //        $("#errorMessage").text(erroMessage);
+        //        $("#errorMessage").html(this.html().replace(/\n/g, '<br/>'));
+        //    }
+        //    else {
+
+        //        $("#letterForm").submit();
+        //    }
+        //})
+
+        $("input[name='oneForce']").click(function () {
+            $("input[name='twoForce']").prop("checked", false);
+            $("input[name='threeForce']").prop("checked", false);
+            $("input[name='letterType']").val('4');
+        });
+        $("input[name='twoForce']").click(function () {
+            $("input[name='oneForce']").prop("checked", false);
+            $("input[name='threeForce']").prop("checked", false);
+            $("input[name='letterType']").val('5');
+        });
+        $("input[name='threeForce']").click(function () {
+            $("input[name='oneForce']").prop("checked", false);
+            $("input[name='twoForce']").prop("checked", false);
+            $("input[name='letterType']").val('6');
+        });
+
+        $("input[name='radioLetter']").click(function () {
+            $("input[name='radioPlan']").prop("checked", false);
+            $("input[name='radioRule']").prop("checked", false);
+            $("input[name='oneForce']").prop("checked", false);
+            $("input[name='twoForce']").prop("checked", false);
+            $("input[name='threeForce']").prop("checked", false);
+            $("input[name='letterType']").val('1');
+            $("#forceDiv").hide();
+        });
+        $("input[name='radioPlan']").click(function () {
+            $("input[name='radioLetter']").prop("checked", false);
+            $("input[name='radioRule']").prop("checked", false);
+            $("input[name='radioPlan']").prop("checked", true);
+            $("input[name='oneForce']").prop("checked", false);
+            $("input[name='twoForce']").prop("checked", false);
+            $("input[name='threeForce']").prop("checked", false);
+            $("input[name='letterType']").val('2');
+            $("#forceDiv").hide();
+        });
+        $("input[name='radioRule']").click(function () {
+            $("input[name='oneForce']").prop("checked", true)
+            $("input[name='letterType']").val('4');
+            $("input[name='radioLetter']").prop("checked", false);
+            $("input[name='radioPlan']").prop("checked", false);
+            $("#forceDiv").toggle();
+        });
+    </script>
+    <script type="text/javascript">
+        function formatDate(timestamp) {
+            var x = new Date(timestamp);
+            var dd = x.getDate();
+            var mm = x.getMonth() + 1;
+            var yy = x.getFullYear();
+            var ss = x.getSeconds();
+            var ms = x.getMilliseconds();
+
+            return yy + "" + mm + "" + dd + "" + ss + "" + ms;
+        }
+
+        $("#btnpdf").on("click", function () {
+            var numItems = $('.selFile').length;
+            if (numItems > 0) {
+                var Name = formatDate(new Date());
+                //var ItemIndex = 0;
+
+                $('#selectedFiles img.selFile').each(function (ItemIndex) {
+                    var imgdata = $(this).attr('src');
+                    ++ItemIndex;
+                    console.log(ItemIndex + " / " + numItems);
+                    var dataString = new FormData();
+                    dataString.append("index", ItemIndex);
+                    dataString.append("blob", imgdata);
+                    dataString.append("name", Name);
+                    dataString.append("allCount", numItems);
+                    console.log("***************");
+                    $.ajax({
+                        url: '/OutLetter/ToPdf',
+                        type: 'POST',
+                        data: dataString,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (resp) {                            
+                            console.log(ItemIndex + " ** " + numItems);
+                            if (resp.pdfname) {
+                                console.log(resp);
+                                $("#ScanedFile").val(resp.pdfname);
+                                $("#ScanedFileSpan").html("فایل مربوطه الصاق شد: " + resp.pdfname);
+                                $("#selectedFiles").html('');
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        var IMGRZ_MAX_WIDTH = 1754;
+        var dataURLToBlob = function (dataURL) {
+            var BASE64_MARKER = ';base64,';
+            if (dataURL.indexOf(BASE64_MARKER) == -1) {
+                var parts = dataURL.split(',');
+                var contentType = parts[0].split(':')[1];
+                var raw = parts[1];
+
+                return new Blob([raw], { type: contentType });
+            }
+            var parts = dataURL.split(BASE64_MARKER);
+            var contentType = parts[0].split(':')[1];
+            var raw = window.atob(parts[1]);
+            var rawLength = raw.length;
+            var uInt8Array = new Uint8Array(rawLength);
+            for (var i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+            return new Blob([uInt8Array], { type: contentType });
+        }
+        function resizeImage(readerEvent, callback) {
+            var image = new Image();
+            image.onload = function (imageEvent) {
+                // Resize the image
+                var canvas = document.createElement('canvas'),
+                    max_size = IMGRZ_MAX_WIDTH,
+                    width = image.width,
+                    height = image.height;
+                if (width > height) {
+                    if (width > max_size) {
+                        height *= max_size / width;
+                        width = max_size;
+                    }
+                } else {
+                    if (height > max_size) {
+                        width *= max_size / height;
+                        height = max_size;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(image, 0, 0, width, height);
+                var dataUrl = canvas.toDataURL('image/jpeg');
+                var resizedImage = dataURLToBlob(dataUrl);
+                callback({
+                    type: "imageResized",
+                    blob: resizedImage,
+                    url: dataUrl
+                });
+            }
+            image.src = readerEvent.target.result;
+        }
+
+        var selDiv = "";
+        var storedFiles = [];
+
+        $(document).ready(function () {
+            selDiv = $("#selectedFiles");
+            $("body").on("click", ".selFile", editFiles);
+        });
+
+        var start = function () {
+            var i = 0;
+            var wsImpl = window.WebSocket || window.MozWebSocket;
+
+            window.ws = new wsImpl('ws://localhost:8181/');
+            ws.onmessage = function (e) {
+                if (typeof e.data === "string") {
+                    //IF Received Data is String
+                }
+                else if (e.data instanceof ArrayBuffer) {
+                    //IF Received Data is ArrayBuffer
+                }
+                else if (e.data instanceof Blob) {
+
+                    i++;
+                    var f = e.data;
+                    f.name = "File" + i;
+                    storedFiles.push(f);
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        //var data = resizebase64(e.target.result, 1000, 1000);
+                        resizeImage(e, function (result) {
+                            var html = "<div class=\"pbox col-sm-2 text-center\" style=\"border: 1px solid #ccc; margin: 5px; padding:5px;\"><img height=\"200px\" width=\"200px\" src=\"" + result.url + "\" data-file='" + f.name + "' class='selFile' title='کلیک جهت نمایش بزرگتر'><div style='margin-top: 5px;'><span class='delPic fa fa-trash-o'></span>" + i + "</div></div>";
+                            selDiv.append(html);
+                        });
+                    }
+                    reader.readAsDataURL(f);
+                }
+            };
+            ws.onopen = function () {
+                //Do whatever u want when connected succesfully
+                $("#ScannerMessage").hide();
+            };
+            ws.onclose = function () {
+                $("#ScannerMessage").show();
+            };
+        }
+        window.onload = start;
+
+        function scanImage() {
+            ws.send("1100");
+        };
+
+        function editFiles(e) {
+            var file = $(this).data("file");
+            for (var i = 0; i < storedFiles.length; i++) {
+                if (storedFiles[i].name === file) {
+                    $('.scandetail').modal('show');
+                    var c = document.getElementById("myCanvas");
+                    var ctx = c.getContext("2d");
+                    var img = new Image();
+                    img.src = window.URL.createObjectURL(storedFiles[i]);
+                    img.onload = function () {
+                        c.width = img.width;
+                        c.height = img.height;
+                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                    }
+                    break;
+                }
+            }
+        };
+
+        AttachmentType($("#AttachmentType").val());
+        $("#AttachmentType").on("change", function () {
+            AttachmentType($(this).val());
+        });
+
+        function AttachmentType(value) {
+            switch (value) {
+                case "filesystem":
+                    $("#FilesystemBox").show();
+                    $("#ScanBox").hide();
+                    break;
+                case "scanner":
+                    $("#ScanBox").show();
+                    $("#FilesystemBox").hide();
+                    break;
+            }
+        }
+
+        $(document).on("click", ".delPic", function () {            
+            $(this).closest('div.pbox').remove();
+            $('#selectedFiles img.selFile').each(function (index) {
+                $(this).next().html("<span class='delPic fa fa-trash-o'></span>" + (++index));
+            });
+        });
+    </script>
+}

@@ -1,0 +1,977 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4C38E5AD-17EF-4EB4-AD1E-EA3D151702C6}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Council.UI</RootNamespace>
+    <AssemblyName>Council.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <Use64BitIISExpress />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BCrypt.Net-Next.StrongName, Version=3.1.3.0, Culture=neutral, PublicKeyToken=1e11be04b6288443, processorArchitecture=MSIL">
+      <HintPath>..\packages\BCrypt.Net-Next.StrongName.3.1.3\lib\net40\BCrypt.Net-Next.StrongName.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Features, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Http.Features.2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Http.Features.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.2.1.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.2.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenPop, Version=2.0.6.1120, Culture=neutral, PublicKeyToken=6bdb97f144b7efc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenPop.NET.2.0.6.1120\lib\net40\OpenPop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\2022_Pakage\02-Business intelligence\5-لوازم خانگی و دکوراسیون\vam30\StimulSoft\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.4.5.0\lib\netstandard2.0\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\2022_Pakage\02-Business intelligence\5-لوازم خانگی و دکوراسیون\vam30\StimulSoft\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\2022_Pakage\02-Business intelligence\5-لوازم خانگی و دکوراسیون\vam30\StimulSoft\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.1\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.2.0.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.2.0.0\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.2.0.0\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.2.0.0\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.2.0.0\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CommissionController.cs" />
+    <Compile Include="Controllers\DraftController.cs" />
+    <Compile Include="Controllers\ECEController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LetterController.cs" />
+    <Compile Include="Controllers\MeetingController.cs" />
+    <Compile Include="Controllers\OrganController.cs" />
+    <Compile Include="Controllers\OutLetterController.cs" />
+    <Compile Include="Controllers\CouncilPeriodController.cs" />
+    <Compile Include="Controllers\PassTestController.cs" />
+    <Compile Include="Controllers\RuleController.cs" />
+    <Compile Include="Controllers\SystemSettingsController.cs" />
+    <Compile Include="CustomAuthentication\CustomAuthorizeAttribute.cs" />
+    <Compile Include="CustomAuthentication\CustomMembership.cs" />
+    <Compile Include="CustomAuthentication\CustomMembershipUser.cs" />
+    <Compile Include="CustomAuthentication\CustomPrincipal.cs" />
+    <Compile Include="CustomAuthentication\CustomRole.cs" />
+    <Compile Include="CustomErrorHandler\CustomErrorHandler.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\PublicHelpers.cs" />
+    <Compile Include="Models\Global Methods.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Startup.cs" />
+    <Compile Include="Web References\SmsService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap-tagsinput-typeahead.css" />
+    <Content Include="Content\bootstrap-tagsinput.css" />
+    <Content Include="Content\ErrorPagesStyle.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\images\bg - Copy.png" />
+    <Content Include="Content\images\logo%24.jpg" />
+    <Content Include="fonts\BDavat.svg" />
+    <Content Include="fonts\BerlinSansFBDemi-Bold.svg" />
+    <Content Include="fonts\BEsfehanBold.svg" />
+    <Content Include="fonts\BNazaninBold.svg" />
+    <Content Include="fonts\BTitrBold.svg" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\MyriadPro-Regular.svg" />
+    <Content Include="fonts\Nazanin.svg" />
+    <Content Include="Images\bg\5326.jpg" />
+    <Content Include="Images\bg\bg-01.jpg" />
+    <Content Include="Images\bg\bg-02.jpg" />
+    <Content Include="Images\Header.jpg" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\logo.png" />
+    <Content Include="Images\logo\636919596568455364-logo.png" />
+    <Content Include="Images\logo\636919596568465517-logo.jpg" />
+    <Content Include="Images\logo\default-login-logo.png" />
+    <Content Include="Images\logo\default-logo.png" />
+    <Content Include="Images\logo\logo.jpg" />
+    <Content Include="Images\mini-logo.png" />
+    <Content Include="Plugins\multiple-select\multiple-select.css" />
+    <Content Include="Plugins\multiple-select\multiple-select.js" />
+    <Content Include="Plugins\r-tab\jquery.scrolling-tabs.min.css" />
+    <Content Include="Plugins\r-tab\jquery.scrolling-tabs.min.js" />
+    <Content Include="Plugins\r-tab\nav.css" />
+    <Content Include="Plugins\tab\cd-icons.svg" />
+    <Content Include="Plugins\tab\main.js" />
+    <Content Include="Plugins\tab\style.css" />
+    <Content Include="Plugins\tinymce\langs\fa_IR.js" />
+    <Content Include="Plugins\tinymce\license.txt" />
+    <Content Include="Plugins\tinymce\plugins\advlist\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\anchor\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\autolink\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\autoresize\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\autosave\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\bbcode\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\charmap\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\codesample\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\code\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\colorpicker\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\contextmenu\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\directionality\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\emoticons\js\emojis.js" />
+    <Content Include="Plugins\tinymce\plugins\emoticons\js\emojis.min.js" />
+    <Content Include="Plugins\tinymce\plugins\emoticons\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\fullpage\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\fullscreen\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\help\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\hr\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\imagetools\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\image\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\importcss\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\insertdatetime\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\legacyoutput\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\link\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\lists\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\media\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\nonbreaking\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\noneditable\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\pagebreak\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\paste\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\preview\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\print\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\quickbars\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\save\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\searchreplace\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\spellchecker\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\tabfocus\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\table\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\template\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\textcolor\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\textpattern\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\toc\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\visualblocks\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\visualchars\plugin.min.js" />
+    <Content Include="Plugins\tinymce\plugins\wordcount\plugin.min.js" />
+    <Content Include="Plugins\tinymce\skins\content\default\content.css" />
+    <Content Include="Plugins\tinymce\skins\content\default\content.min.css" />
+    <Content Include="Plugins\tinymce\skins\content\document\content.css" />
+    <Content Include="Plugins\tinymce\skins\content\document\content.min.css" />
+    <Content Include="Plugins\tinymce\skins\content\writer\content.css" />
+    <Content Include="Plugins\tinymce\skins\content\writer\content.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide-dark\content.inline.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide-dark\content.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide-dark\skin.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide\content.inline.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide\content.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide\content.mobile.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide\skin.min.css" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide\skin.mobile.min.css" />
+    <Content Include="Plugins\tinymce\themes\mobile\theme.min.js" />
+    <Content Include="Plugins\tinymce\themes\silver\theme.min.js" />
+    <Content Include="Plugins\tinymce\tinymce.min.js" />
+    <Content Include="Scripts\Account\EditUser.js" />
+    <Content Include="Scripts\Account\Users.js" />
+    <Content Include="Scripts\coreui.min.js" />
+    <Content Include="Content\images\466.gif" />
+    <Content Include="Content\images\bg.png" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap1.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\images\logo 1.png" />
+    <Content Include="Content\images\logo.jpg" />
+    <Content Include="Content\jquery.idealforms.css" />
+    <Content Include="Content\PrintA4.css" />
+    <Content Include="Content\PrintA5.css" />
+    <Content Include="Content\Print\paper.css" />
+    <Content Include="Content\Print\paper.min.css" />
+    <Content Include="Content\SiteStyle.css" />
+    <Content Include="Content\style.css" />
+    <Content Include="Content\MdBootstrapPersianDateTimePicker\jquery.Bootstrap-PersianDateTimePicker.css" />
+    <Content Include="Content\MdBootstrapPersianDateTimePicker\jquery.Bootstrap-PersianDateTimePicker.min.css" />
+    <Content Include="Content\tinymce\license.txt" />
+    <Content Include="Content\tinymce\plugins\advlist\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\anchor\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\autolink\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\autoresize\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\autosave\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\bbcode\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\charmap\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\code\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\colorpicker\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\contextmenu\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\directionality\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-cool.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-cry.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-embarassed.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-foot-in-mouth.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-frown.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-innocent.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-kiss.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-laughing.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-money-mouth.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-sealed.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-smile.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-surprised.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-tongue-out.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-undecided.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-wink.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\img\smiley-yell.gif" />
+    <Content Include="Content\tinymce\plugins\emoticons\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\example\dialog.html" />
+    <Content Include="Content\tinymce\plugins\example\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\example_dependency\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\fullpage\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\fullscreen\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\hr\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\image\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\importcss\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\insertdatetime\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\layer\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\legacyoutput\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\link\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\lists\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\media\moxieplayer.swf" />
+    <Content Include="Content\tinymce\plugins\media\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\nonbreaking\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\noneditable\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\pagebreak\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\paste\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\preview\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\print\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\save\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\searchreplace\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\spellchecker\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\tabfocus\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\table\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\template\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\textcolor\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\textpattern\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\visualblocks\css\visualblocks.css" />
+    <Content Include="Content\tinymce\plugins\visualblocks\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\visualchars\plugin.min.js" />
+    <Content Include="Content\tinymce\plugins\wordcount\plugin.min.js" />
+    <Content Include="Content\tinymce\skins\lightgray\content.inline.min.css" />
+    <Content Include="Content\tinymce\skins\lightgray\content.min.css" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce-small.svg" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce.svg" />
+    <Content Include="Content\tinymce\skins\lightgray\img\anchor.gif" />
+    <Content Include="Content\tinymce\skins\lightgray\img\loader.gif" />
+    <Content Include="Content\tinymce\skins\lightgray\img\object.gif" />
+    <Content Include="Content\tinymce\skins\lightgray\img\trans.gif" />
+    <Content Include="Content\tinymce\skins\lightgray\skin.ie7.min.css" />
+    <Content Include="Content\tinymce\skins\lightgray\skin.min.css" />
+    <Content Include="Content\tinymce\themes\modern\theme.min.js" />
+    <Content Include="Content\tinymce\tinymce.min.js" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\new\Yekan.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="fonts\new\Yekan.eot" />
+    <Content Include="fonts\new\Yekan.ttf" />
+    <Content Include="fonts\new\Yekan.woff" />
+    <Content Include="Content\tinymce\langs\readme.md" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce-small.ttf" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce-small.woff" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce.eot" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce.ttf" />
+    <Content Include="Content\tinymce\skins\lightgray\fonts\tinymce.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-tagsinput.less" />
+    <None Include="ECE_Receipt_ver1.01.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ECE_Send_ver1.01.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="ECE_Send_ver1.01.xsx">
+      <DependentUpon>ECE_Send_ver1.01.xsd</DependentUpon>
+    </Content>
+    <Content Include="fonts\B Yekan.eot" />
+    <Content Include="fonts\B Yekan.ttf" />
+    <Content Include="fonts\B Yekan.woff" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="Plugins\tinymce\langs\readme.md" />
+    <Content Include="Plugins\tinymce\skins\ui\oxide\fonts\tinymce-mobile.woff" />
+    <Content Include="Council Document\Help.docx" />
+    <Content Include="fonts\vazir\12beb453179c57feddae7668ffc538b64826e0625c15ceed78201c2f23caeede.eot" />
+    <Content Include="fonts\vazir\137d800f7c13f14fb4a93d093431f5ce46e16b0951f30aa922e06bba3d050301.eot" />
+    <Content Include="fonts\vazir\231cbd4cf3fbe5cb6d3f7ed98811fb30fce694173131f04c53ef87ca2b4dbad8.woff" />
+    <Content Include="fonts\vazir\3a532e22ef144a4176cd7e81476686bf15c97fd225d409835ee3a7b971e44917.woff" />
+    <Content Include="fonts\vazir\3f4c5ecf1c841b827c981e532b627013643b31389a3931bdd8eade19a248eb12.ttf" />
+    <Content Include="fonts\vazir\87c70175ae1b0d6a9ba4d7e4eabe69ad4380c7ecc8380c63641ed7b27332dcbf.ttf" />
+    <Content Include="Scripts\bootstrap-tagsinput-angular.js" />
+    <Content Include="Scripts\bootstrap-tagsinput-angular.min.js" />
+    <Content Include="Scripts\bootstrap-tagsinput.js" />
+    <Content Include="Scripts\bootstrap-tagsinput.min.js" />
+    <Content Include="Scripts\bootstrap-tagsinput.min.js.map" />
+    <Content Include="Scripts\bootstrap-tagsinput-angular.min.js.map" />
+    <Content Include="fonts\BerlinSansFBDemi-Bold.eot" />
+    <Content Include="fonts\BerlinSansFBDemi-Bold.ttf" />
+    <Content Include="fonts\BerlinSansFBDemi-Bold.woff" />
+    <Content Include="fonts\BerlinSansFBDemi-Bold.woff2" />
+    <Content Include="fonts\BEsfehanBold.ttf" />
+    <Content Include="fonts\BEsfehanBold.woff" />
+    <Content Include="fonts\BEsfhnBd_2.eot" />
+    <Content Include="fonts\BEsfhnBd_2.woff2" />
+    <Content Include="fonts\BNazaninBold.ttf" />
+    <Content Include="fonts\BNazaninBold.woff" />
+    <Content Include="fonts\BNaznnBd_3.eot" />
+    <Content Include="fonts\BNaznnBd_3.woff2" />
+    <Content Include="fonts\BTitrBd_3.eot" />
+    <Content Include="fonts\BTitrBd_3.woff2" />
+    <Content Include="fonts\BTitrBold.ttf" />
+    <Content Include="fonts\BTitrBold.woff" />
+    <Content Include="fonts\MyriadPro-Regular.eot" />
+    <Content Include="fonts\MyriadPro-Regular.ttf" />
+    <Content Include="fonts\MyriadPro-Regular.woff" />
+    <Content Include="fonts\MyriadPro-Regular.woff2" />
+    <Content Include="fonts\BTitrBold.eot" />
+    <Content Include="fonts\BTitrBold.woff2" />
+    <Content Include="fonts\Nazanin.eot" />
+    <Content Include="fonts\Nazanin.ttf" />
+    <Content Include="fonts\Nazanin.woff" />
+    <Content Include="fonts\Nazanin.woff2" />
+    <Content Include="fonts\BDavat.eot" />
+    <Content Include="fonts\BDavat.ttf" />
+    <Content Include="fonts\BDavat.woff" />
+    <Content Include="fonts\BDavat.woff2" />
+    <None Include="Properties\PublishProfiles\Cuncil.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\allPage.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\ECE\GetECE.js" />
+    <Content Include="Scripts\Home\CommisionVoted.js" />
+    <Content Include="Scripts\Home\CouncilVoted.js" />
+    <Content Include="Scripts\Home\index.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.css" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Scripts\jquery-ui.min.css" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.idealforms.js" />
+    <Content Include="Scripts\jquery.idealforms.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\MdBootstrapPersianDateTimePicker\calendar.js" />
+    <Content Include="Scripts\MdBootstrapPersianDateTimePicker\calendar.min.js" />
+    <Content Include="Scripts\MdBootstrapPersianDateTimePicker\jquery.Bootstrap-PersianDateTimePicker.js" />
+    <Content Include="Scripts\MdBootstrapPersianDateTimePicker\jquery.Bootstrap-PersianDateTimePicker.min.js" />
+    <Content Include="Scripts\Meeting\CreateInviteLetter.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\numtoword.js" />
+    <Content Include="Scripts\OutLetter\SendOutLetter&amp;EditOutLetter.js" />
+    <Content Include="Scripts\OutLetter\ShowOutLetters.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\responsive-tabs.js" />
+    <Content Include="Scripts\scripts.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="StimulSoftReport\Localization\fa.xml" />
+    <Content Include="Upload\Letters\201510\635818815500607454.jpg" />
+    <Content Include="Upload\Letters\201510\635818818849646385.jpg" />
+    <Content Include="Upload\Letters\201510\635818819220447850.jpg" />
+    <Content Include="Upload\Letters\201510\635818820314351905.PNG" />
+    <Content Include="Upload\Letters\201511\635840440524006948.png" />
+    <Content Include="Upload\Letters\201512\63584909996334812561.png" />
+    <Content Include="Upload\Letters\201512\63584909996336813142.png" />
+    <Content Include="Upload\Letters\201512\63584909996336813156.png" />
+    <Content Include="Upload\Letters\201710\Images\63644196653242326878.png" />
+    <Content Include="Upload\Letters\201710\Thumbs\63644196653242326878_thumb.png" />
+    <Content Include="Upload\Letters\201711\Images\63645735057062396433.png" />
+    <Content Include="Upload\Letters\201711\Images\63645739228057308856.png" />
+    <Content Include="Upload\Letters\201711\Images\63645741068199624087.jpg" />
+    <Content Include="Upload\Letters\201711\Images\63645742354643156932.png" />
+    <Content Include="Upload\Letters\201711\Images\63646251320468244330.png" />
+    <Content Include="Upload\Letters\201711\Images\63646251381134417873.png" />
+    <Content Include="Upload\Letters\201711\Images\63646251753662053360.png" />
+    <Content Include="Upload\Letters\201711\Images\63646252018002493726.png" />
+    <Content Include="Upload\Letters\201711\Images\63646252144131026879.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63645735057062396433_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63645739228057308856_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63645741068199624087_thumb.jpg" />
+    <Content Include="Upload\Letters\201711\Thumbs\63645742354643156932_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63646251320468244330_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63646251381134417873_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63646251753662053360_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63646252018002493726_thumb.png" />
+    <Content Include="Upload\Letters\201711\Thumbs\63646252144131026879_thumb.png" />
+    <Content Include="Upload\Letters\20181\Images\63651088812687694912.png" />
+    <Content Include="Upload\Letters\20181\Images\63651265335065745031.png" />
+    <Content Include="Upload\Letters\20181\Images\63651434831300766269.png" />
+    <Content Include="Upload\Letters\20181\Images\63652321727584538558.png" />
+    <Content Include="Upload\Letters\20181\Thumbs\63651088812687694912_thumb.png" />
+    <Content Include="Upload\Letters\20182\Images\63653624974269064043.png" />
+    <Content Include="Upload\Letters\20194\Images\63690758840338934959.png" />
+    <Content Include="Upload\Letters\20194\Images\63690765745998516313.png" />
+    <Content Include="Upload\OutLetter\201510\635818816637421967.PNG" />
+    <Content Include="Upload\OutLetter\201510\635818818213792601.PNG" />
+    <Content Include="Upload\OutLetter\201510\635818818689510174.PNG" />
+    <Content Include="Upload\OutLetter\201511\635840440376609570.png" />
+    <Content Include="Upload\OutLetter\201512\63584909969166664594.jpg" />
+    <Content Include="Upload\OutLetter\201512\63584909969168665110.jpg" />
+    <Content Include="Upload\OutLetter\201512\63584909969168665181.jpg" />
+    <Content Include="Upload\OutLetter\20164\63597002446065966484.jpg" />
+    <Content Include="Upload\OutLetter\20164\63597002948681935312.jpg" />
+    <Content Include="Upload\OutLetter\20165\63598842317820291570.jpg" />
+    <Content Include="Upload\OutLetter\20165\63598993612817231175.jpg" />
+    <Content Include="Upload\OutLetter\20165\63598993780458800413.jpg" />
+    <Content Include="Upload\OutLetter\20165\63598993780461803934.jpg" />
+    <Content Include="Upload\OutLetter\20165\63598993894808250395.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599004343815821133.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599004475050610821.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599004590251355451.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599004987527633496.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599005059654708011.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599005097592140492.png" />
+    <Content Include="Upload\OutLetter\20165\63599005354750519770.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599005726497392478.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599006076456277924.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599006092406185869.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599006143154183314.jpg" />
+    <Content Include="Upload\OutLetter\20165\63599006208983906321.jpg" />
+    <Content Include="Upload\OutLetter\201710\Images\63644196544319763144.png" />
+    <Content Include="Upload\OutLetter\201710\Images\63644196544565992177.png" />
+    <Content Include="Upload\OutLetter\201710\Images\63644196606262767496.png" />
+    <Content Include="Upload\OutLetter\201710\Images\63644196606266771038.png" />
+    <Content Include="Upload\OutLetter\201710\Thumbs\63644196544319763144_thumb.png" />
+    <Content Include="Upload\OutLetter\201710\Thumbs\63644196544565992177_thumb.png" />
+    <Content Include="Upload\OutLetter\201710\Thumbs\63644196606262767496_thumb.png" />
+    <Content Include="Upload\OutLetter\201710\Thumbs\63644196606266771038_thumb.png" />
+    <Content Include="Upload\OutLetter\201711\Images\63645739192449084162.png" />
+    <Content Include="Upload\OutLetter\201711\Images\63645740080792956230.png" />
+    <Content Include="Upload\OutLetter\201711\Images\63645740080817973420.jpg" />
+    <Content Include="Upload\OutLetter\201711\Images\63645740080931561943.png" />
+    <Content Include="Upload\OutLetter\201711\Images\63645742268526735336.jpg" />
+    <Content Include="Upload\OutLetter\201711\Images\63645742268542746537.jpg" />
+    <Content Include="Upload\OutLetter\201711\Thumbs\63645739192449084162_thumb.png" />
+    <Content Include="Upload\OutLetter\201711\Thumbs\63645740080792956230_thumb.png" />
+    <Content Include="Upload\OutLetter\201711\Thumbs\63645740080817973420_thumb.jpg" />
+    <Content Include="Upload\OutLetter\201711\Thumbs\63645740080931561943_thumb.png" />
+    <Content Include="Upload\OutLetter\201711\Thumbs\63645742268526735336_thumb.jpg" />
+    <Content Include="Upload\OutLetter\201711\Thumbs\63645742268542746537_thumb.jpg" />
+    <Content Include="Upload\OutLetter\20181\Images\63651004508034165584.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651088703717563510.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651109948673325158.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651110007951774482.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651110664835920386.mp3" />
+    <Content Include="Upload\OutLetter\20181\Images\63651110817633306713.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651110893010208629.mp3" />
+    <Content Include="Upload\OutLetter\20181\Images\63651111112086800269.mp3" />
+    <Content Include="Upload\OutLetter\20181\Images\63651119575680210646.txt" />
+    <Content Include="Upload\OutLetter\20181\Images\63651119602149013578.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651434831200194825.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651533637460656498.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651534033520590251.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63651702226793453159.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63652313895320739750.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63652314135011637744.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63652315855201080566.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63652321678058995455.png" />
+    <Content Include="Upload\OutLetter\20181\Images\63652321727136577518.png" />
+    <Content Include="Upload\OutLetter\20181\Thumbs\63651004508034165584_thumb.png" />
+    <Content Include="Upload\OutLetter\20181\Thumbs\63651088703717563510_thumb.png" />
+    <Content Include="Upload\OutLetter\20181\Thumbs\63651109948673325158_thumb.png" />
+    <Content Include="Upload\OutLetter\20181\Thumbs\63651110007951774482_thumb.png" />
+    <Content Include="Upload\OutLetter\20181\Thumbs\63651110817633306713_thumb.png" />
+    <Content Include="Upload\OutLetter\20181\Thumbs\63651119602149013578_thumb.png" />
+    <Content Include="Upload\OutLetter\20182\Images\63653269010973278688.png" />
+    <Content Include="Upload\OutLetter\20182\Images\63653624974233280989.png" />
+    <Content Include="Upload\OutLetter\20182\Images\63655343087096144245.png" />
+    <Content Include="Upload\OutLetter\20192\Images\63686177176967662333.jpg" />
+    <Content Include="Upload\OutLetter\20192\Images\63686185195133607651.jpg" />
+    <Content Include="Upload\OutLetter\20192\Images\63686185195195110587.jpg" />
+    <Content Include="Upload\OutLetter\20193\Images\63687807997582434592.png" />
+    <Content Include="Upload\OutLetter\20194\Images\63690159889925006220.png" />
+    <Content Include="Upload\OutLetter\20194\Images\63690162124214490431.png" />
+    <Content Include="Upload\OutLetter\20194\Images\63690758777125244125.txt" />
+    <Content Include="Upload\OutLetter\20194\Images\63690758840325922478.png" />
+    <Content Include="Upload\OutLetter\20194\Images\63690764051871524297.jpg" />
+    <Content Include="Upload\OutLetter\20194\Images\63690765306998528437.png" />
+    <Content Include="Upload\OutLetter\20194\Images\63690765691455818296.png" />
+    <Content Include="Upload\Signature\201512\635847298163681903.png" />
+    <Content Include="Upload\Signature\201710\Images\63643141917120304984.jpg" />
+    <Content Include="Upload\Signature\201710\Images\63643149513406041532.jpg" />
+    <Content Include="Upload\Signature\201710\Images\63643164607741662980.png" />
+    <Content Include="Upload\Signature\201710\Thumbs\63643141917120304984_thumb.jpg" />
+    <Content Include="Upload\Signature\201710\Thumbs\63643149513406041532_thumb.jpg" />
+    <Content Include="Upload\Signature\201710\Thumbs\63643164607741662980_thumb.png" />
+    <Content Include="Upload\XML\20181\63650509233559102825.xml" />
+    <Content Include="Plugins\multiple-select\multiple-select.png" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Manage.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Account\Users.cshtml" />
+    <Content Include="Views\Account\EditUser.cshtml" />
+    <Content Include="Views\Commission\Index.cshtml" />
+    <Content Include="Views\Commission\Edit.cshtml" />
+    <Content Include="Views\OutLetter\ShowOutLetters.cshtml" />
+    <Content Include="Views\OutLetter\SendOutLetter.cshtml" />
+    <Content Include="Views\OutLetter\ReciveOutLetter.cshtml" />
+    <Content Include="Views\Letter\Index.cshtml" />
+    <Content Include="Views\Letter\Display.cshtml" />
+    <Content Include="Views\Letter\LetterItem.cshtml" />
+    <Content Include="Views\OutLetter\FlowOutLetter.cshtml" />
+    <Content Include="Views\Letter\ReadyForCouncil.cshtml" />
+    <Content Include="Views\Letter\Voting.cshtml" />
+    <Content Include="Views\Letter\MeetingResult.cshtml" />
+    <Content Include="Views\Home\DefaultStatements.cshtml" />
+    <Content Include="Views\Meeting\CreateMeeting.cshtml" />
+    <Content Include="Views\Meeting\Index.cshtml" />
+    <Content Include="Views\Meeting\MeetingDetails.cshtml" />
+    <Content Include="Views\Letter\Search.cshtml" />
+    <Content Include="Views\Meeting\Search.cshtml" />
+    <Content Include="Views\OutLetter\Search.cshtml" />
+    <Content Include="Views\OutLetter\Print.cshtml" />
+    <Content Include="Views\OutLetter\EditSendLetter.cshtml" />
+    <Content Include="Views\OutLetter\EditReciveLetter.cshtml" />
+    <Content Include="Views\OutLetter\DisplaySendLetter.cshtml" />
+    <Content Include="Views\OutLetter\DisplayReciveLetter.cshtml" />
+    <Content Include="Views\Letter\LetterItemTest.cshtml" />
+    <Content Include="Views\Letter\_ReferalLetter.cshtml" />
+    <Content Include="Views\Letter\_SendToMembers.cshtml" />
+    <Content Include="Views\Letter\_SendToCommission.cshtml" />
+    <Content Include="Views\Letter\_SendToBoss.cshtml" />
+    <Content Include="Views\Letter\_SendToCommissionMembers.cshtml" />
+    <Content Include="Views\Letter\CommissionReadyForCouncil.cshtml" />
+    <Content Include="Views\Letter\CommissionVoting.cshtml" />
+    <Content Include="Views\Letter\_OutLetterOfLetterItem.cshtml" />
+    <Content Include="Views\OutLetter\DeleteOutLetter.cshtml" />
+    <Content Include="Views\Home\_NewLetterPartial.cshtml" />
+    <Content Include="Views\Home\_LastCommisionPartial.cshtml" />
+    <Content Include="Views\Home\_LastOpinionPartial.cshtml" />
+    <Content Include="Views\Home\SearchResult.cshtml" />
+    <Content Include="Views\Letter\_ExtraAllLetters.cshtml" />
+    <Content Include="Views\Letter\_ArchivedLetters.cshtml" />
+    <Content Include="Views\Letter\_RemovedLetters.cshtml" />
+    <Content Include="Views\Letter\_OutLetters.cshtml" />
+    <Content Include="Views\Letter\_ForCouncilLetters.cshtml" />
+    <Content Include="Views\OutLetter\_RecievedOutletter.cshtml" />
+    <Content Include="Views\OutLetter\_ArchivedOutLetter.cshtml" />
+    <Content Include="Views\OutLetter\_RemovedOutLetter.cshtml" />
+    <Content Include="Views\OutLetter\_SendedOutLetter.cshtml" />
+    <Content Include="Views\CouncilPeriod\Index.cshtml" />
+    <Content Include="Views\Home\EmptySearchResult.cshtml" />
+    <Content Include="Views\Rule\Index.cshtml" />
+    <Content Include="Views\Rule\_ShowRuleLetter.cshtml" />
+    <Content Include="Views\Account\RetNotAuthPage.cshtml" />
+    <Content Include="Views\Organ\Index.cshtml" />
+    <Content Include="Views\OutLetter\_LawOutLetter.cshtml" />
+    <Content Include="Views\OutLetter\_PlanLawsOutletters.cshtml" />
+    <Content Include="Views\OutLetter\ShowPlanLawsLetters.cshtml" />
+    <Content Include="Views\OutLetter\ShowLaws.cshtml" />
+    <Content Include="Views\OutLetter\SearchLawLetter.cshtml" />
+    <Content Include="Views\OutLetter\SearchPlanLetter.cshtml" />
+    <Content Include="Views\OutLetter\SendOutLetterPrintA4_old.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\OutLetter\RecievedOutLetterPrint.cshtml" />
+    <Content Include="Views\OutLetter\_NoteOutLetter.cshtml" />
+    <Content Include="Views\Letter\_NoteLetter.cshtml" />
+    <Content Include="Views\Meeting\CreateSession.cshtml" />
+    <Content Include="Views\Meeting\CreateInviteLetter.cshtml" />
+    <Content Include="Views\Meeting\InvitePrint.cshtml" />
+    <Content Include="Views\Rule\ShowRuleLetter.cshtml" />
+    <Content Include="Views\Account\OnlineUsers.cshtml" />
+    <Content Include="Views\Rule\Test.cshtml" />
+    <Content Include="Views\Rule\EditRuleLetter.cshtml" />
+    <Content Include="Views\Rule\CommisionRules.cshtml" />
+    <Content Include="Views\Rule\_ShowCommisionRuleLetter.cshtml" />
+    <Content Include="Views\Rule\ShowCommisionRuleLetter.cshtml" />
+    <Content Include="Views\Rule\EditCommisionRuleLetter.cshtml" />
+    <Content Include="Views\Meeting\FinalMeetingPrint.cshtml" />
+    <Content Include="Views\Meeting\FinalMeetingEdit.cshtml" />
+    <Content Include="Views\Letter\_OutOfReadyForCouncil.cshtml" />
+    <Content Include="Views\Draft\Create.cshtml" />
+    <Content Include="Views\Draft\Index.cshtml" />
+    <Content Include="Views\Draft\Display.cshtml" />
+    <Content Include="Views\Home\NewLetters.cshtml" />
+    <Content Include="Views\Home\CommisionVoted.cshtml" />
+    <Content Include="Views\Home\CouncilVoted.cshtml" />
+    <Content Include="Views\Home\_LastMyLettersPrtial.cshtml" />
+    <Content Include="Views\Home\_LastMyReadyForCouncilPartial.cshtml" />
+    <Content Include="Views\Home\_LastAllowForVotePartial.cshtml" />
+    <Content Include="Views\Home\_LastMyReadyForVotePartial.cshtml" />
+    <Content Include="Views\Home\_LastMyResultPrtial.cshtml" />
+    <Content Include="Views\OutLetter\_SearchPlanOrganLetter.cshtml" />
+    <Content Include="Views\ECE\Index.cshtml" />
+    <Content Include="Views\ECE\Details.cshtml" />
+    <Content Include="Views\ECE\_ECETable.cshtml" />
+    <Content Include="Upload\Letters\20181\Images\63651179840047815117.pdf" />
+    <Content Include="Upload\Letters\20181\Images\63651180074597475843.pdf" />
+    <Content Include="Upload\Letters\20181\Images\63651264798391408021.docx" />
+    <Content Include="Upload\Letters\20181\Images\63651265335057753768.pdf" />
+    <Content Include="Upload\Letters\20182\Images\63655343206906103012.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651116046413865779.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651119874401808985.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651178361622447589.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651178361718878140.docx" />
+    <Content Include="Upload\OutLetter\20181\Images\63651178908797886559.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651179839947164220.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651180049035948329.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651264795640606895.docx" />
+    <Content Include="Upload\OutLetter\20181\Images\63651265249795833345.pdf" />
+    <Content Include="Upload\OutLetter\20181\Images\63651265249827095261.docx" />
+    <Content Include="Upload\OutLetter\20181\Images\63651265334974492747.pdf" />
+    <Content Include="Upload\OutLetter\20182\Images\63653624931888302715.pdf" />
+    <Content Include="Upload\OutLetter\20182\Images\63655343206805838884.pdf" />
+    <Content Include="Views\PassTest\Index.cshtml" />
+    <Content Include="Views\Error\AccessDenied.cshtml" />
+    <Content Include="Views\Error\BadRequest.cshtml" />
+    <Content Include="Views\Error\NotFound.cshtml" />
+    <Content Include="Views\Error\InternalServerError.cshtml" />
+    <Content Include="Views\Organ\Delete.cshtml" />
+    <Content Include="Views\SystemSettings\Index.cshtml" />
+    <Content Include="Views\SystemSettings\Edit.cshtml" />
+    <Content Include="Views\Rule\CouncilRule.cshtml" />
+    <Content Include="Views\Rule\_GetCouncilRule.cshtml" />
+    <Content Include="Views\Rule\ShowCommisionRules.cshtml" />
+    <Content Include="Views\Rule\_ShowCommisionRule.cshtml" />
+    <Content Include="Views\Commission\CommissionMembers.cshtml" />
+    <Content Include="Views\Home\_LastMyReadyForCommisionPartial.cshtml" />
+    <Content Include="Views\Meeting\FinalApproved.cshtml" />
+    <Content Include="Views\Home\Print.cshtml" />
+    <Content Include="StimulSoftReport\LetterA5.mrt" />
+    <Content Include="StimulSoftReport\LetterHeaderA4.mrt" />
+    <Content Include="StimulSoftReport\LetterHeaderA5.mrt" />
+    <Content Include="StimulSoftReport\LetterA4.mrt" />
+    <Content Include="StimulSoftReport\RecivedLetter.mrt" />
+    <None Include="Views\Home\_LastMyOutLettersPrtial.cshtml" />
+    <Content Include="Views\Home\_NewOutLetterPartial.cshtml" />
+    <Content Include="Views\OutLetter\SendOutLetterPrintA5.cshtml" />
+    <Content Include="Views\OutLetter\SendOutLetterPrintA5Header.cshtml" />
+    <Content Include="Views\OutLetter\SendOutLetterPrintA4Header.cshtml" />
+    <Content Include="Views\OutLetter\SendOutLetterPrintA4.cshtml" />
+    <None Include="Web References\SmsService\index.wsdl" />
+    <Content Include="Web References\SmsService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <None Include="XMLSchema1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Content\Login\" />
+    <Folder Include="ScTemp\" />
+    <Folder Include="Upload\OutLetters\201512\" />
+    <Folder Include="Upload\OutLetter\20226\" />
+    <Folder Include="Upload\Signature\20179\Images\" />
+    <Folder Include="Upload\Signature\20179\Thumbs\" />
+    <Folder Include="Views\Law\" />
+    <Folder Include="Views\Plan\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Council.Core\Council.Core.csproj">
+      <Project>{6916eda1-cf48-4f9c-bf63-109c9205f436}</Project>
+      <Name>Council.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Council.Data\Council.Data.csproj">
+      <Project>{e8c39396-e7f1-4131-8a48-03bb4638869c}</Project>
+      <Name>Council.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Council.Service\Council.Service.csproj">
+      <Project>{93b58139-e313-4988-bae2-7a54bbac6a72}</Project>
+      <Name>Council.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Council.Utility\Council.Utility.csproj">
+      <Project>{cda4d567-c5ae-49b1-981a-f156bf036257}</Project>
+      <Name>Council.Utility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ECE\ECE.csproj">
+      <Project>{59134df4-00f0-49fc-9752-c5edc7bf3992}</Project>
+      <Name>ECE</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="https://dev.homais.com/services/sms/index.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SmsService\</RelPath>
+      <UpdateFromURL>https://dev.homais.com/services/sms/index.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Council_UI_SmsService_services_sms</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>9375</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:9275/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

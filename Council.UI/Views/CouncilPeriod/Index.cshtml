@@ -1,0 +1,121 @@
+﻿@model Council.Core.Entities.CouncilPeriod
+
+@{
+    var peroids = ViewBag.Periods as List<Council.Core.Entities.CouncilPeriod>;
+}
+
+@{
+    ViewBag.Title = "دوره ها ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header">
+                تعریف دوره جدید فعال
+            </div>
+            @using (Html.BeginForm("Save", "CouncilPeriod", FormMethod.Post, new { id = "PeriodForm" }))
+            {
+        <div class="card-body">
+            @if (TempData["message"] != null)
+            {
+                var message = (Council.Core.Models.ShowMessage)TempData["message"];
+                <div class="alert @message.MessageType"><span class="closebtn">×</span>@message.Message</div>
+            }
+
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <div class="row form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row form-group">
+                @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                    @Html.EditorFor(model => model.Code, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Code, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="row form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description)
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12"></div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                    @Html.CheckBoxFor(model => model.IsActive, htmlAttributes: new { @checked = true })
+                    @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label" })
+                    @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+                <div class="card-footer">
+                    <input type="submit" value="ثبت" class="btn btn-success" />
+                </div>
+              }
+        </div>
+    </div>
+</div>
+
+@if (peroids.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            دوره های موجود
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed table-hover table-striped text-center">
+                    <thead>
+                        <tr>
+                            <td>
+                                کد
+                            </td>
+                            <td>
+                                نام
+                            </td>
+                            <td>
+                                وضعیت
+                            </td>
+                            <td>
+                                توضیحات
+                            </td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in peroids)
+                        {
+                            <tr>
+                                <td>@item.Code</td>
+                                <td>@item.Name</td>
+                                <td>@(item.IsActive ? "فعال" : "غیر فعال")</td>
+                                <td>
+                                    @item.Description
+                                </td>
+                                <td>
+                                    @if (!item.IsActive)
+                                    {
+                                        <a class="btn btn-danger" href="@Url.Action("ChangePeriod", "CouncilPeriod", new { Id = item.ID })" title="ویرایش">
+                                            انتخاب به عنوان دوره جاری
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

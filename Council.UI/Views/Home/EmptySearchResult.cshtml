@@ -1,0 +1,41 @@
+﻿
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+
+@{
+    ViewBag.Title = "جستجو";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="customDiv">
+    <div class="row">
+        <div class="col-lg-8">
+            <h4>به سیستم اتوماسیون و رای گیری شورای شهر ساوه خوش آمدید ! </h4>
+        </div>
+        <div class="col-lg-4" style="direction:ltr">
+            @using (Html.BeginForm("SearchResult", "Home", FormMethod.Post))
+            {
+                <div id="searchDiv">
+                    <input id="searchText" type="text" name="searchTxt" required="required" placeholder="جستجو در سایت">
+                    <button type="submit" class="btn btn-default" style="height: 30px;"><span class='glyphicon glyphicon-search'></span></button>
+                    
+                </div>
+            }
+        </div>
+    </div>
+
+    @*<div class="inline-show">
+
+        </div>*@
+
+</div>
+<div class="card">
+    <div class="card-body">
+        <p>داده ای برای نمایش پیدا نشد</p>
+    </div>
+</div>
+
+
+
+

@@ -1,0 +1,85 @@
+﻿@model Council.Core.Models.LetterItemModel
+@{
+    var outLetterSpecs = Model.Letter.OutLetter;
+}
+@if (Model.Letter.OutLetter != null)
+{
+    var haveHR = false;
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title mb-0">@outLetterSpecs.Subject</h4>
+            <div class="small text-muted">نامه دریافتی میباشد</div>
+        </div>
+        <div class="card-body">
+            <div class="row form-group">
+                <label class="control-label col-lg-2">نوع نامه :</label>
+                <div class="col-lg-10 blueColor">@(outLetterSpecs.Received ? "دریافتی" : "ارسالی")</div>
+            </div>
+            <div class="row form-group">
+                <label class="control-label col-lg-2">شماره نامه ثبت در دبیرخانه :</label>
+                <div class="col-lg-10 blueColor">@Html.DisplayFor(model => model.Letter.OutLetter.OutLetterNumber)</div>
+            </div>
+            <div class="row form-group">
+                <label class="control-label col-lg-2">
+                    @{var reciverOrSender = outLetterSpecs.Received ? outLetterSpecs.Sender : outLetterSpecs.Reciver;}
+                    @(outLetterSpecs.Received ? "ارسال کننده" : "دریافت کننده"):
+                </label> <div class="col-lg-10 blueColor">@reciverOrSender</div>
+            </div>
+            <div class="row form-group">
+                <label class="control-label col-lg-2">
+                    @{var transfereeOrBringer = outLetterSpecs.Received ? outLetterSpecs.Bringer : outLetterSpecs.Transferee;}
+                    @(outLetterSpecs.Received ? "آورنده" : "تحویل گیرنده"):
+                </label> <div class="col-lg-10 blueColor">@transfereeOrBringer</div>
+            </div>
+
+            @if (!String.IsNullOrEmpty(outLetterSpecs.Comment))
+            {
+                <div class="row form-group">
+                    <label class="control-label col-lg-2">موضوع:</label> <div class="col-lg-10 blueColor">@outLetterSpecs.Subject</div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-lg-2">توضیحات:</label> <div class="col-lg-10 blueColor">@(Html.Raw(outLetterSpecs.Comment))</div>
+                </div>
+            }
+            @if (outLetterSpecs.Files != "" || outLetterSpecs.Uploads != null)
+            {
+                haveHR = true;
+                var counter = 1;
+                if (outLetterSpecs.Files != "")
+                {
+                    <a id="attachment" href="@(Url.Content("~" + outLetterSpecs.Files))" target="_blank">
+                        [ <i class="fa fa-file"></i> فایل ضمیمه @counter ]
+                    </a>
+                    counter++;
+                }
+                if (outLetterSpecs.Uploads != null)
+                {
+                    foreach (var item in outLetterSpecs.Uploads)
+                    {
+                        <a href="@(Url.Content("~" + item.FileAddress))" target="_blank">
+
+                            [ <i class="fa fa-file"></i> فایل ضمیمه @counter ]
+                        </a>
+                        counter++;
+                    }
+                }
+            }
+            @if (Model.Letter.Meeting != null || Model.Letter.CommissionMeeting != null)
+            {
+                if (!haveHR)
+                {
+                    <hr />
+                }
+                <br />
+                if (Model.Letter.Meeting != null)
+                {
+                    <a class="btn btn-info" href="@Url.Action("MeetingResult", "Letter", new { letterID = Model.Letter.ID })" title="نمایش">نمایش نتایج رای گیری</a>
+                }
+                if (Model.Letter.CommissionMeeting != null)
+                {
+                    <a class="btn btn-primary" href="@Url.Action("MeetingResult", "Letter", new { letterID = Model.Letter.ID,isCommission=true })" title="نمایش">نمایش نتایج رای گیری کمیسیون</a>
+                }
+            }
+        </div>
+    </div>
+                        }

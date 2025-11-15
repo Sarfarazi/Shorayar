@@ -1,0 +1,59 @@
+﻿@model Council.Core.Models.LetterItemModel
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@{ 
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    var UserID = _User.UserId;
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">ارسال به کمیسیون</h5>
+        @if (Model.Letter.LetterRefrences.Any(lr => lr.SenderAppID == UserID || lr.LetterStatuses.Any(s => s.UserID == UserID && s.LetterStatusForUser)))
+        {
+            using (Html.BeginForm("SendToCommision", "Letter", FormMethod.Post, new { @id = "addLetterRefrenceForm2" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="text" name="letterID" id="letterID" class="hidden" value="@Model.Letter.ID" />
+                <input type="text" name="recivers22" id="recivers22" class="hidden" />
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true)
+                    <div class="row form-group">
+                        <label class="control-label col-md-2" for="Transcript">رونوشت</label>
+                        <div class="col-md-10">
+                            <textarea class="form-control" cols="5" data-val="true" id="Transcript2" name="Transcript"></textarea>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statementsModal2">
+                                ثبت جمله پیشفرض
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-md-2" for="Transcript">انتخاب کمیسیون</label>
+                        <div class="col-md-10">
+                            <select name="CommisionId" class="form-control">
+                                @foreach (var item in Model.Commisions)
+                                {
+                                    <option value="@item.ID">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>                    
+                    <div class="row form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">
+                            <input type="submit" value="ارسال به کمیسیون" class="btn btn-success" />
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+

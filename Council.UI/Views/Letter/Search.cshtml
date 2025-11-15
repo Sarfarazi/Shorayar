@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Council.Core.Entities.Letter>
+@using Council.UI.Helpers;
+@using Microsoft.AspNet.Identity;
+@{
+    var filter = ViewBag.Filter as string; ; ; ;
+    ViewBag.Title = "جستجو :: " + filter;
+}
+<script src="~/Scripts/scripts.js"></script>
+
+<div class="letter searchResults">
+    @if (Model.Count() == 0)
+    {
+        <h4>جستجوی شما نتیجه ای نداشت !</h4>
+    }
+    else
+    {
+        foreach (var item in Model)
+        {
+            <div class="customDiv">
+                <h4><a href="~/Letter/LetterItem?letterID=@item.ID">@item.Title</a></h4>
+                <hr />
+                @if (item.Content!=null && item.Content.Contains(filter))
+                {
+                    var indexOfFilter = item.Content.IndexOf(filter);
+                    var _content = "";
+                    if (indexOfFilter < 300)
+                    {
+                        _content = item.Content;
+                    }
+                    else
+                    {
+                        _content = "..." + item.Content.Substring(indexOfFilter - 200) + "...";
+                    }
+                    @Html.ContentSubstring(_content)
+                }
+                else
+                {
+                    @Html.ContentSubstring(item.Content)
+                }
+                <hr />
+                <div class="row">
+                    <div class="col-md-4">
+                        @Html.GetPersonNameWithAppID(item.LetterRefrences.OrderBy(d => d.CreatedOn).First().SenderAppID)
+                    </div>
+                    <div class="col-md-4">
+                        @Html.GetPersianDate(item.CreatedOn)
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+<script>
+    highlight('@filter');
+</script>

@@ -1,0 +1,166 @@
+﻿@model Council.Core.Entities.Letter
+@using Council.UI.Helpers;
+@{
+    ViewBag.Title = "گردش نامه دریافتی";
+    var uniqueNumber = ViewBag.UniqueNumber;
+    var outLetter = ViewBag.OutLetter as Council.Core.Entities.OutLetter;
+}
+
+<div class="card">
+    <div class="card-header">
+        گردش نامه دریافتی در سازمان
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @id = "letterForm" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <input type="text" name="recivers" id="recivers" class="hidden" />
+            <input type="text" name="outLetterID" value="@outLetter.ID" class="hidden" />
+
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row form-group">
+                        @Html.LabelFor(model => model.LetterNumber, new { @class = "control-label col-lg-2 col-md-2 col-sm-12 col-12" })
+                        <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                            <input class="text-box single-line form-control" data-val="true" name="LetterNumber" id="LetterNumber"  type="text" value="@uniqueNumber" readonly="readonly">
+                            @Html.ValidationMessageFor(model => model.LetterNumber, null, new { @class="text-danger"})
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="row form-group">
+                        @Html.LabelFor(model => model.Title, new { @class = "control-label col-lg-2 col-md-2 col-sm-12 col-12" })
+                        <div class="col-lg-10 col-md-10 col-sm-12 col-12">
+                            <input class="text-box single-line form-control" name="Title" id="Title" type="text" value="@outLetter.Subject">
+                            @Html.ValidationMessageFor(model => model.Title, null, new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-1 col-md-1 col-sm-12 col-12"></div>
+                <div class="col-lg-11 col-md-11 col-sm-12 col-12">
+                    <div class="form-check form-check-inline ml-1">
+                        <input type="radio" value="0" name="SendType" class="form-check-input" checked />
+                        <label class="form-check-label">ارسال برای رئیس  شورا</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input type="radio" value="1" name="SendType" class="form-check-input" />
+                        <label class="form-check-label">ارسال برای نائب رئیس </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-lg-1 col-md-1 col-sm-12 col-12"></div>
+                <div class="col-lg-11 col-md-11 col-sm-12 col-12">
+                    <div class="form-check form-check-inline ml-1">
+                        @Html.EditorFor(model => model.Urgency, new { htmlAttributes = new { @class = "form-check-input" } })
+                        @Html.LabelFor(model => model.Urgency, new { @class = "form-check-label" })
+                        @Html.ValidationMessageFor(model => model.Urgency, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                @Html.Label("متن", new { @class = "control-label col-lg-1 col-md-1 col-sm-12 col-12" })
+                <div class="col-lg-11 col-md-11 col-sm-12 col-12">
+                    @Html.TextAreaFor(model => model.Content , new { @class="SampleEditor"})
+                    @Html.ValidationMessageFor(model => model.Content, null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-horizontal">
+                @*<div class="form-group">
+                    <label class="control-label col-md-2" for="Content">گیرنده ها</label>
+                    <div class="col-md-5">
+                        <table class="table table-bordered table-condensed table-hover table-responsive table-striped" id="reciversTable">
+                            <thead>
+                                <tr>
+                                    <td class="hidden">ID</td>
+                                    <td>نام و نام خانوادگی</td>
+                                    <td>ارسال نامه جهت</td>
+                                </tr>
+                            </thead>
+                            <tbody id="reciversTBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-5">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                            ثبت گیرنده
+                        </button>
+                    </div>
+                </div>*@
+                <div class="row form-group">
+                    <div class="col-lg-1 col-md-1 col-sm-12 col-12"></div>
+                    <div class="col-lg-11 col-md-11 col-sm-12 col-12">
+                        <div>
+                            <a class="btn btn-info" onclick="document.getElementById('inputFile').click(); return false;"> انتخاب فایل ضمیمه</a>
+                            <input type="file" accept="image/png, image/jpeg, image/gif" class="hidden" name="file" id="inputFile" value="انتخاب" />
+                            <span></span>
+                        </div>
+                        <div id="uploads">
+                        </div>
+                        <span class="btn btn-sm btn-default" id="addNewUpload"><i class="fa fa-plus"></i></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-lg-12 text-left">
+                        <input type="submit" value="ارسال " class="btn btn-success" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">انتخاب گیرنده ها</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group left-addon searchInput">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control" placeholder="فیلتر..." id="filterRecivers" />
+                </div>
+                <table class="table-bordered table-condensed table table-hover table-responsive table-striped">
+                    <thead>
+                        <tr>
+                            <td>نام و نام خانوادگی</td>
+                            <td>پست سازمانی</td>
+                            <td>گروه</td>
+                            <td>انتخاب</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Recivers as List<Council.Core.Entities.User>)
+                        {
+                            if (item.IsActive)
+                            {
+                                <tr>
+                                    <td id="@("firstAndLastName"+item.ID)" class="firstAndLastName">@(item.FirstName + " " + item.LastName)</td>
+                                    <td>
+                                        <a id="@item.ID" class="btn btn-primary addReciver">انتخاب</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script src="~/Plugins/tinymce/tinymce.min.js"></script>
+<script src="~/Scripts/scripts.js"></script>
+<script>
+    letterStart();
+</script>
+}
+
+

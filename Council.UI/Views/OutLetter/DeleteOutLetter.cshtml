@@ -1,0 +1,143 @@
+﻿@model Council.Core.Entities.OutLetter
+@{
+    bool hasLetter = (ViewBag.HasLetter as string) == "True";
+    string Id = ViewBag.Id as string;
+
+}
+
+<div class="card">
+    <div class="card-header">
+        حذف
+    </div>
+    <div class="card-body">
+        @if (hasLetter)
+        {
+            <h5>این نامه گردش داده شده و امکان حذف نمیباشد</h5>
+        }
+        else
+        {
+            <h5>آیتم مورد نظر حذف شود؟</h5>
+        }
+        @*@if (Model.Received == true)
+        {
+            <input type="hidden" name="Organ" value="@Model.Organ.ID" />
+        }*@
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <td style="width:150px;">
+                        <strong>موضوع</strong>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.Subject)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>شماره ثبت در دبیرخانه</strong>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.OutLetterNumber)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>تاریخ ثبت در دبیرخانه</strong>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.SendDate)
+                    </td>
+                </tr>
+                @*<tr>
+            <td>
+                @Html.DisplayNameFor(model => model.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Number)
+            </td>
+        </tr>*@
+                <tr>
+                    <td>
+                        @if (Model.Received)
+                        {<strong>شماره نامه وارده</strong>
+
+                        }
+                        else
+                        {
+                            <strong>شماره نامه صادره</strong>
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.RegisterNumber)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @if (Model.Received)
+                        {
+                            <strong>تاریخ نامه وارده</strong>
+                        }
+                        else
+                        {
+                            <strong>تاریخ نامه صادره</strong>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.OutLetterDate)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong> @Html.DisplayNameFor(model => model.LinkedLetters)</strong>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => model.LinkedLetters)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong> @Html.DisplayNameFor(model => model.Organ.Name)</strong>
+                    </td>
+                    <td>
+                        @if (Model.Received == true)
+                        {
+                            @Html.DisplayFor(model => model.Organ.Name);
+                        }
+                        else
+                        {
+                            @ViewBag.OrganList
+                        }
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong> @Html.DisplayNameFor(model => model.Comment)</strong>
+                    </td>
+                    <td>
+                        @Html.Raw(Model.Comment)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        @if (!hasLetter)
+        {
+            using (Html.BeginForm("DoDeleteOutLetter", "OutLetter"))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-actions no-color">
+                    <input type="hidden" value="@Model.ID" name="Id" />
+                    <input type="submit" value="حذف" class="btn btn-danger" />
+                    @Html.ActionLink("بازگشت", "ShowOutLetters", null, new { @class = "btn btn-default" })
+                </div>
+            }
+        }
+        else
+        {
+            @Html.ActionLink("بازگشت", "ShowOutLetters", null, new { @class = "btn btn-primary" })
+        }
+    </div>
+</div>

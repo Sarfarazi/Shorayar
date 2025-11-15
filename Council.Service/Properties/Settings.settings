@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Council.Service.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Council_Service_com_negins_messagingws_SendSMS" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://messagingws.negins.com/sendSMS.asmx</Value>
+    </Setting>
+    <Setting Name="Council_Service_SMSService_services_sms" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">https://dev.homais.com/services/sms/index.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

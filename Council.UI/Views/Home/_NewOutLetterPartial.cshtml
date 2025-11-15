@@ -1,0 +1,155 @@
+﻿@using Council.Core
+@using Council.Core.Enums;
+@using Microsoft.AspNet.Identity;
+@using Council.UI.CustomAuthentication;
+@model List<Council.Core.Entities.OutLetter>
+
+
+@{
+    //var letters = ViewBag.MyLetters as IQueryable<Council.Core.Entities.Letter>;
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    string UserID = _User.UserId;
+    var newLetters = Model.ToList();
+}
+
+
+@if (newLetters.Count > 0)
+{
+
+    <h3>نامه های ارسالی</h3>
+    <table class="table table-bordered table-condensed table-hover table-striped allletters">
+        <thead>
+            <tr>
+                <td class="table-heade-rowNumber">ردیف</td>
+                <td>شماره نامه</td>
+                <td>موضوع</td>
+                <td>وضعیت نامه</td>
+                <td class="third-width">تاریخ نامه</td>
+            </tr>
+        </thead>
+        <tbody class="NewLettersUl">
+            @{var rowNumber = -1;
+                foreach (var item in newLetters.ToList())
+                {
+                 <tr>
+                <td><span id="rowNumber">@(++rowNumber + Convert.ToInt32(ViewBag.RowNumber))</span></td>
+                <td>@(item.OutLetterNumber)</td>
+                <td>
+                    <a href="@Url.Action("LetterItem", "Letter", new { letterID = item.ID })">
+                        @item.Subject
+                    </a>
+                </td>
+                <td>
+                    @if (item.OutLetterStatus == 7)
+                    {
+                        <span> در انتظار تایید و امضا</span>
+                    }
+                    else if (item.OutLetterStatus == 8)
+                    {
+                        <span> عدم تایید و نیاز به اصلاح</span>
+                    }
+
+                </td>
+                <td>@(item.OutLetterDate)</td>
+                <td>
+                <td>
+                    @*<a class="btn btn-default addToTabbtn" title="اضافه کردن به فولدر" id="@item.ID" data-toggle="modal" data-target="#addToTab">
+                    اضافه در فولدر
+                </a>*@
+                    <div class="dropdown drp-action">
+
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            عملیات
+                        </button>
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                @Html.ActionLink("نمایش و تایید", "DisplaySendLetter", "OutLetter", new { letterID = item.ID }, null)
+                            </li>
+                        </ul>
+                    </div>
+                    @*<a class="btn btn-info" onclick="ShowPrint('@item.ID')" href="javascript:void(0)">چاپ</a>*@
+                    @*<a class="btn btn-danger" href="@Url.Action("MarkOutLetterAsRemoved", "Letter", new { outLetterID = item.ID })" title="حذف">
+                    حذف
+                </a>*@
+                </td>
+                </td>
+                @*<td class="text-right">
+                @(item.Urgency ? "[ اضطراری ]" : "")
+                @if (User.IsInRole("Boss"))
+                {
+                    if (item.LetterStatus != LetterStatus.SendToMember && item.LetterRefrences.Any(m => m.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew)))
+                    {
+                        <i class="newLetter">جدید</i>
+                    }
+                }
+                else
+                {
+                    if (item.LetterRefrences.Any(m => m.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew)))
+                    {
+                        <i class="newLetter">جدید</i>
+                    }
+                }
+                <span class="@( item.LetterRefrences.Any(m => m.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew)) ? "isNewLetter" : "" )">
+                    <a href="@Url.Action("LetterItem","Letter", new { letterID = item.ID})">
+                        @item.Title
+                    </a>
+                </span>
+            </td>
+            <td>
+                @switch (item.LetterStatus)
+                {
+                    case LetterStatus.NormalLetter:
+                        break;
+                    case LetterStatus.SendForBoss:
+                        break;
+                    case LetterStatus.SendInvite:
+                        break;
+                    case LetterStatus.Votting:
+                        break;
+                    case LetterStatus.ReadyForVoting:
+                        break;
+                    case LetterStatus.AllowVotting:
+                        break;
+                    case LetterStatus.End:
+                        break;
+                    case LetterStatus.OutOfVotting:
+                        break;
+                    case LetterStatus.SentToCommision:
+                        <span>ارسال شده به رئیس کمیسیون</span>
+                        break;
+                    case LetterStatus.CommissionVoting:
+                        <span>تنظیمات رای گیری کمیسیون</span>
+                        break;
+                    case LetterStatus.CommissionReadyForVoting:
+                        break;
+                    case LetterStatus.CommissionAllowVotting:
+                        break;
+                    case LetterStatus.CommissionEnd:
+                        break;
+                    case LetterStatus.OutOfCommisionVotting:
+                        break;
+                    case LetterStatus.SendToMember:
+                        <span>ارسال شده به اعضای شورا</span>
+                        break;
+                    default:
+                        break;
+                }
+            </td>
+            <td>
+                @(item.OutLetter == null ? "نامه داخلی":"نامه دریافتی")
+                <input id="PageNumber" type="hidden" value="1" />
+                <input id="AllLettersCount" type="hidden" value="@ViewBag.LettersCount" />
+            </td>*@
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+   
+}
+
+
+
+

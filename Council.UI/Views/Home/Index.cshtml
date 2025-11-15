@@ -1,0 +1,491 @@
+﻿@model Council.Core.Models.HomePageViewModel
+@using Microsoft.AspNet.Identity;
+@using Council.Core.Enums;
+@using Council.Core.Statics;
+@using Council.Service.DBServices;
+@using Council.UI.CustomAuthentication;
+ 
+@{
+    CustomPrincipal _User = (CustomPrincipal)HttpContext.Current.User;
+    CommissionServices commService = new CommissionServices();
+    var IsCommisionBoss = commService.All().Any(m => m.CommissionChairman.ID == _User.UserId);
+    var organs = ViewBag.Organs as List<Council.Core.Entities.Organ>;
+}
+<div class="card">
+    <div class="card-body">
+        <div id="TopMenu">
+            <div class="row justify-content-around">
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-12 form-group">
+                        <div class="card">
+                            <div class="card-body process-step">
+                                <a href="/OutLetter/ShowOutLetters" class="btn btn-circle">
+                                    <i class="fa fa-pencil-square-o"></i>
+                                </a>
+                                <p>  دریافتی / ارسالی</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Writer1") || User.IsInRole("Writer2") ||
+                 User.IsInRole("CouncilMember") || User.IsInRole("Manager"))
+                {
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-12 form-group ">
+                        <div class="card">
+                            <div class="card-body process-step">
+                                <a href="/OutLetter/ShowPlanLawsLetters" class="btn btn-circle">
+                                    <i class="fa fa-list-alt"></i>
+                                </a>
+                                <p>لوایح / طرحها</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-12 form-group">
+                        <div class="card">
+                            <div class="card-body process-step">
+                                <a href="/Rule/Index?skip=0&take=50" class="btn btn-circle">
+                                    <i class="fa fa-align-center"></i>
+                                </a>
+                                <p>مصوبات</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Writer1") || User.IsInRole("Writer2") ||
+                 User.IsInRole("CouncilMember") || User.IsInRole("Manager"))
+                {
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-12 form-group ">
+                        <div class="card">
+                            <div class="card-body process-step">
+                                <a href="/Home/CouncilVoted" class="btn btn-circle">
+                                    <i class="fa fa-check-square-o"></i>
+                                </a>
+                                <p>آخرین رای گیری شورا</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="col-lg-2 col-md-3 col-sm-4 col-12 form-group">
+                    <div class="card">
+                        <div class="card-body process-step">
+                            <a class="btn btn-circle" id="refreshPage">
+                                <i class="fa fa-refresh"></i>
+                            </a>
+                            <p>بارگزاری مجدد</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+                @{
+                    var Selected = false;
+                    string NClass = null;
+                    string TClass = string.Empty;
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember"))
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+                    <li role="presentation" class="@NClass">
+                        <a id="MyLettersLink" href="#t1" aria-controls="t1" role="tab" data-toggle="tab">
+                            کارتابل من
+                            <i class="fa fa-inbox"></i>
+                        </a>
+                    </li>
+                }
+
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Writer1") || User.IsInRole("Writer2"))
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+
+                    <li role="presentation" class="@NClass">
+                        <a id="ReadyForCouncilLink" href="#t2" aria-controls="t2" role="tab" data-toggle="tab">
+                            تنظیمات رای گیری شورا
+                            <i class="fa fa-cog"></i>
+                        </a>
+                    </li>
+                }
+                @if (IsCommisionBoss)
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+                    <li role="presentation" class="@NClass">
+                        <a id="ReadyForCommissionLink" href="#t7" aria-controls="t7" role="tab" data-toggle="tab">
+                            تنظیمات رای گیری کمیسیون
+                            <i class="fa fa-cog"></i>
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || IsCommisionBoss)
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+                    <li role="presentation">
+                        <a id="AllowCouncilLink" href="#t3" aria-controls="t3" role="tab" data-toggle="tab">
+                            اجازه رای گیری
+                            <i class="fa fa-check"></i>
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember"))
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+
+                    <li role="presentation" class="@NClass">
+                        <a id="DoCouncilLink" href="#t4" aria-controls="t4" role="tab" data-toggle="tab">
+                            آماده رای گیری
+                            <i class="fa fa-th-large"></i>
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember") || User.IsInRole("Guest"))
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+
+                    <li role="presentation" class="@NClass">
+                        <a id="ShowAllResultLink" href="#t5" aria-controls="t5" role="tab" data-toggle="tab">
+                            نتایج
+                            <i class="fa fa-file-text"></i>
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember") || User.IsInRole("Guest"))
+                {
+                    if (!Selected)
+                    {
+                        NClass = "active";
+                        Selected = true;
+                    }
+                    else
+                    {
+                        NClass = null;
+                    }
+
+                    <li role="presentation" class="@NClass">
+                        <a id="ShowAllRuleLink" href="#t6" aria-controls="t6" role="tab" data-toggle="tab">
+                            مصوبات
+                            <i class="fa fa-file"></i>
+                        </a>
+                    </li>
+                }
+              
+
+            </ul>
+            <div class="tab-content">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="row form-group">
+                            <div class="col-lg-12">
+                                @Html.DropDownList("Organ", new SelectList(organs, "ID", "Name"), " ", new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-lg-12 text-left">
+                                <button id="organSearch" class="btn btn-sm btn-primary " type="submit">فیلتر سازمان</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <form action="~/OutLetter/Search/" method="get">
+                            <div class="search">
+                                <div class="row form-group">
+                                    <div class="col-lg-12">
+                                        <input type="text" class="form-control" id="query" name="filter" placeholder='فیلتر' required>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-lg-12 text-left">
+                                        <button class="btn btn-sm btn-primary" type="submit">جستجو</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember"))
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+                    <div role="tabpanel" class="tab-pane @TClass" id="t1">
+                        @if (User.IsInRole("Boss") || User.IsInRole("BossHelper"))
+                        {
+                            <div id="MyOutLetters">
+                                <div id="MyOutLettersLoader" style="display:none;background-color:white" class="text-center ">
+                                    <img src="~/Content/images/466.gif" />
+                                </div>
+                            </div>
+                        }
+
+                        <div id="MyLetters">
+                            <div id="MyLettersLoader" style="display:none;background-color:white" class="text-center ">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+
+
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Writer1") || User.IsInRole("Writer2"))
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+
+                    <div role="tabpanel" class="tab-pane @TClass" id="t2">
+                        <div id="ReadyForCouncil">
+                            <div id="ReadyForCouncilLoader" style="display:none;background-color:white" class="text-center">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (IsCommisionBoss)
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+
+                    <div role="tabpanel" class="tab-pane @TClass" id="t7">
+                        <div id="ReadyForCommsion">
+                            <div id="ReadyForCommisionLoader" style="display:none;background-color:white" class="text-center">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || IsCommisionBoss)
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+                    <div role="tabpanel" class="tab-pane @TClass" id="t3">
+                        <div id="AllowCouncil">
+                            <div id="AllowCouncilLoader" style="display:none;background-color:white" class="text-center">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember"))
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+
+                    <div role="tabpanel" class="tab-pane @TClass" id="t4">
+                        <div id="DoCouncil">
+                            <div id="DoCouncilLoader" style="display:none;background-color:white" class="text-center">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember") || User.IsInRole("Guest"))
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+
+                    <div role="tabpanel" class="tab-pane @TClass" id="t5">
+                        <div id="ShowAllResult">
+                            <div id="ShowAllResultLoader" style="display:none;background-color:white" class="text-center">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+                    </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("Boss") || User.IsInRole("BossHelper") || User.IsInRole("Manager") || User.IsInRole("Writer1") || User.IsInRole("Writer2") || User.IsInRole("CouncilMember") || User.IsInRole("Guest"))
+                {
+                    if (Selected)
+                    {
+                        TClass = "active";
+                        Selected = false;
+                    }
+                    else
+                    {
+                        TClass = null;
+                    }
+
+                    <div role="tabpanel" class="tab-pane @TClass" id="t6">
+                        <div id="ShowAllRule">
+                            <div id="ShowAllRuleLoader" style="display:none;background-color:white" class="text-center">
+                                <img src="~/Content/images/466.gif" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="emptySessionMessage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">لیست کاربران بدون رای</h4>
+            </div>
+            <div class="modal-body">
+                <h4></h4>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" data-dismiss="modal">بستن</a>
+                <a class="btn btn-success doReadyForCouncil" href="javascript:void(0)">
+                    ادامه
+                </a>
+                <a class="btn btn-success cancelReadyForCouncil" href="javascript:void(0)">
+                    تعریف جلسه جدید
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="VoteUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">لیست کاربران بدون رای</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table-bordered table-condensed table table-hover table-striped notVoteUsr">
+                        <thead>
+                            <tr>
+                                <td>نام و نام خانوادگی</td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                @*<div>
+                    <div>
+                        <label for="imposibleRadio">رای این افراد ممتنع ثبت شود</label>
+                        <input type="radio" id="imposibleRadio" checked="checked" />
+                    </div>
+                    <div>
+                        <label for="agreeRadio">رای این افراد موافق ثبت شود</label>
+                        <input type="radio" id="agreeRadio" value="checked" />
+                    </div>
+                    <div>
+                        <label for="disAgreeRadio">رای این افراد مخالف ثبت شود</label>
+                        <input type="radio" id="disAgreeRadio" value="checked" />
+                    </div>
+                </div>*@
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" data-dismiss="modal">بستن</a>
+                @*<a class="btn btn-success doVote" href="javascript:void(0)">
+            انجام رای گیری
+        </a>*@
+                @*<a class="btn btn-success doVote" href="javascript:void(0)">
+                    اختتام رای گیری
+                </a>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles{
+    <link href="~/Plugins/tab/style.css" rel="stylesheet" />
+    <link href="~/Plugins/r-tab/jquery.scrolling-tabs.min.css" rel="stylesheet" />
+}
+@section scripts{
+    <script src="~/Plugins/tab/main.js"></script>
+    <script src="~/Scripts/Home/index.js"></script>
+    <script src="~/Plugins/r-tab/jquery.scrolling-tabs.min.js"></script>
+}

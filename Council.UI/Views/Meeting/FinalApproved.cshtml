@@ -1,0 +1,25 @@
+﻿@model Council.Core.Models.Final_Approved
+@{
+    ViewBag.Title = "ثبت نهایی";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        ثبت نهایی
+    </div>
+    <div class="card-body">
+        <p>با ثبت نهایی این صورت جلسه، امکان ویرایش بر روی مصوبات و صورت جلسه برداشته می شود. آیا اطمینان دارید؟</p>
+        @using (Html.BeginForm("FinalApproved", "Meeting"))
+        {
+            @Html.HiddenFor(m => m.MeettingID)
+            @Html.AntiForgeryToken()
+
+            <input type="submit" value="ثبت" class="btn btn-sm btn-success" />
+            <a href='@Url.Action("CreateMeeting","Meeting")' class="btn btn-sm btn-primary">
+                بازگشت
+            </a>
+        }
+    </div>
+</div>
+

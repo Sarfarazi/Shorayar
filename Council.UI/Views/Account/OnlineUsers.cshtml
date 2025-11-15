@@ -1,0 +1,129 @@
+﻿@model Council.Core.Entities.User
+
+@{
+
+    ViewBag.Title = "کاربران آنلاین";
+    var users = ViewBag.Users as List<Council.Core.Models.UserAndUserName>;
+}
+
+@if (users.Any())
+{
+    <div class="card">
+        <div class="card-header">
+            کاربران آنلاین
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed table-hover table-responsive table-striped ">
+                    <thead>
+                        <tr>
+                            <td>
+                                نام خانوادگی - نام
+                            </td>
+                            <td>
+                                نام کاربری
+                            </td>
+                            <td>
+                                @Html.DisplayNameFor(model => users.First().Tell)
+                            </td>
+                            <td>
+                                وضعیت
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody class="userTable">
+                        @foreach (var item in users)
+                {
+                            <tr>
+                                <td class="userFirstAndLastName">
+                                    @(item.LastName + "-" + item.FirstName)
+                                    @if (item.IsCouncilBoss)
+                                    { <span class="blueColor">[ رئیس  شورا ]</span>}
+                                    @if (item.IsWriter1)
+                                    { <span class="redColor">[ منشی شورا یک ]</span>}
+                                    @if (item.IsWriter2)
+                                    { <span class="redColor">[ منشی شورا دو ]</span>}
+                                    @if (item.IsOtherCouncilMember)
+                                    { <span class="otherCouncil">[ عضو علی البدل ]</span>}
+                                    @if (item.BossHelper)
+                                    { <span class="orangeColor">[ نائب رئیس  شورا ]</span>}
+                                    @*@if (item.IsSiteManager)
+                            { <span class="blueColor">[ مدیر سایت ]</span>}*@
+                                </td>
+                                <td>
+                                    @item.UserName
+                                </td>
+                                <td>@item.Tell</td>
+                                <td class="userStatusTd">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="greenColor userActive">فعال</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="redColor userDeActive">غیرفعال</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("ChangeOnlineStatus", "Account", new { @class="btn btn-success", userID = item.ID })" title="">
+                                        خروج اضطراری
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+<script>
+    $(document).ready(function () {
+        $('#usersSearch').keyup(function () {
+            var _filter = $(this).val();
+            $('.userFirstAndLastName').each(function (i, element) {
+                if (_filter.length < 1)
+                    $(this).parent().show()
+                else {
+                    if ($(this).html().indexOf(_filter) >= 0)
+                        $(this).parent().show()
+                    else
+                        $(this).parent().hide();
+                }
+
+            });
+        });
+    });
+    $(".userTable tr .userActive").parent().parent()
+    $("#allUser").click(function () {
+        $("#userActive").prop("checked", false);
+        $("#userNoActive").prop("checked", false);
+        $('.userTable tr').each(function (i, element) {
+            $(this).show();
+        });
+    });
+    $("#userActive").click(function () {
+        $("#allUser").prop("checked", false);
+        $("#userNoActive").prop("checked", false);
+        $('.userTable tr .userStatusTd span').each(function (i, element) {
+            if ($(this).hasClass('userActive'))
+                $(this).parent().parent().show()
+            else
+                $(this).parent().parent().hide()
+        });
+        
+    });
+    $("#userNoActive").click(function () {
+        $("#allUser").prop("checked", false);
+        $("#userActive").prop("checked", false);
+        $('.userTable tr .userStatusTd span').each(function (i, element) {
+            if ($(this).hasClass('userDeActive'))
+                $(this).parent().parent().show()
+            else
+                $(this).parent().parent().hide()
+        });
+    });
+</script>

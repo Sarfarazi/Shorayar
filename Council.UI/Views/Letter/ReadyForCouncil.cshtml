@@ -1,0 +1,128 @@
+﻿@model Council.Core.Entities.Meeting
+@{
+    ViewBag.Title = "تنظیمات جهت رای گیری";
+    var uniqueNumber = ViewBag.UniqueNumber;
+    var letterID = ViewBag.LetterID;
+    var users = ViewBag.Users as List<Council.Core.Entities.User>;
+    var meetings = ViewBag.Meetings as List<Council.Core.Entities.Meeting>;
+    var meetingNumber = ViewBag.SessionNumber;
+    
+}
+
+<div class="card">
+    <div class="card-header">
+        توضیحات جلسه
+    </div>
+    <div class="card-body">
+        @{
+            if (meetingNumber != null && meetingNumber != -200)
+            {
+                    using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data", @id = "letterForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true)
+                            <div class="row form-group">
+                                @Html.LabelFor(model => model.MeetingNumber, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" name="MeetingNumber" value="@ViewBag.SessionNumber" disabled="disabled" />
+                                    <input type="hidden" name="MeetingNumber" value="@ViewBag.SessionNumber" />
+                                    @Html.ValidationMessageFor(model => model.MeetingNumber)
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.Label("دستور جلسه", htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    <input type="text" class="form-control" name="Title" value="@ViewBag.LetterTitle" disabled="disabled" />
+                                </div>
+                            </div>
+                            @*<div class="form-group form-group">
+                                @Html.Label("دستور جلسه", htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-8">
+                                    <select  name="meetingId" class="form-control" required="required">
+                                        @foreach (var item in meetings)
+                                        {
+                                            <option value="@item.ID">@item.Subject</option>
+                                        }
+                                    </select>
+                                    @Html.DropDownListFor(m => m.Organ, new SelectList(organs, "ID", "Name"), "", new { @class = "form-control", required = "required" })
+
+                                </div>
+                            </div>*@
+
+                            <div class="row form-group">
+                                @Html.LabelFor(model => model.HiddenVoting, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.CheckBoxFor(m => m.HiddenVoting)
+                                    @Html.ValidationMessageFor(model => model.HiddenVoting)
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                @Html.Label("متن", new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextAreaFor(model => model.Content)
+                                    @Html.ValidationMessageFor(model => model.Content)
+                                </div>
+                            </div>*@
+                            <div class="row form-group">
+                                @Html.Label("افراد", new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EditorFor(model => model.Peoples , new { htmlAttributes = new {@class="form-control SampleEditor" } })
+                                    @Html.ValidationMessageFor(model => model.Peoples , null, new { @class="text-danger"})
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <label class="control-label col-md-2" for="Name">اعضای شورا</label>
+                                <div class="col-md-10" id="usersContetn">
+                                    @foreach (var item in users)
+                                    {
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <span class="blueColor bold"> @(item.FirstName + " " + item.LastName) </span>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <div class="form-check form-check-inline mr-1">
+                                                    <input class="form-check-input" id="@("inline-radio1"+item.ID)" type="radio" name="@item.ID" value="1" checked="checked">
+                                                    <label class="form-check-label" for="@("inline-radio1"+item.ID)">حاضر</label>
+                                                </div>
+                                                <div class="form-check form-check-inline mr-1">
+                                                    <input class="form-check-input" id="@("inline-radio2"+item.ID)" type="radio" name="@item.ID" value="0">
+                                                    <label class="form-check-label" for="@("inline-radio2"+item.ID)">غایب</label>
+                                                </div>
+                                                <div class="form-check form-check-inline mr-1">
+                                                    <input class="form-check-input" id="@("inline-radio3"+item.ID)" type="radio" name="@item.ID" value="2">
+                                                    <label class="form-check-label" for="@("inline-radio3"+item.ID)">مرخصی/ ماموریت</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <input type="text" name="meetingMembers" id="meetingMembers" class="hidden" value="" />
+                            <input type="text" name="letterID" id="letterID" class="hidden" value="@letterID" />
+                            <div class="row form-group">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-10">
+                                    <button class="btn btn-success" id="submitFormbtn">ثبت تنظیمات</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+            }
+            else
+            {
+                <h3>کاربر گرامی !</h3>
+                <h4>جلسه فعال در سیستم وجود ندارد . لطفا جلسه فعال را تعریف کنید</h4>
+                <a href="~/Meeting/CreateSession">تعریف جلسه </a>
+            }
+        }
+    </div>
+</div>
+
+@section scripts{
+<script src="~/Plugins/tinymce/tinymce.min.js"></script>
+<script src="~/Scripts/scripts.js"></script>
+<script>
+    readyFotCouncil();
+</script>
+}

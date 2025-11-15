@@ -1,0 +1,224 @@
+﻿@model Council.Core.Models.POPEmailDetails
+@{
+    ViewBag.Title = "جزییات";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("GetFile", "ECE", FormMethod.Post))
+{
+    <input type="hidden" id="hfMessageId" name="MessageId" />
+    <input type="hidden" id="hfFileId" name="FileId" />
+    <input type="submit" id="btnDownload" value="Download" style="display:none" />
+}
+
+<div class="row">
+    <div class="col-lg-10 offset-lg-1 col-md-10 md-offset-1 col-sm-12 col-12">
+        <div class="card">
+            <div class="card-header">
+                جزییات
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 text-left">
+                        <a href="@Url.Action("Index","ECE")" class="btn btn-sm btn-primary">بازگشت</a>
+                    </div>
+                </div>
+                <fieldset>
+                    <legend>اطلاعات ایمیل</legend>
+                    <div class="row form-group">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">عنوان ایمیل</label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">@Model.Subject</div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">فرستنده</label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">@Html.Raw(Model.From)</div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">آدرس فرستنده</label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">@Model.FromEmail</div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">تاریخ ارسال</label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Council.Utility.DateTimeConvert.DateTimeConvert.PersianNumDateWithHours(Model.DateSent)
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">متن ایمیل</label>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                            @Html.Raw(Model.Body)
+                        </div>
+                    </div>
+                </fieldset>
+
+                @if (Model.Letter != null)
+                {
+                    <div class="cd-tabs js-cd-tabs">
+                        <nav>
+                            <ul class="cd-tabs__navigation js-cd-navigation">
+                                <li><a data-content="LetterInfo" class="cd-selected" href="#LetterInfo"><i class="fa fa-inbox"></i>اطلاعات نامه</a></li>
+                                <li><a data-content="LetterPic" href="#LetterPic"><i class="fa fa-reply"></i>تصاویر</a></li>
+                            </ul> <!-- cd-tabs__navigation -->
+                        </nav>
+                        <ul class="cd-tabs__content js-cd-content">
+                            <li data-content="LetterInfo" class="cd-selected">
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">عنوان نامه</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @Model.Letter.Subject
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">شماره نامه</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @Model.Letter.LetterNo
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">تاریخ نامه</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @Model.Letter.LetterDateTime.Value
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">اولویت</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @Model.Letter.Priority.Name / @Model.Letter.Priority.Code
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">طبقه بندی</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @Model.Letter.Classification.Name / @Model.Letter.Classification.Code
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">نامه های مرتبط</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @foreach (var letter in @Model.Letter.RelatedLetters)
+                                            {
+                                            <ul>
+                                                <li><strong>نوع:</strong> @letter.RelationType</li>
+                                                <li><strong>شماره نامه:</strong> @letter.RelatedLetterNo</li>
+                                                <li><strong>تاریخ نامه:</strong> @letter.RelatedLetterDateTime.Value</li>
+                                                <li>
+                                                    <strong>فرستنده:</strong>
+                                                    <ul>
+                                                        <li><strong>نام سازمان:</strong> @letter.RelatedLetterSender.Organization</li>
+                                                        <li><strong>واحد سازمانی: </strong> @letter.RelatedLetterSender.Department</li>
+                                                        <li><strong>پست سازمانی:</strong> @letter.RelatedLetterSender.Position</li>
+                                                        <li><strong>نام شخص: </strong> @letter.RelatedLetterSender.Name</li>
+                                                        <li><strong>کد: </strong>@letter.RelatedLetterSender.Code</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                            }
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">گیرندگان</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        <ul>
+                                            <li><strong>نوع:</strong> @Model.Letter.Receiver.ReceiveType</li>
+                                            <li><strong>نام سازمان:</strong> @Model.Letter.Receiver.Organization</li>
+                                            <li><strong>واحد سازمانی: </strong> @Model.Letter.Receiver.Department</li>
+                                            <li><strong>پست سازمانی:</strong> @Model.Letter.Receiver.Position</li>
+                                            <li><strong>نام شخص: </strong> @Model.Letter.Receiver.Name</li>
+                                            <li><strong>کد: </strong>@Model.Letter.Receiver.Code</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">سایر گیرندگان</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @foreach (var oreciver in @Model.Letter.OtherReceivers)
+                                            {
+                                            <ul>
+                                                <li><strong>نوع:</strong> @oreciver.ReceiveType</li>
+                                                <li><strong>نام سازمان:</strong> @oreciver.Organization</li>
+                                                <li><strong>واحد سازمانی: </strong> @oreciver.Department</li>
+                                                <li><strong>پست سازمانی:</strong> @oreciver.Position</li>
+                                                <li><strong>نام شخص: </strong> @oreciver.Name</li>
+                                                <li><strong>کد: </strong>@oreciver.Code</li>
+                                            </ul>
+                                            }
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">کلمات کلیدی</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @foreach (var item in Model.Letter.Keywords)
+                                            {
+                                            <span>@item.Value</span>
+                                            }
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="control-label col-lg-3 col-md-3 col-sm-12 col-12">ضمائم</label>
+                                    <div class="col-lg-9 col-md-9 col-sm-12 col-12 email-file">
+                                        @if (Model.Letter.Attachments != null)
+                                            {
+                                            <div>
+                                                @foreach (var file in Model.Letter.Attachments)
+                                                    {
+                                                    <a href="javascript:;" onclick="GetFile(@Model.MessageNumber , @file.FileId)" title="دریافت فایل">
+                                                        <i class="fa fa-paperclip"></i> @file.FileName
+                                                    </a>
+                                                    @*<span>
+                                                            <img src="@string.Format("data:{0};base64,{1}" , file.ContentType , file.Value)" title="@file.Any" width="100" />
+                                                        </span>*@
+                                                    }
+                                            </div>
+                                            @*if (Model.Letter.Attachments.Count() > 1)
+                                                {
+                                                    <div>
+                                                        <a href="javascript:;" onclick="GetZipFile(@Model.MessageNumber)" title="دریافت فایل ها به صورت فشرده"><i class="fa fa-file-archive-o"></i> دریافت فایل ها به صورت فشرده</a>
+                                                    </div>
+                                                }*@
+                                            }
+                                    </div>
+                                </div>
+                            </li>
+                            <li data-content="LetterPic">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @{ var index = 0;}
+                                        @foreach (var org in Model.Letter.Origins)
+                                            {
+                                            <div class="col-md-4">
+                                                <img title='@string.Format("تصویر {0}", ++index)' src="@string.Format("data:{0};base64,{1}" , org.ContentType , org.Value)" />
+                                            </div>
+                                            }
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    using (Html.BeginForm("AddLetter", "ECE" , new{id = Model.MessageNumber}))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="row form-group">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12 text-left">
+                                <input type="submit" value="ثبت" class="btn btn-success" />
+                            </div>
+                        </div>
+                    }
+                 }
+            </div>
+        </div>
+    </div>
+</div>
+<link href="~/Plugins/tab/style.css" rel="stylesheet" />
+
+@section scripts{
+    <script src="~/Plugins/tab/main.js"></script>
+    <script>
+        function GetFile(msgId, fileId) {
+            console.log(fileId);
+            $("#hfMessageId").val(msgId);
+            $("#hfFileId").val(fileId);
+            $("#btnDownload")[0].click();
+        };
+    </script>
+}

@@ -1,0 +1,239 @@
+﻿@model Council.Core.Entities.OutLetter
+
+@{
+    ViewBag.Title = "نمایش";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        نمایش نامه دریافتی
+    </div>
+    <div class="card-body">
+        <input type="hidden" name="Organ" value="@Model.Organ" />
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <a href="javascript:void(0)" onclick="showModalNote()" class="btn btn-success">
+                        <i class="fa fa-pencil-square-o"></i> افزودن یادداشت
+                    </a>
+                    <a href="@Url.Action("ShowOutLetters", "OutLetter")" class="btn btn-sm btn-primary">بازگشت</a>
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>موضوع</strong> :
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.Subject)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong> @Html.DisplayName("نوع نامه"):</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @{
+                            if (Model.OutLetterStatus == 4)
+                            {
+                                <span>لایحه ، تک فوریتی</span>
+                            }
+                            else if (Model.OutLetterStatus == 5)
+                            {
+                                <span>لایحه ، دو فوریتی</span>
+                            }
+                            else if (Model.OutLetterStatus == 6)
+                            {
+                                <span>لایحه ، سه فوریتی</span>
+                            }
+                            else
+                            {
+                                <span>نامه</span>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>شماره ثبت در دبیرخانه:</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.OutLetterNumber)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>تاریخ ثبت در دبیرخانه:</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.SendDate)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>شماره نامه وارده:</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.RegisterNumber)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>تاریخ نامه وارده:</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.OutLetterDate)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>@Html.DisplayNameFor(model => model.Sender)</strong> :
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.Sender)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>@Html.DisplayNameFor(model => model.Bringer)</strong>  :
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.Bringer)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>@Html.DisplayNameFor(model => model.LinkedLetters):</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.LinkedLetters)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>@Html.DisplayNameFor(model => model.OrginalLetter):</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.OrginalLetter)
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong>@Html.DisplayNameFor(model => model.BoxNumber):</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.BoxNumber)
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <strong> @Html.DisplayNameFor(model => model.ArchiveCode) :</strong>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DisplayFor(model => model.ArchiveCode)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="row form-group">
+                <div class="col-md-4">
+                    <strong>@Html.DisplayNameFor(model => model.Organ.Name)</strong> :
+                </div>
+                <div class="col-md-5">
+                    @Html.DisplayFor(model => model.Organ.Name)
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-2">
+                <strong>@Html.DisplayName("توضیحات / متن"):</strong>
+            </div>
+            <div class="col-md-10">
+                @Html.Raw(Model.Comment)
+
+            </div>
+        </div>
+        <fieldset>
+            <legend>ضمائم اولیه و اصلی</legend>
+            @if ((!String.IsNullOrEmpty(Model.Files)) || (Model.Uploads != null && Model.Uploads.Count != 0))
+            {
+                var counter = 1;
+                if (!String.IsNullOrEmpty(Model.Files))
+                {
+                    <a id="attachment" href="@(Url.Content("~" + Model.Files))">[ فایل ضمیمه @counter ]</a>
+                    counter++;
+                }
+                foreach (var item in Model.Uploads)
+                {
+                    <a href="@(Url.Content("~" + item.FileAddress))">[ فایل ضمیمه @counter ]</a>
+                    counter++;
+                }
+            }
+        </fieldset>
+        <div class="modal fade" id="AddNoteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
+                        <h5>افزودن یادداشت</h5>
+                    </div>
+                    <br />
+                    @using (Html.BeginForm("AddNote", "OutLetter", FormMethod.Post, new { enctype = "multipart/form-data", @id = "AddNoteForm" }))
+                    {
+                        <div class="modal-body">
+                            <label>یادداشت :</label>
+                            <input type="text" name="text" class="text-box" required="required" />
+                            <input type="hidden" name="letterId" value=@Model.ID />
+                        </div>
+
+                        <div class="modal-footer">
+                            <input type="submit" class="btn_Custome btn-success" value="ثبت" />
+                            <button type="button" class="btn_Custome btn-danger" data-dismiss="modal">بستن</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @*<hr />
+        <p>
+            @Html.ActionLink("بازگشت", "ShowOutLetters", null, new { @class = "" })
+        </p>*@
+    </div>
+</div>
+<script>
+    $(".displayBox").prev().css("font-weight", "bold")
+    function showModalNote() {
+        $("#AddNoteModal").modal("show");
+    }
+</script>
+

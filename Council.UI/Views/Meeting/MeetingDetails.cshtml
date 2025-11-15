@@ -1,0 +1,105 @@
+﻿@model Council.Core.Entities.Meeting
+@{
+    ViewBag.Title = "جزییات جلسه";
+}
+<div class="customDiv">
+    <h3>جزییات جلسه</h3><hr />
+    <div>
+        <span class="blueColor bold">شماره جلسه</span>
+        <div>
+            @Model.MeetingNumber
+        </div>
+    </div>
+    <div>
+        <span class="blueColor bold">موضوع</span>
+        <div>
+            @Model.Subject
+        </div>
+    </div>
+    <br />
+    <div>
+        <span class="blueColor bold">شرح تصمیمات</span>
+        <div>
+            @Html.Raw(Model.Content)
+        </div>
+    </div>
+    <br />
+    <div>
+        <span class="blueColor bold">افراد میهمان</span>
+        <div>
+            @Html.Raw(Model.Peoples)          
+        </div>
+    </div>
+    <br />
+    <div>
+        <span class="blueColor bold">اعضا</span>
+        <div>
+            <ul>
+                @foreach (var item in Model.MeetingUsers)
+                {
+                    <li>@(item.User.FirstName + " " + item.User.LastName) | @(item.status == 0 ? "غایب" : (item.status == 1 ? "حاضر" : "ماموریت")) </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <hr />
+    <input type="button" id="printMeeting" onclick="print()" value="چاپ" class="btn btn-default">
+</div>
+<script>
+    var $subject = '@Model.Subject';
+    var $content = '@Html.Raw(Model.Content)';
+    var $people = '@Model.Peoples';
+    var $jsonUsers = JSON.parse('@Html.Raw(ViewBag.UserStatuses)');
+    var $jsonUsersDiv = function () {
+        var result = '';
+        for (var i = 0; i < $jsonUsers.length; i++) {
+            result += $jsonUsers[i].FirstName + " " + $jsonUsers[i].LastName + " | " + ($jsonUsers[i].status == 0 ? "غایب" : ($jsonUsers[i].status == 1 ? "حاضر" : "ماموریت")) + "<br />";
+        }
+        return result;
+    }
+    $(document).ready(function () {
+
+
+
+    })
+    function print() {
+
+        var result = '<div  style="border:1px solid #ddd; padding:5px;font-family:Tahoma">' +
+                     '<table width="100%" style="direction:rtl">' +
+                         '<tr>' +
+                             '<td>موضوع : ' + $subject + '</td>' +
+                         '</tr>' +
+                         '<tr>' +
+                             '<td colspan="3"><hr style="border:1px solid #ddd"/></td>' +
+                         '</tr>' +
+                         '<tr>' +
+                          '<td >شرح تصمیمات : ' + $content + '<br /> <br /> </td>' +
+                         '</tr>' +
+                         '<tr>' +
+                             '<td >افراد میهمان : ' + $people + '</td>' +
+                         '</tr>' +
+                         '<tr>' +
+                             '<td >' + $content + '</td>' +
+                         '</tr>' +
+                         '<tr>' +
+                             '<td colspan="3"><hr style="border:1px solid #ddd"/></td>' +
+                         '</tr>' +
+                         '<tr>' +
+
+                             '<td >' +
+                             'وضعیت اعضای شورا:' + '<br /><br />' +
+                             $jsonUsersDiv()
+        '</td>' +
+    '</tr>' +
+'</table>' +
+'</div><br />';
+        var printWindow = window.open('', '');
+        printWindow.document.write('<html  moznomarginboxes mozdisallowselectionprint><head><title>' + $subject + '</title>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(result);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+    }
+</script>

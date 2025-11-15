@@ -1,0 +1,114 @@
+﻿@model Council.Core.Entities.EditUser
+@{
+    ViewBag.Title = "ویرایش کاربر";
+}
+
+<div class="card">
+    <div class="card-header">
+        مشخصات کاربر
+    </div>
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="card-body">
+            @Html.AntiForgeryToken()
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.ID)
+                @Html.HiddenFor(m => m.SelectedTypes)
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.SelectedType, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.DropDownListFor(m => m.SelectedType, new SelectList(Model.UserType, "Value", "Text"), new { @class = "form-control", multiple = "multiple" })
+                                @Html.ValidationMessageFor(model => model.SelectedTypes, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.FirstName, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.LastName, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Mobile, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.Mobile, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Mobile, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Gender, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" name="Gender" id="male" type="radio" value="False" @(Model.Gender == false ? "checked='checked'" : string.Empty) />
+                                    <label class="form-check-label" for="male">آقا</label>
+                                </div>
+                                <div class="form-check form-check-inline mr-1">
+                                    <input class="form-check-input" name="Gender" id="female" type="radio" value="True" @(Model.Gender == true ? "checked='checked'" : string.Empty) />
+                                    <label class="form-check-label" for="female">خانم</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.NationalCode, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.NationalCode, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.NationalCode, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Tell, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.Tell, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Tell, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            @Html.LabelFor(model => model.Email, new { @class = "control-label col-lg-3 col-md-3 col-sm-12 col-12" })
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Email, null, new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        
+                        <div class="row form-group">
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-12"></div>
+                            <div class="col-lg-9 col-md-9 col-sm-12 col-12">
+                                <a class="btn btn-info" onclick="document.getElementById('inputFile').click(); return false;"> انتخاب امضا</a>
+                                <input type="file" accept="image/png, image/jpeg, image/gif" class="hidden" name="file" id="inputFile" value="انتخاب" />
+                                <div style="display:none"></div>
+                                <div class="col-lg-9 col-md-9 col-sm-12 col-12" style="float:left">
+                                    <img id="signatureImage" style="width:199px" src="@(Model.Signature!=null?Model.Signature:"")" alt="" />
+                                </div>
+                                <div class="redColor">@ViewBag.ErrorMessage</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <input type="submit" value="به روز رسانی" class="btn btn-sm btn-success" />
+        </div>
+    }
+</div>
+@section styles{
+    <link href="~/Plugins/multiple-select/multiple-select.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    <script src="~/Plugins/multiple-select/multiple-select.js"></script>
+    <script src="~/Scripts/Account/EditUser.js"></script>
+}

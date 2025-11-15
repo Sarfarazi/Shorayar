@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "نتایج جلسه";
+    List<Council.Core.Entities.Voting> voting = ViewBag.Votings as List<Council.Core.Entities.Voting>;
+    voting = voting.OrderBy(v => v.VoteStatus).ToList();
+    Council.Core.Entities.Letter letter = ViewBag.Letter as Council.Core.Entities.Letter;
+    var isCommission = ((ViewBag.IsCommission as string) == "IsCommission");
+    var isHiddenVoting = ViewBag.IsVotingHidden != null ? ViewBag.IsVotingHidden : false;
+}
+
+<div class="card">
+    <div class="card-header">
+        <strong>@letter.Title</strong>
+        <small>[ @letter.OutLetter.Subject ]</small>
+    </div>
+    <div class="card-body">
+        <a class="btn btn-default" href="@Url.Action("LetterItem", "Letter", new { letterID = letter.ID })" title="نمایش">
+            نمایش جزییات نامه
+        </a>
+        @if (isCommission)
+        {
+            <a class="btn btn-default" target="_blank" href="@Url.Action("Print", "OutLetter", new { letterID = letter.ID, isCommission = true })" title="چاپ">
+                نسخه چاپی
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-default" target="_blank" href="@Url.Action("Print", "OutLetter", new { letterID = letter.ID })" title="چاپ">
+                نسخه چاپی
+            </a>
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        نتایج
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 ">
+                <div class="voteResults greenBackground centerContent mx-auto">
+                    [ @voting.Where(v => v.VoteStatus == "1").Count() ]<br />
+                    رای موافق
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="voteResults redBackground centerContent mx-auto">
+                    [ @voting.Where(v => v.VoteStatus == "2").Count() ]<br />
+                    رای مخالف
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="voteResults blueBackground centerContent mx-auto">
+                    [ @voting.Where(v => v.VoteStatus == "3").Count() ]<br />
+                    رای ممتنع
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        افراد حاضر در رای گیری
+    </div>
+    <div class="card-body">
+        <span class="redColor"></span>
+        <span class="greenColor"></span>
+        @{ if (!isHiddenVoting)
+            {
+                <ul>
+                    @foreach (var item in voting)
+                    {
+                        var user = item.User;
+                        var voteText = item.VoteStatus == "1" ?
+                              Html.Raw("<span class='greenColor'>موافق</span>") :
+                              (item.VoteStatus == "2" ? Html.Raw("<span class='redColor'>مخالف</span>") : Html.Raw("ممتنع"));
+                        <li>
+
+                            @(user.FirstName + " " + user.LastName) | @voteText
+                            @if (!String.IsNullOrEmpty(item.Comment))
+                            {
+                                <br />  @item.Comment
+                                <hr />
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <P>کاربر گرامی این مصوبه بصورت مخفی رای گیری شده است</P>
+            }
+        }        
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        خلاصه تصمیمات
+    </div>
+    <div class="card-body">
+        @if (isCommission)
+            {
+            @Html.Raw(letter.CommissionMeeting.Content)
+        }
+        else
+        {
+            @Html.Raw(letter.Meeting.Content)
+        }
+    </div>
+</div>

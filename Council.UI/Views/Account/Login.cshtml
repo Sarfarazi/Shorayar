@@ -1,0 +1,64 @@
+﻿@model Council.Core.Entities.LoginViewModel
+@using Council.Service.DBServices;
+@{
+    ViewBag.Title = "ورود به سیستم";
+    Layout = null;
+
+    SystemSettingsService settingsService = new SystemSettingsService();
+    var curentSetting = settingsService.All().FirstOrDefault(m => m.Used);
+    var Settings = new Council.Core.Models.CurrentSetting
+    {
+        CouncilName = curentSetting != null ? curentSetting.CouncilName : "شورایار",
+        CouncilLogo = curentSetting != null ? curentSetting.CouncilLogo : "default-logo.png",
+        CouncilLoginLogo = curentSetting != null ? curentSetting.CouncilLoginLogo : "default-login-logo.png"
+    };
+}
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ورود به سیستم</title>
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/SiteStyle.css" rel="stylesheet" />
+</head>
+<body class="cityBg">
+    <div class="form">        
+        <div class="thumbnail"><img src="~/Images/logo/@Settings.CouncilLoginLogo" /></div>
+        <div class="login-form">
+        @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true , null, new { @class="text-danger"})
+            <div class="inner-addon left-addon">
+                <i class="fa fa-user"></i>
+                <input type="text" name="UserName" class="form-control" placeholder="نام کاربر" />
+                @Html.ValidationMessageFor(m => m.UserName , null, new { @class="text-danger"})
+            </div>            
+            <div class="inner-addon left-addon">
+                <i class="fa fa-lock"></i>
+                <input type="password" name="Password" class="form-control" placeholder="رمز عبور" />
+                @Html.ValidationMessageFor(m => m.Password, null, new { @class = "text-danger" })
+            </div>
+            <input type="hidden" name="RememberMe" value=true />
+            <button type="submit">ورود</button>            
+        }                     
+        </div>
+        <div class="loginError"><span>@ViewBag.LoginErrorMessage</span></div>
+        <div class="info">
+            <span>تولید و توسعه توسط <a href="https://raygostaran.ir">  رای گستران پارس مهر</a></span>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+@Scripts.Render("~/bundles/jqueryval")
+@section Scripts {
+    
+    <script>
+
+    $('.message a').click(function () {
+        $('form').animate({ height: "toggle", opacity: "toggle" }, "slow");
+    });
+
+    </script>
+}

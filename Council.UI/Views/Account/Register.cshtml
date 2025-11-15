@@ -1,0 +1,56 @@
+﻿@model Council.Core.Entities.RegisterViewModel
+@{
+    ViewBag.Title = "ایجاد کاربری";
+}
+
+<div class="row">
+    <div class="col-lg-8 lg-offset-2 col-md-8 md-offset-2">
+        <div class="card">
+            <div class="card-header">
+                ایجاد کاربری<br />
+                <small><strong>@ViewBag.UserName</strong></small>
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary()
+
+                    <div class="row form-group">
+                        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(m => m.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(m => m.Password, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            @Html.EditorFor(m => m.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        @Html.Label("دبیرخانه", new { @class = "col-md-2 control-label" })
+                        <div class="col-md-10">
+                            <input type="checkbox" class="checkbox" name="Manager" id="Manager" />
+                        </div>
+                    </div>
+                    <input type="hidden" value="@ViewBag.UserID" name="userID" />
+                    <div class="row form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" class="btn btn-success" value="ایجاد" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

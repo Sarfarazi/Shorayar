@@ -1,0 +1,19 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Council.Core/bin/Debug
+/Council.Data/bin/Debug
+/Council.Service/bin/Debug
+/Council.UI/bin
+/Council.Utility/bin/Debug
+/Council.Utility/obj
+/ECE/bin/Debug
+/ECE/obj
+/Council.Core/obj
+/Council.Data/obj
+/Council.Service/obj
+/Council.UI/obj
+/WebScan/bin/Debug
+/WebScan/obj

@@ -40,7 +40,7 @@ namespace Council.UI.Controllers
             var UserID = userService.GetUserByUserName(User.Identity.Name).ID;
             var account = new AccountController();
             //ViewBag.RoleName=account.GetRoleName(appID);
-            ViewBag.Organs = organService.All().Where(m => m.Deleted == false).ToList();
+            ViewBag.Organs = organService.Where(m => m.Deleted == false).ToList();
             homeService = new HomePageService(UserID);
             var model = homeService.GetModel();
             //ViewBag.UserIsBoss = userService.UserIsBoss(appID);

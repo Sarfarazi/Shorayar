@@ -37,9 +37,15 @@ namespace Council.Data.Repositories
             var tt= dbContext.Set<T>();
             return tt;
         }
+        public T FirstOrDefault(Expression<Func<T, bool>> predicate)
+        {
+            return dbContext.Set<T>().FirstOrDefault(predicate);
+        }
+        public IQueryable<T> Where(Expression<Func<T, bool>> predicate)
+        {
+            return dbContext.Set<T>().Where(predicate);
+        }
 
-            
-                
         public IEnumerable<T> All(int skip,int take)
         {
             var yy= dbContext.Set<T>();

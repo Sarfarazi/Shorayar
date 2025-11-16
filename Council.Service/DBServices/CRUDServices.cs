@@ -4,6 +4,7 @@ using Council.Data.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,11 +28,20 @@ namespace Council.Service.DBServices
         }
 
         public IQueryable<T> All()
-        {          
-             var result= this.repository.All();
+        {
+            var result = this.repository.All();
             return result;
         }
-
+        public T FirstOrDefault(Expression<Func<T, bool>> predicate)
+        {
+            var result = this.repository.FirstOrDefault(predicate);
+            return result;
+        }
+        public IQueryable<T> Where(Expression<Func<T, bool>> predicate)
+        {
+            var result = this.repository.Where(predicate);
+            return result;
+        }
         public T Create(T item, bool validate = true, bool saveChanges = true)
         {
             this.repository.Insert(item);
@@ -45,7 +55,7 @@ namespace Council.Service.DBServices
         public void Delete(string id, bool saveChanges = true)
         {
             var item = this.repository.Get<string>(id);
-            this.repository.Delete(item);            
+            this.repository.Delete(item);
         }
         public void Remove(T item, bool saveChanges = true)
         {

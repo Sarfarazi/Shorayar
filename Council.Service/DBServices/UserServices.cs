@@ -39,7 +39,7 @@ namespace Council.Service.DBServices
 
         public bool SetUserRole(string userId , string Role)
         {
-            var user = All().FirstOrDefault(u => u.ID == userId);
+            var user = FirstOrDefault(u => u.ID == userId);
             var role = _db.Roles.Where(r => r.RoleTitle == Role).FirstOrDefault();
             if (user == null || role == null)
             {
@@ -76,7 +76,7 @@ namespace Council.Service.DBServices
 
         public User GetUserByUserName(string UserName)
         {
-            return All().Where(u => u.UserName == UserName).FirstOrDefault();
+            return FirstOrDefault(u => u.UserName == UserName);
         }
 
         public IQueryable<User> GetActiveUsers()

@@ -46,8 +46,8 @@ namespace Council.UI.Controllers
             //ViewBag.UserIsBoss = userService.UserIsBoss(appID);
             //ViewBag.UserIsSiteManager = userService.UserIsSiteManager(appID);
             //ViewBag.UserIsMember = userService.UserIsMember(appID);
-            //ViewBag.MyLetters = letterService.All().Where(l => l.LetterRefrences.Any(r => r.SenderAppID == appID || r.Recivers.Any(u => u.ApplicationUserID == appID)));
-            //ViewBag.Finished = letterService.All().Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Take(10).ToList();
+            //ViewBag.MyLetters = letterService.Where(l => l.LetterRefrences.Any(r => r.SenderAppID == appID || r.Recivers.Any(u => u.ApplicationUserID == appID)));
+            //ViewBag.Finished = letterService.Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Take(10).ToList();
             return View(model);
         }
 
@@ -215,14 +215,14 @@ namespace Council.UI.Controllers
         {
             var UserID = userService.GetUserByUserName(User.Identity.Name).ID;
 
-            //var ret = letterService.All().Where(n=>n.CouncilPeriod.IsActive).Where(h=>!h.Deleted)
+            //var ret = letterService.Where(n=>n.CouncilPeriod.IsActive).Where(h=>!h.Deleted)
             //    .Where(n=>n.LetterStatus==LetterStatus.NormalLetter || n.LetterStatus== LetterStatus.SentToCommision || n.LetterStatus == LetterStatus.SendForBoss || n.LetterStatus == LetterStatus.CommissionEnd)
             //    .Where(l => l.LetterRefrences.Any(r => r.LetterStatuses.Any(s => s.UserID == UserID && !s.Removed )))               
             //    .OrderByDescending(m => m.CreatedOn);
 
             var all = letterService.All().ToList();
-            var s1 = letterService.All().Where(n => n.CouncilPeriod.IsActive && !n.Deleted).ToList();
-            var s2 = letterService.All().Where(n => n.CouncilPeriod.IsActive && !n.Deleted
+            var s1 = letterService.Where(n => n.CouncilPeriod.IsActive && !n.Deleted).ToList();
+            var s2 = letterService.Where(n => n.CouncilPeriod.IsActive && !n.Deleted
             && (n.LetterStatus == LetterStatus.NormalLetter || n.LetterStatus == LetterStatus.SentToCommision || n.LetterStatus == LetterStatus.SendForBoss || n.LetterStatus == LetterStatus.CommissionEnd)).ToList();
 
             var ret = letterService.All()
@@ -246,14 +246,14 @@ namespace Council.UI.Controllers
         {
             var UserID = userService.GetUserByUserName(User.Identity.Name).ID;
 
-            //var ret = letterService.All().Where(n=>n.CouncilPeriod.IsActive).Where(h=>!h.Deleted)
+            //var ret = letterService.Where(n=>n.CouncilPeriod.IsActive).Where(h=>!h.Deleted)
             //    .Where(n=>n.LetterStatus==LetterStatus.NormalLetter || n.LetterStatus== LetterStatus.SentToCommision || n.LetterStatus == LetterStatus.SendForBoss || n.LetterStatus == LetterStatus.CommissionEnd)
             //    .Where(l => l.LetterRefrences.Any(r => r.LetterStatuses.Any(s => s.UserID == UserID && !s.Removed )))               
             //    .OrderByDescending(m => m.CreatedOn);
 
            // var all = OutLetterService.All().ToList();
-          //  var s1 = OutLetterService.All().Where(n => n.CouncilPeriod.IsActive && !n.Deleted).ToList();
-           // var s2 = OutLetterService.All().Where(n => n.CouncilPeriod.IsActive && !n.Deleted).ToList();
+          //  var s1 = OutLetterService.Where(n => n.CouncilPeriod.IsActive && !n.Deleted).ToList();
+           // var s2 = OutLetterService.Where(n => n.CouncilPeriod.IsActive && !n.Deleted).ToList();
            //monire && (n.LetterStatus == LetterStatus.NormalLetter || n.LetterStatus == LetterStatus.SentToCommision || n.LetterStatus == LetterStatus.SendForBoss || n.LetterStatus == LetterStatus.CommissionEnd)).ToList();
 
             var ret = OutLetterService.All()
@@ -268,8 +268,8 @@ namespace Council.UI.Controllers
         public ActionResult SearchNewLetters(string txt)
         {
             var UserID = userService.GetUserByUserName(User.Identity.Name).ID;
-            // var ret = letterService.All().Where(l => l.LetterRefrences.Any(r => r.SenderAppID == appID || r.Recivers.Any(u => u.ApplicationUserID == appID)) && l.Title.Contains(txt)).OrderBy(m => m.CreateOn);
-            var ret = letterService.All().Where(k => k.CouncilPeriod.IsActive).Where(l => l.LetterRefrences.Any(r => r.SenderAppID == UserID ) && l.Title.Contains(txt)).OrderBy(m => m.CreateOn);
+            // var ret = letterService.Where(l => l.LetterRefrences.Any(r => r.SenderAppID == appID || r.Recivers.Any(u => u.ApplicationUserID == appID)) && l.Title.Contains(txt)).OrderBy(m => m.CreateOn);
+            var ret = letterService.Where(k => k.CouncilPeriod.IsActive).Where(l => l.LetterRefrences.Any(r => r.SenderAppID == UserID ) && l.Title.Contains(txt)).OrderBy(m => m.CreateOn);
             var model = ret.Where(l => l.LetterRefrences.Any(r => r.LetterStatuses.Any(s => s.UserID == UserID && s.IsNew && !s.Removed))).OrderByDescending(l => l.CreatedOn);
             ViewBag.LettersCount = -1;
             ViewBag.RowNumber = 1;
@@ -330,7 +330,7 @@ namespace Council.UI.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult DefaultStatements()
         {
-            ViewBag.DefaultStatements = defaultStatementService.All().Where(m => !m.Deleted).ToList();
+            ViewBag.DefaultStatements = defaultStatementService.Where(m => !m.Deleted).ToList();
             return View();
         } 
         #endregion
@@ -370,7 +370,7 @@ namespace Council.UI.Controllers
         {
             string id = "2f39c11372374b4b9a30bf9d7cfba3ec";
             var letter =OutLetterService.Get<string>(id);
-            var boss = userService.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+            var boss = userService.Where(m => m.IsCouncilBoss).FirstOrDefault();
             PrintOutLetter printLetter = new PrintOutLetter();
             printLetter.Content = letter.Comment;
             printLetter.LetterDate = letter.OutLetterDate;

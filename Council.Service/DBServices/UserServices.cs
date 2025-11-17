@@ -58,7 +58,7 @@ namespace Council.Service.DBServices
 
         public User CheckUserPass(string UserName, string Password)
         {
-            var user = All().FirstOrDefault(u => u.UserName == UserName);
+            var user = FirstOrDefault(u => u.UserName == UserName);
 
             if (user != null)
             {
@@ -71,7 +71,7 @@ namespace Council.Service.DBServices
 
         public User GetUserByID(string userId)
         {
-            return All().Where(u => u.ID == userId).FirstOrDefault();
+            return Where(u => u.ID == userId).FirstOrDefault();
         }
 
         public User GetUserByUserName(string UserName)
@@ -81,7 +81,7 @@ namespace Council.Service.DBServices
 
         public IQueryable<User> GetActiveUsers()
         {
-            return All().Where(u => u.IsActive);
+            return Where(u => u.IsActive);
         }
 
         public User UpdateUser(User user, HttpPostedFileBase file)
@@ -115,7 +115,7 @@ namespace Council.Service.DBServices
 
         public IList<User> AllActive()
         {   
-            return this.All().Where(u => u.IsActive).ToList();
+            return this.Where(u => u.IsActive).ToList();
 
         }
         //public bool ChnageOnlineStatus(string userid)
@@ -135,43 +135,43 @@ namespace Council.Service.DBServices
 
         public IQueryable<User> GetCouncilMembers()
         {
-            return All().Where(u => u.IsCouncilMember);
+            return Where(u => u.IsCouncilMember);
         }
         public IQueryable<User> GetActiveCouncilMembers()
         {
-            return All().Where(u => u.IsCouncilMember && u.IsActive);
+            return Where(u => u.IsCouncilMember && u.IsActive);
         }
         public bool UserIsBoss(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsCouncilBoss;
+            return this.FirstOrDefault(u => u.ID == Id).IsCouncilBoss;
         }
         public bool UserIsBossHelper(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).BossHelper;
+            return this.FirstOrDefault(u => u.ID == Id).BossHelper;
         }
         public bool UserIsSiteManager(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsSiteManager;
+            return this.FirstOrDefault(u => u.ID == Id).IsSiteManager;
         }
         public bool UserIsWriter1(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsWriter1;
+            return this.FirstOrDefault(u => u.ID == Id).IsWriter1;
         }
         public bool UserIsWriter2(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsWriter2;
+            return this.FirstOrDefault(u => u.ID == Id).IsWriter2;
         }
         public bool UserIsOtherCouncilMember(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsOtherCouncilMember;
+            return this.FirstOrDefault(u => u.ID == Id).IsOtherCouncilMember;
         }
         public bool UserIsManager(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsManager;
+            return this.FirstOrDefault(u => u.ID == Id).IsManager;
         }
         public bool UserIsMember(string Id)
         {
-            return this.All().FirstOrDefault(u => u.ID == Id).IsCouncilMember;
+            return this.FirstOrDefault(u => u.ID == Id).IsCouncilMember;
         }
         public IList<UserAndUserName> AllowSendRequestUsers(string UserId)
         {
@@ -186,7 +186,7 @@ namespace Council.Service.DBServices
         public List<string> ChangeCouncilBoss(string userID)
         {
             var oldBosses = new List<string>();
-            var bosses = this.All().Where(u => u.IsCouncilBoss).ToList();
+            var bosses = this.Where(u => u.IsCouncilBoss).ToList();
             foreach (var item in bosses)
             {
                 oldBosses.Add(item.ID);
@@ -203,7 +203,7 @@ namespace Council.Service.DBServices
         public List<string> ChangeCouncilGuest(string userID)
         {
             var oldGuest = new List<string>();
-            var guests = this.All().Where(u => u.IsCouncilGuest).ToList();
+            var guests = this.Where(u => u.IsCouncilGuest).ToList();
             foreach (var item in guests)
             {
                 oldGuest.Add(item.ID);
@@ -276,7 +276,7 @@ namespace Council.Service.DBServices
         public List<string> ChangeCouncilWriter1(string userID)
         {
             var oldWriters = new List<string>();
-            var writers = this.All().Where(u => u.IsWriter1).ToList();
+            var writers = this.Where(u => u.IsWriter1).ToList();
             foreach (var item in writers)
             {
                 oldWriters.Add(item.ID);
@@ -293,7 +293,7 @@ namespace Council.Service.DBServices
         public List<string> ChangeCouncilWriter2(string userID)
         {
             var oldWriters = new List<string>();
-            var writers = this.All().Where(u => u.IsWriter2).ToList();
+            var writers = this.Where(u => u.IsWriter2).ToList();
             foreach (var item in writers)
             {
                 oldWriters.Add(item.ID);
@@ -310,7 +310,7 @@ namespace Council.Service.DBServices
         public List<string> ChangeCouncilBossHelper(string userID)
         {
             var oldBossHelper = new List<string>();
-            var BossHelpers = this.All().Where(u => u.BossHelper).ToList();
+            var BossHelpers = this.Where(u => u.BossHelper).ToList();
             foreach (var item in BossHelpers)
             {
                 oldBossHelper.Add(item.ID);
@@ -326,7 +326,7 @@ namespace Council.Service.DBServices
         }
         public void ChangeSiteManager(string userID)
         {
-            var siteManagers = this.All().Where(u => u.IsSiteManager).ToList();
+            var siteManagers = this.Where(u => u.IsSiteManager).ToList();
             foreach (var item in siteManagers)
             {
                 item.IsSiteManager = false;
@@ -351,7 +351,7 @@ namespace Council.Service.DBServices
 
         public string CurrentNameAndLastName(string appId)
         {
-            var user = All().FirstOrDefault(u => u.ID == appId);
+            var user = FirstOrDefault(u => u.ID == appId);
             return user.FirstName + " " + user.LastName;
         }
 
@@ -367,12 +367,12 @@ namespace Council.Service.DBServices
 
         public string GetWriterOneFullName()
         {
-            var user = All().Where(m => m.IsWriter1).FirstOrDefault();
+            var user = Where(m => m.IsWriter1).FirstOrDefault();
             return user.FirstName + ' ' + user.LastName;
         }
         public string GetWriterOneId()
         {
-            var user = All().Where(m => m.IsWriter1).FirstOrDefault();
+            var user = Where(m => m.IsWriter1).FirstOrDefault();
             return user.ID;
         }
     }

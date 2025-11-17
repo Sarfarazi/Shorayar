@@ -20,7 +20,7 @@ namespace Council.UI.Controllers
         public ActionResult Index()
         {
             ViewBag.Members = userService.GetCouncilMembers().ToList();
-            ViewBag.Commissions = commissionService.All().Where(m => !m.Deleted).ToList();
+            ViewBag.Commissions = commissionService.Where(m => !m.Deleted).ToList();
             return View();
         } 
         #endregion

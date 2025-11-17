@@ -52,7 +52,7 @@
             {
                 var LetterID = item.ID;
 
-                var Currentletter = letterService.All().FirstOrDefault(m => m.ID == LetterID);
+                var Currentletter = letterService.FirstOrDefault(m => m.ID == LetterID);
                 var Metting = Currentletter.Meeting;
                 var CommissionMetting = Currentletter.CommissionMeeting;
 

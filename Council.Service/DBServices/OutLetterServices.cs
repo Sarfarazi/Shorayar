@@ -25,7 +25,7 @@ namespace Council.Service.DBServices
             string fileName= publicMethods.UploadFile(file, "OutLetter");
             if(fileName != "1")
             {
-                var activePeriod = periodService.All().Where(m => m.IsActive).FirstOrDefault();
+                var activePeriod = periodService.Where(m => m.IsActive).FirstOrDefault();
                 outLetterSpecs.Files = fileName;
                 outLetterSpecs.Uploads = Uploads(uploads);
                 outLetterSpecs.CouncilPeriod = activePeriod;
@@ -45,7 +45,7 @@ namespace Council.Service.DBServices
 
             if (fileName != null && System.IO.File.Exists(ScPath))
             {
-                var activePeriod = periodService.All().Where(m => m.IsActive).FirstOrDefault();
+                var activePeriod = periodService.Where(m => m.IsActive).FirstOrDefault();
                 outLetterSpecs.Files = fileName;
                 outLetterSpecs.CouncilPeriod = activePeriod;
                 this.Create(outLetterSpecs);
@@ -199,7 +199,7 @@ namespace Council.Service.DBServices
 
         public IQueryable<OutLetter> Search(string filter)
         {
-            return All().Where(m => m.Bringer.Contains(filter)
+            return Where(m => m.Bringer.Contains(filter)
                 || m.Subject.Contains(filter)
                 || m.Comment.Contains(filter)
                 || m.OutLetterNumber.Contains(filter)
@@ -218,7 +218,7 @@ namespace Council.Service.DBServices
         }
         public IQueryable<OutLetter> SearchLaws(string filter)
         {
-            return All().Where(m=>m.OutLetterStatus>=4 && m.OutLetterStatus<=6)
+            return Where(m=>m.OutLetterStatus>=4 && m.OutLetterStatus<=6)
                 .Where(m => m.Bringer.Contains(filter)
                 || m.Subject.Contains(filter)
                 || m.Comment.Contains(filter)
@@ -232,7 +232,7 @@ namespace Council.Service.DBServices
         }
         public IQueryable<OutLetter> SearchPlans(string filter)
         {
-            return All().Where(m => m.OutLetterStatus==2)
+            return Where(m => m.OutLetterStatus==2)
                 .Where(m => m.Bringer.Contains(filter)
                 || m.Subject.Contains(filter)
                 || m.Comment.Contains(filter)

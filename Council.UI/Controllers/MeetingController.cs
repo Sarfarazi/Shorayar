@@ -48,26 +48,26 @@ namespace Council.UI.Controllers
             //CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             //var userId = _User.UserId;
 
-            //var session = SessionNumber != null ? sessionService.All().Where(m => m.MeetingNumber == SessionNumber).FirstOrDefault() : null;
+            //var session = SessionNumber != null ? sessionService.Where(m => m.MeetingNumber == SessionNumber).FirstOrDefault() : null;
 
             //ViewBag.Sessions = sessionService.All().ToList().Where(m => m.Meetings.Any() && m.Meetings.All(p => p.Content != null)).OrderBy(m => m.MeetingNumber).ToList();
             //ViewBag.MeetingNumber = SessionNumber == null ? "" : session.MeetingNumber.ToString();
             //ViewBag.Content = SessionNumber == null ? "" : session.Content;
-            //var model = sessionService.All().Where(m => m.Content == null).ToList();
-            //ViewBag.User = userService.All().Where(m => m.ID == userId).FirstOrDefault();
+            //var model = sessionService.Where(m => m.Content == null).ToList();
+            //ViewBag.User = userService.Where(m => m.ID == userId).FirstOrDefault();
             //return View(model);
 
 
             CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             var userId = _User.UserId;
 
-            var session = SessionNumber != null ? sessionService.All().Where(m => m.MeetingNumber == SessionNumber).FirstOrDefault() : sessionService.All().Where(m => m.IsActive).FirstOrDefault();
+            var session = SessionNumber != null ? sessionService.Where(m => m.MeetingNumber == SessionNumber).FirstOrDefault() : sessionService.Where(m => m.IsActive).FirstOrDefault();
 
             ViewBag.Sessions = sessionService.All().ToList().Where(m => m.Meetings.Any()).OrderBy(m => m.MeetingNumber).ToList();
             ViewBag.MeetingNumber = session == null ? "" : session.MeetingNumber.ToString();
             ViewBag.Content = SessionNumber == null ? "" : session.Content;
-            var model = sessionService.All().Where(m => m.Content == null).ToList();
-            ViewBag.User = userService.All().Where(m => m.ID == userId).FirstOrDefault();
+            var model = sessionService.Where(m => m.Content == null).ToList();
+            ViewBag.User = userService.Where(m => m.ID == userId).FirstOrDefault();
             return View(model);
         }
 
@@ -76,7 +76,7 @@ namespace Council.UI.Controllers
         [ValidateInput(false)]
         public ActionResult CreateMeeting(int MeetingNumber, string Content)
         {
-            var session = sessionService.All().Where(m => m.MeetingNumber == MeetingNumber).FirstOrDefault();
+            var session = sessionService.Where(m => m.MeetingNumber == MeetingNumber).FirstOrDefault();
             session.Content = Content;
             sessionService.DeActiveAllSession();
             return RedirectToAction("CreateMeeting");
@@ -91,14 +91,14 @@ namespace Council.UI.Controllers
             CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             string userId = _User.UserId;
 
-            var session = sessionService.All().Where(m => m.IsActive).FirstOrDefault();
+            var session = sessionService.Where(m => m.IsActive).FirstOrDefault();
             if (session != null)
             {
                 if (session.SessionStatus == SessionStatus.Created)
                 {
                     var activeSession = session != null ? session.MeetingNumber : -200;
                     var homePageService = new HomePageService(userId);
-                    var myCommision = commissionService.All().Where(c => c.CommissionChairman.ID == userId
+                    var myCommision = commissionService.Where(c => c.CommissionChairman.ID == userId
                                          || c.Members.Any(m => m.ID == userId))
                                         .Select(c => new SessionCommissionAndBossIds { BossId = c.CommissionChairman.ID, CommissionId = c.ID, CommisionName = c.Name }).ToList();
                     var MyLetters = homePageService.GetMyLetters();
@@ -166,7 +166,7 @@ namespace Council.UI.Controllers
                 //    ViewBag.DuplicateSession = 1;
                 //}
                 meetingHeader.IsActive = true;
-                var Period = PeriodService.All().Where(m => m.IsActive == true).FirstOrDefault();
+                var Period = PeriodService.Where(m => m.IsActive == true).FirstOrDefault();
                 meetingHeader.Code= sessionService.GetUniqueNumberForSession(Period.ID);
                 // string MeetingNumber = Period.Code + meetingHeader.MeetingOwner + meetingHeader.Code;
                  string MeetingNumber = meetingHeader.Code; 
@@ -187,7 +187,7 @@ namespace Council.UI.Controllers
 
         public ActionResult FinalMeetingPrint(string SessionNumber)
         {
-            var Setting = settingService.All().FirstOrDefault(m => m.Used);
+            var Setting = settingService.FirstOrDefault(m => m.Used);
             string CouncilName = Setting != null ? Setting.CouncilName : null;
             ViewBag.Setting = Setting;
 
@@ -197,38 +197,38 @@ namespace Council.UI.Controllers
             var LetterMeetingId = new List<MeetingIdWithLetterId>();
             SignersUser signeruser = null;
 
-            var boss = userService.All().Where(m => m.IsCouncilBoss && m.IsActive).FirstOrDefault();
+            var boss = userService.Where(m => m.IsCouncilBoss && m.IsActive).FirstOrDefault();
             signeruser = new SignersUser { Name = boss.FirstName + ' ' + boss.LastName, Signature = boss.Signature, UserPosition = (int)Council.Core.Enums.UserPosition.CouncilBoss, Gender = !boss.Gender ? "آقا" : "خانم" };
             signersList.Add(signeruser);
 
-            var helper = userService.All().Where(m => m.BossHelper && m.IsActive).FirstOrDefault();
+            var helper = userService.Where(m => m.BossHelper && m.IsActive).FirstOrDefault();
             if (helper != null)
             {
                 signeruser = new SignersUser { Name = helper.FirstName + ' ' + helper.LastName, Signature = helper.Signature, UserPosition = (int)Council.Core.Enums.UserPosition.CouncilHelper, Gender = !helper.Gender ? "آقا" : "خانم" };
                 signersList.Add(signeruser);
             }            
             
-            var writer1 = userService.All().Where(m => m.IsWriter1 && m.IsActive).FirstOrDefault();
+            var writer1 = userService.Where(m => m.IsWriter1 && m.IsActive).FirstOrDefault();
             if (writer1 != null)
             {
                 signeruser = new SignersUser { Name = writer1.FirstName + ' ' + writer1.LastName, Signature = writer1.Signature, UserPosition = (int)Council.Core.Enums.UserPosition.CouncilWriter1, Gender = !writer1.Gender ? "آقا" : "خانم" };
                 signersList.Add(signeruser); 
             }
 
-            var writer2 = userService.All().Where(m => m.IsWriter2 && m.IsActive).FirstOrDefault();
+            var writer2 = userService.Where(m => m.IsWriter2 && m.IsActive).FirstOrDefault();
             if (writer2 != null)
             {
                 signeruser = new SignersUser { Name = writer2.FirstName + ' ' + writer2.LastName, Signature = writer2.Signature, UserPosition = (int)Council.Core.Enums.UserPosition.CouncilWriter2, Gender = !writer2.Gender ? "آقا" : "خانم" };
                 signersList.Add(signeruser); 
             }
 
-            var session = sessionService.All().Where(m => m.MeetingNumber.ToString() == SessionNumber).FirstOrDefault();
-            meetings = meetingService.All().Where(m => m.MeetingNumber == SessionNumber).ToList();
+            var session = sessionService.Where(m => m.MeetingNumber.ToString() == SessionNumber).FirstOrDefault();
+            meetings = meetingService.Where(m => m.MeetingNumber == SessionNumber).ToList();
             if (meetings != null && meetings.Count() > 0)
             {
                 foreach (var item in meetings)
                 {
-                    var letter = letterService.All().Where(m => m.Meeting.ID == item.ID).FirstOrDefault();
+                    var letter = letterService.Where(m => m.Meeting.ID == item.ID).FirstOrDefault();
                     if (letter != null)
                     {
                         LetterMeetingId.Add(new MeetingIdWithLetterId { LetterId = letter.ID, LetterTitle = letter.Title, MeetingId = item.ID });
@@ -268,7 +268,7 @@ namespace Council.UI.Controllers
         public JsonResult CheckHasContent(string meetingNumber)
         {
             int number = Convert.ToInt32(meetingNumber);
-            var session = sessionService.All().Where(m => m.MeetingNumber == number).FirstOrDefault();
+            var session = sessionService.Where(m => m.MeetingNumber == number).FirstOrDefault();
             if (session != null && session.Content != null)
             {
                 return Json("yes", JsonRequestBehavior.AllowGet);
@@ -323,19 +323,19 @@ namespace Council.UI.Controllers
         {
             List<string> letters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(letterIds);
             List<MemberGender> members = new List<MemberGender>();
-            var councilMembers = userService.All().Where(n => n.IsActive).Where(u => u.IsCouncilMember).ToList();
+            var councilMembers = userService.Where(n => n.IsActive).Where(u => u.IsCouncilMember).ToList();
             foreach (var item in councilMembers)
             {
                 members.Add(new MemberGender { Name = item.FirstName + ' ' + item.LastName, IsFemale = item.Gender ? true : false });
             }
 
             //یافتن کاربری که نقش دبیر جلسه 1 را دارد
-            //var user = userService.All().Where(m => m.IsWriter1 && m.IsActive).FirstOrDefault();
+            //var user = userService.Where(m => m.IsWriter1 && m.IsActive).FirstOrDefault();
 
             CustomPrincipal Currentuser = (CustomPrincipal)HttpContext.User;
-            var user = userService.All().Where(m => m.ID == Currentuser.UserId).FirstOrDefault();
+            var user = userService.Where(m => m.ID == Currentuser.UserId).FirstOrDefault();
 
-            var session = sessionService.All().Where(m => m.MeetingNumber.ToString() == sessionId).FirstOrDefault();
+            var session = sessionService.Where(m => m.MeetingNumber.ToString() == sessionId).FirstOrDefault();
             InvitePrintModel printItem = new InvitePrintModel();
             printItem.SessionDate = session.RegisterDate;
             printItem.SesionFromTime = session.StartTime;
@@ -373,10 +373,10 @@ namespace Council.UI.Controllers
             List<string> letters = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(letterIds);
             string content = "";
             content += HttpUtility.HtmlEncode("با سلام ");
-            var session = sessionService.All().Where(m => m.MeetingNumber.ToString() == sessionId).FirstOrDefault();
-            var councilMembers = userService.All().Where(n => n.IsActive).Where(u => u.IsCouncilMember).ToList();
+            var session = sessionService.Where(m => m.MeetingNumber.ToString() == sessionId).FirstOrDefault();
+            var councilMembers = userService.Where(n => n.IsActive).Where(u => u.IsCouncilMember).ToList();
             var letterNumber = uniqueNumberService.GetUniqueNumber();
-            var Setting = settingService.All().FirstOrDefault(m => m.Used);
+            var Setting = settingService.FirstOrDefault(m => m.Used);
             string CouncilName = Setting != null ? Setting.CouncilName : null;
 
             foreach (var councilMember in councilMembers)
@@ -440,7 +440,7 @@ namespace Council.UI.Controllers
         {
             if (ModelState.IsValid)
             {
-                var meetingHeader = meetingHeaderService.All().Where(m => m.ID == model.MeettingID).FirstOrDefault();
+                var meetingHeader = meetingHeaderService.Where(m => m.ID == model.MeettingID).FirstOrDefault();
 
                 meetingHeader.FinalApproved = true;
                 meetingHeaderService.Update(meetingHeader);

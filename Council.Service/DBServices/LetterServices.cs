@@ -29,12 +29,12 @@ namespace Council.Service.DBServices
         {
             outLetterService = new OutLetterServices();
             var OutLetterSpec = outLetterService.Get<string>(outLetterID);
-            var letter = this.All().Where(k => k.CouncilPeriod.IsActive).Where(l => l.OutLetter.ID == OutLetterSpec.ID).FirstOrDefault();
+            var letter = this.Where(k => k.CouncilPeriod.IsActive).Where(l => l.OutLetter.ID == OutLetterSpec.ID).FirstOrDefault();
             return letter == null ? null : letter.ID;
         }
         public UserPosition GetUserPosition(string appId)
         {
-            var user = userService.All().FirstOrDefault(u => u.ID == appId);
+            var user = userService.FirstOrDefault(u => u.ID == appId);
             if (user.IsCouncilBoss || user.BossHelper)
                 return UserPosition.CouncilBoss;
             if (user.IsCouncilMember)
@@ -44,7 +44,7 @@ namespace Council.Service.DBServices
         }
         public UserPosition GetUserPosition(string UserId, string letterId)
         {
-            var user = userService.All().FirstOrDefault(u => u.ID == UserId);
+            var user = userService.FirstOrDefault(u => u.ID == UserId);
             var letter = this.Get<string>(letterId);
             if (UserIsCurrentCommissionBoss(letter, UserId))
                 return UserPosition.CurrentCommissionBoss;
@@ -96,12 +96,12 @@ namespace Council.Service.DBServices
         public string AddValToOutLetter(Letter letter, string OutLetterSpecID, HttpPostedFileBase file, string appID, List<HttpPostedFileBase> uploads)
         {
             userService = new UserServices();
-            var bossId = userService.All().FirstOrDefault(u => u.IsCouncilBoss || u.BossHelper).ID;
+            var bossId = userService.FirstOrDefault(u => u.IsCouncilBoss || u.BossHelper).ID;
             //OutLetterSpec.Letter = letter;
             if (bossId != null)
             {
                 PeriodService periodService = new PeriodService();
-                var activePeriod = periodService.All().Where(m => m.IsActive).FirstOrDefault();
+                var activePeriod = periodService.Where(m => m.IsActive).FirstOrDefault();
                 outLetterService = new OutLetterServices();
                 var OutLetterSpec = outLetterService.Get<string>(OutLetterSpecID);
                 letter.ID = Guid.NewGuid().ToString().Replace("-", "");
@@ -117,15 +117,15 @@ namespace Council.Service.DBServices
             userService = new UserServices();
             var bossId = "";
             if (SendType == "0")
-                bossId = userService.All().FirstOrDefault(u => u.IsCouncilBoss).ID;
+                bossId = userService.FirstOrDefault(u => u.IsCouncilBoss).ID;
             else if (SendType == "1") //helperId
-                bossId = userService.All().FirstOrDefault(u => u.BossHelper).ID;
+                bossId = userService.FirstOrDefault(u => u.BossHelper).ID;
 
             //OutLetterSpec.Letter = letter;
             if (bossId != null)
             {
                 PeriodService periodService = new PeriodService();
-                var activePeriod = periodService.All().Where(m => m.IsActive).FirstOrDefault();
+                var activePeriod = periodService.Where(m => m.IsActive).FirstOrDefault();
                 outLetterService = new OutLetterServices();
                 var OutLetterSpec = outLetterService.Get<string>(OutLetterSpecID);
                 letter.ID = Guid.NewGuid().ToString().Replace("-", "");
@@ -241,7 +241,7 @@ namespace Council.Service.DBServices
 
         public IQueryable<Letter> MyLetters(string userId)
         {
-            return All().Where(l => l.LetterRefrences.Any(lr => lr.SenderAppID == userId || lr.Recivers.Any(r => r.ID == userId)));
+            return Where(l => l.LetterRefrences.Any(lr => lr.SenderAppID == userId || lr.Recivers.Any(r => r.ID == userId)));
         }
         public IQueryable<Letter> Search(string filter, string appId)
         {
@@ -258,7 +258,7 @@ namespace Council.Service.DBServices
             string fileName = publicMethods.UploadFile(file, "OutLetter");
             if (fileName != "1")
             {
-                var activePeriod = peroidService.All().Where(m => m.IsActive).FirstOrDefault();
+                var activePeriod = peroidService.Where(m => m.IsActive).FirstOrDefault();
                 var _recivers = new List<Reciver>();
                 if (reciverAppId == null)
                     _recivers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Reciver>>(recivers);
@@ -289,7 +289,7 @@ namespace Council.Service.DBServices
             string fileName = publicMethods.UploadFile(file, "OutLetter");
             if (fileName != "1")
             {
-                var activePeriod = peroidService.All().Where(m => m.IsActive).FirstOrDefault();
+                var activePeriod = peroidService.Where(m => m.IsActive).FirstOrDefault();
                 var _recivers = new List<Reciver>();
                 if (reciverAppId == null)
                     _recivers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Reciver>>(recivers);
@@ -420,7 +420,7 @@ namespace Council.Service.DBServices
         {
             var letter = this.Get<string>(letterID);
             userService = new UserServices();
-            var user = userService.All().FirstOrDefault(u => u.ID == UserID);
+            var user = userService.FirstOrDefault(u => u.ID == UserID);
             var refrences = letter.LetterRefrences.Where(l => l.LetterStatuses.Any(s => s.UserID == UserID));
             //.LetterStatuses.First(ls => ls.UserID == appID).IsNew = false;
             foreach (var item in refrences)
@@ -434,7 +434,7 @@ namespace Council.Service.DBServices
         {
             var letter = this.Get<string>(letterID);
             userService = new UserServices();
-            var user = userService.All().FirstOrDefault(u => u.ID == appID);
+            var user = userService.FirstOrDefault(u => u.ID == appID);
             var refrences = letter.LetterRefrences.Where(l => l.LetterStatuses.Any(s => s.UserID == appID));
             foreach (var item in refrences)
             {
@@ -445,7 +445,7 @@ namespace Council.Service.DBServices
         public void UnReadForBoss(string letterId)
         {
             userService = new UserServices();
-            var bossAppId = userService.All().FirstOrDefault(u => u.IsCouncilBoss || u.BossHelper).ID;
+            var bossAppId = userService.FirstOrDefault(u => u.IsCouncilBoss || u.BossHelper).ID;
             UnReadLetter(letterId, bossAppId);
         }
         public string MarkAsArchived(string letterID, string appID)
@@ -534,11 +534,11 @@ namespace Council.Service.DBServices
             userService = new UserServices();
             var bossId = "";
             if (SendType == "0")
-                bossId = userService.All().FirstOrDefault(u => u.IsCouncilBoss).ID;
+                bossId = userService.FirstOrDefault(u => u.IsCouncilBoss).ID;
             else if (SendType == "1") //helperId
-                bossId = userService.All().FirstOrDefault(u => u.BossHelper).ID;
+                bossId = userService.FirstOrDefault(u => u.BossHelper).ID;
 
-            //var bossId = userService.All().FirstOrDefault(u => u.IsCouncilBoss).ID;
+            //var bossId = userService.FirstOrDefault(u => u.IsCouncilBoss).ID;
             AddLetterRefrence("", UserId, Transcript, letterID, RefrenceType.SendToBoss, bossId);
             ChangLetterStatus(letterID, LetterStatus.SendForBoss);
             return "";
@@ -546,7 +546,7 @@ namespace Council.Service.DBServices
         public string SendToHelper(string Transcript, string letterID, string appId)
         {
             userService = new UserServices();
-            var helperId = userService.All().FirstOrDefault(u => u.BossHelper).ID;
+            var helperId = userService.FirstOrDefault(u => u.BossHelper).ID;
             AddLetterRefrence("", appId, Transcript, letterID, RefrenceType.SendToBoss, helperId);
             ChangLetterStatus(letterID, LetterStatus.SendForBoss);
             return "";
@@ -601,7 +601,7 @@ namespace Council.Service.DBServices
         {
             userService = new UserServices();
             //Members and SiteAdmin
-            List<string> reciversIds = userService.All().Where(u => u.IsCouncilMember || u.ID == UserId).Select(uu => uu.ID).ToList();
+            List<string> reciversIds = userService.Where(u => u.IsCouncilMember || u.ID == UserId).Select(uu => uu.ID).ToList();
             var _recivers = new List<Reciver>();
             foreach (var item in reciversIds)
                 _recivers.Add(new Reciver { ID = item, Status = "1" });
@@ -613,7 +613,7 @@ namespace Council.Service.DBServices
         }
         public string ReVoting(string letterId, bool isCommission = false)
         {
-            var votings = votingService.All().Where(v => v.Letter.ID == letterId && v.IsCommission == isCommission)
+            var votings = votingService.Where(v => v.Letter.ID == letterId && v.IsCommission == isCommission)
                                              .Where(n => !n.Deleted)
                                              .ToList();
 
@@ -663,7 +663,7 @@ namespace Council.Service.DBServices
         {
             userService = new UserServices();
             var sessionService = new SessionServices();
-            var session = sessionService.All().Where(m => m.MeetingNumber.ToString() == meeting.MeetingNumber && m.IsActive).FirstOrDefault();
+            var session = sessionService.Where(m => m.MeetingNumber.ToString() == meeting.MeetingNumber && m.IsActive).FirstOrDefault();
 
             var _recivers = new List<Reciver>();
             _recivers = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Reciver>>(meetingMembers);
@@ -799,12 +799,12 @@ namespace Council.Service.DBServices
             {
                 if (letter.CommissionMeeting != null && letter.Meeting == null)
                 {
-                    var metting = mettingService.All().Where(m => m.ID == letter.CommissionMeeting.ID).FirstOrDefault();
+                    var metting = mettingService.Where(m => m.ID == letter.CommissionMeeting.ID).FirstOrDefault();
                     return metting.HiddenVoting ? true : false;
                 }
                 else if (letter.CommissionMeeting == null && letter.Meeting != null)
                 {
-                    var metting = mettingService.All().Where(m => m.ID == letter.Meeting.ID).FirstOrDefault();
+                    var metting = mettingService.Where(m => m.ID == letter.Meeting.ID).FirstOrDefault();
                     return metting.HiddenVoting ? true : false;
                 }
             }
@@ -816,7 +816,7 @@ namespace Council.Service.DBServices
             Voting voting = new Voting();
             userService = new UserServices();
             var letter = Get<string>(letterId);
-            var user = userService.All().FirstOrDefault(u => u.ID == userAppId);
+            var user = userService.FirstOrDefault(u => u.ID == userAppId);
 
             if (!votingService.All().Any(v => v.User.ID == user.ID && v.Letter.ID == letter.ID && v.IsCommission == isCommission))
             {
@@ -843,7 +843,7 @@ namespace Council.Service.DBServices
         }
         public IQueryable<Letter> GlobalSearch(string query)
         {
-            return All().Where(l => l.Content.Contains(query) || l.LetterNumber.Contains(query) || l.Title.Contains(query));
+            return Where(l => l.Content.Contains(query) || l.LetterNumber.Contains(query) || l.Title.Contains(query));
 
         }
         public MeetingResult GetMeetingResult(string leterID, bool isCommission = false)
@@ -854,7 +854,7 @@ namespace Council.Service.DBServices
         CommissionInfo GetCommissionInfo(string letterId)
         {
             var commissionId = this.Get<string>(letterId).LetterRefrences.OrderBy(r => r.CreatedOn).Last(r => r.CommissionId != null).CommissionId;
-            CommissionInfo result = commissionService.All().Where(c => c.ID == commissionId)
+            CommissionInfo result = commissionService.Where(c => c.ID == commissionId)
                                     .Select(c => new CommissionInfo
                                     {
                                         CommissionChairman = c.CommissionChairman.FirstName + " " + c.CommissionChairman.LastName,
@@ -889,7 +889,7 @@ namespace Council.Service.DBServices
         }
         public IEnumerable<Letter> GetAllRuleLetter()
         {
-            return All().Where(m => m.LetterStatus == LetterStatus.End && m.CouncilPeriod.IsActive)
+            return Where(m => m.LetterStatus == LetterStatus.End && m.CouncilPeriod.IsActive)
                    .OrderByDescending(m => m.Meeting.MeetingNumber)
                    .ToList();
 
@@ -923,14 +923,14 @@ namespace Council.Service.DBServices
             {
                 if (letter.Meeting!=null)
                 {
-                    mettings = meetingService.All().Where(m => m.ID == letter.Meeting.ID).FirstOrDefault().MeetingUsers.ToList();
-                    vottings = votingService.All().Where(m => m.Letter.ID == letterId && !m.IsCommission).ToList();
+                    mettings = meetingService.Where(m => m.ID == letter.Meeting.ID).FirstOrDefault().MeetingUsers.ToList();
+                    vottings = votingService.Where(m => m.Letter.ID == letterId && !m.IsCommission).ToList();
 
                 }
                 if (letter.CommissionMeeting!=null)
                 {
-                    mettings = meetingService.All().Where(m => m.ID == letter.CommissionMeeting.ID).FirstOrDefault().MeetingUsers.ToList();
-                    vottings = votingService.All().Where(m => m.Letter.ID == letterId && m.IsCommission).ToList();
+                    mettings = meetingService.Where(m => m.ID == letter.CommissionMeeting.ID).FirstOrDefault().MeetingUsers.ToList();
+                    vottings = votingService.Where(m => m.Letter.ID == letterId && m.IsCommission).ToList();
 
                 }
             }
@@ -959,13 +959,13 @@ namespace Council.Service.DBServices
             var letter = this.Get<string>(letterId);
             if (letter != null && letter.LetterStatus == LetterStatus.AllowVotting)
             {
-                mettings = meetingService.All().Where(m => m.ID == letter.Meeting.ID).FirstOrDefault().MeetingUsers.Where(m => m.status == 1).ToList();
-                vottings = votingService.All().Where(m => m.Letter.ID == letterId && !m.IsCommission).ToList();
+                mettings = meetingService.Where(m => m.ID == letter.Meeting.ID).FirstOrDefault().MeetingUsers.Where(m => m.status == 1).ToList();
+                vottings = votingService.Where(m => m.Letter.ID == letterId && !m.IsCommission).ToList();
             }
             else
             {
-                mettings = meetingService.All().Where(m => m.ID == letter.CommissionMeeting.ID).FirstOrDefault().MeetingUsers.Where(m => m.status == 1).ToList();
-                vottings = votingService.All().Where(m => m.Letter.ID == letterId && m.IsCommission).ToList();
+                mettings = meetingService.Where(m => m.ID == letter.CommissionMeeting.ID).FirstOrDefault().MeetingUsers.Where(m => m.status == 1).ToList();
+                vottings = votingService.Where(m => m.Letter.ID == letterId && m.IsCommission).ToList();
             }
             foreach (var item in mettings)
             {

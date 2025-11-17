@@ -24,7 +24,7 @@ namespace Council.Service.DBServices
         }
         public string GetLastTodayUniqueCode(string dateNumber)
         {
-            UniqueNumber uniqueNumber = this.All().Where(u => u.DateNumber == dateNumber).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
+            UniqueNumber uniqueNumber = this.Where(u => u.DateNumber == dateNumber).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
             if (uniqueNumber == null)
                 return "0";
 
@@ -37,7 +37,7 @@ namespace Council.Service.DBServices
 
             var serverDateTime = publicMethods.ServerDateTime();
             string y= publicMethods.GetYearShamsi(serverDateTime);
-            UniqueNumber uniqueNumber = this.All().Where(u => u.LetterType == LetterType && u.DateNumber==y).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
+            UniqueNumber uniqueNumber = this.Where(u => u.LetterType == LetterType && u.DateNumber==y).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
             if (uniqueNumber == null)
                 return "0";
 
@@ -45,7 +45,7 @@ namespace Council.Service.DBServices
         }
         public string GetLastUniqueCodeForFlow(string LetterNumber)
         {
-            UniqueNumber uniqueNumber = this.All().Where(u => u.LetterType == 3 && u.FullNumber==LetterNumber).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
+            UniqueNumber uniqueNumber = this.Where(u => u.LetterType == 3 && u.FullNumber==LetterNumber).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
             if (uniqueNumber == null)
                 return "0";
 
@@ -65,12 +65,12 @@ namespace Council.Service.DBServices
 
         public UniqueNumber GetUniqueNumber(string dateNumber, string code)
         {
-            return this.All().Where(u => u.DateNumber == dateNumber && u.Code == code).FirstOrDefault();
+            return this.Where(u => u.DateNumber == dateNumber && u.Code == code).FirstOrDefault();
         }
 
         public UniqueNumber GetUniqueNumber(string fullNumber)
         {
-            return this.All().Where(u => u.FullNumber == fullNumber).FirstOrDefault();
+            return this.Where(u => u.FullNumber == fullNumber).FirstOrDefault();
         }
 
         public string GetUniqueNumber()

@@ -14,7 +14,7 @@ namespace Council.Service.DBServices
         UserServices userService = new UserServices();
         public IQueryable<Meeting> Search(string filter)
         {
-            return All().Where(m => m.Peoples.Contains(filter) || m.Subject.Contains(filter) || m.Content.Contains(filter)).OrderByDescending(l => l.CreatedOn);
+            return Where(m => m.Peoples.Contains(filter) || m.Subject.Contains(filter) || m.Content.Contains(filter)).OrderByDescending(l => l.CreatedOn);
         }
       
 

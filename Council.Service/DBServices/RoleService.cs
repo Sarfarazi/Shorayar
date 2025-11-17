@@ -30,7 +30,7 @@ namespace Council.Service.DBServices
         {
             Dictionary<bool, string> result = new Dictionary<bool, string>();
 
-            var Role = this.All().Where(r => r.ID == ID).FirstOrDefault();
+            var Role = this.Where(r => r.ID == ID).FirstOrDefault();
 
             if (Role.JustOne && Role.UserRole.Count() > 0)
             {
@@ -49,7 +49,7 @@ namespace Council.Service.DBServices
         {
             Dictionary<bool, string> result = new Dictionary<bool, string>();
 
-            var Role = this.All().Where(r => r.ID == ID).FirstOrDefault();
+            var Role = this.Where(r => r.ID == ID).FirstOrDefault();
 
             if (Role.JustOne && Role.UserRole.Count() > 0)
             {

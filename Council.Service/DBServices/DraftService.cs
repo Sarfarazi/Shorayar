@@ -23,9 +23,9 @@ namespace Council.Service.DBServices
         {
             var allowUsers = GetAllowUsers(users, UserId);
             draft.OwnerId = UserId;
-            //allowUsers.Add(userService.All().FirstOrDefault(u => u.ApplicationUserID == appId));
+            //allowUsers.Add(userService.FirstOrDefault(u => u.ApplicationUserID == appId));
             draft.Users = allowUsers;
-            // draft.Creator = userService.All().FirstOrDefault(u => u.ApplicationUserID == appId);
+            // draft.Creator = userService.FirstOrDefault(u => u.ApplicationUserID == appId);
             return Create(draft);
         }
         IList<User> GetAllowUsers(string reciversID, string appId = null)

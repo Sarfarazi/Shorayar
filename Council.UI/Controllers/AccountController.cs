@@ -91,7 +91,7 @@ namespace Council.UI.Controllers
                     //HttpCookie cs = HttpContext.Request.Cookies["cs"];
                     //if (cs == null)
                     //{
-                    //    var curentSetting = settingsService.All().FirstOrDefault(m => m.Used);
+                    //    var curentSetting = settingsService.FirstOrDefault(m => m.Used);
                     //    var setting = new Council.Core.Models.CurrentSetting
                     //    {
                     //        CouncilName = Server.UrlEncode(curentSetting.CouncilName),
@@ -898,7 +898,7 @@ namespace Council.UI.Controllers
         //    AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie, DefaultAuthenticationTypes.ExternalCookie);
         //    Global.AbandonSession();
         //    //var id = userService.GetUserByUserName(User.Identity.Name).ID;
-        //    //var user = userService.All().Where(m => m.ID == id).FirstOrDefault();
+        //    //var user = userService.Where(m => m.ID == id).FirstOrDefault();
         //    //if (user != null)
         //    //{
         //    //    user.IsOnline = false;

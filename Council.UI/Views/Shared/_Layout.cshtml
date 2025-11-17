@@ -5,7 +5,7 @@
     //var Settings = JsonConvert.DeserializeObject<CurrentSetting>(Request.Cookies["cs"].Value);
 
     SystemSettingsService settingsService = new SystemSettingsService();
-    var curentSetting = settingsService.All().FirstOrDefault(m => m.Used);
+    var curentSetting = settingsService.FirstOrDefault(m => m.Used);
     var Settings = new Council.Core.Models.CurrentSetting
     {
         CouncilName = curentSetting != null ? curentSetting.CouncilName : "شورایار",

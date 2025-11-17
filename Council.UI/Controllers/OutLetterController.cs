@@ -215,7 +215,7 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ShowOutLetters()
         {
-            //var model = outLetterServices.All().Where(o => !o.Deleted).OrderByDescending(o =>o.RegisterNumber).Take(50).ToList();
+            //var model = outLetterServices.Where(o => !o.Deleted).OrderByDescending(o =>o.RegisterNumber).Take(50).ToList();
             ViewBag.Organs = organService.All().ToList();
             return View();
         }
@@ -224,10 +224,10 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ShowRecivedOutLetters(int skip, int take)
         {
-            var model = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
+            var model = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.RecievedOutLetterCount = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).Count();
+            ViewBag.RecievedOutLetterCount = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).Count();
             ViewBag.RecivedOutLettersPageNumber = skip;
             return PartialView("_RecievedOutletter", model);
         }
@@ -237,18 +237,18 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ShowSendedOutLetters(int skip, int take)
         {
-            var model = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
+            var model = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => !l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.SendedOutLetterCount = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && !l.Archived && !l.Removed).Count();
+            ViewBag.SendedOutLetterCount = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && !l.Archived && !l.Removed).Count();
             ViewBag.SendedOutLettersPageNumber = skip;
             return PartialView("_SendedOutLetter", model);
         }
 
         public ActionResult SendLetterItem(string letterID)
         {
-            ViewBag.Organs = organService.All().Where(m => m.Deleted == false).ToList();
-            var item = outLetterServices.All().Where(l => l.ID == letterID).FirstOrDefault();
+            ViewBag.Organs = organService.Where(m => m.Deleted == false).ToList();
+            var item = outLetterServices.Where(l => l.ID == letterID).FirstOrDefault();
             // var activeUsers = item.LetterRefrences.OrderByDescending(l => l.CreatedOn).FirstOrDefault().Recivers.Where(m => m.IsActive);
             // var users = activeUsers != null ? activeUsers.FirstOrDefault() : null;
             var UserId = userService.GetUserByUserName(User.Identity.Name).ID;
@@ -259,8 +259,8 @@ namespace Council.UI.Controllers
             //  model.LastReciverID = users != null ? users.ID : "";
             // model.UserIsBoss = userService.UserIsBoss(UserId);
             // model.UserIsBossHelper = userService.UserIsBossHelper(UserId);
-            //  model.Commisions = commisionService.All().Where(m => !m.Deleted).ToList();
-            //  model.Statements = defaultStatementService.All().Where(m => !m.Deleted).ToList();
+            //  model.Commisions = commisionService.Where(m => !m.Deleted).ToList();
+            //  model.Statements = defaultStatementService.Where(m => !m.Deleted).ToList();
             // model.LastRefrence = letterService.GetLastRefrence(letterID);
             //  model.UserPosition = letterService.GetUserPosition(UserId, item.ID);
             return View(model);
@@ -273,10 +273,10 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ShowArchivedOutLetters(int skip, int take)
         {
-            var model = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
+            var model = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.ArchivedOutLetterCount = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Archived && !l.Removed).Count();
+            ViewBag.ArchivedOutLetterCount = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Archived && !l.Removed).Count();
             ViewBag.ArchivedOutLettersPageNumber = skip;
             return PartialView("_ArchivedOutLetter", model);
         }
@@ -286,11 +286,11 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ShowRemovedOutLetters(int skip, int take)
         {
-            var model = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive)
+            var model = outLetterServices.Where(m => m.CouncilPeriod.IsActive)
                                                .Where(o => o.Deleted)
                                                .OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.RemovedOutLetterCount = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => o.Deleted).Count();
+            ViewBag.RemovedOutLetterCount = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => o.Deleted).Count();
             ViewBag.RemovedOutLettersPageNumber = skip;
             return PartialView("_RemovedOutLetter", model);
         }
@@ -318,21 +318,21 @@ namespace Council.UI.Controllers
 
         public ActionResult PlanOutLetters(int skip, int take)
         {
-            var model = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
+            var model = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.PlanOutLetterCount = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).Count();
+            ViewBag.PlanOutLetterCount = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).Count();
             ViewBag.PlanOutLettersPageNumber = skip;
 
             return PartialView("_PlanOutletter", model);
         }
         public ActionResult LawOutLetters(int skip, int take)
         {
-            var model = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
+            var model = outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Where(l => l.OutLetterStatus >= 4 && l.OutLetterStatus <= 6)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.LawOutLetterCount = outLetterServices.All().Where(m => m.CouncilPeriod.IsActive)
+            ViewBag.LawOutLetterCount = outLetterServices.Where(m => m.CouncilPeriod.IsActive)
                                         .Where(o => !o.Deleted).Where(l => l.Received & !l.Archived && !l.Removed)
                                         .Where(l => l.OutLetterStatus >= 4 && l.OutLetterStatus <= 6).Count();
             ViewBag.LawOutLettersPageNumber = skip;
@@ -343,7 +343,7 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Boss,BossHelper, Writer1,Writer2,Manager,CouncilMember,Guest")]
         public ActionResult ExtraRemovedOutLetters(int skip, int take, string organId = "")
         {
-            var model = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => o.Deleted)
+            var model = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => o.Deleted)
                                                .OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList()
                                    : outLetterServices.All()
@@ -352,8 +352,8 @@ namespace Council.UI.Controllers
                                                .Where(o => o.Deleted)
                                                .OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.RemovedOutLetterCount = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => o.Deleted).Count() :
-                                                           outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => o.Deleted).Count();
+            ViewBag.RemovedOutLetterCount = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => o.Deleted).Count() :
+                                                           outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => o.Deleted).Count();
             ViewBag.RemovedOutLettersPageNumber = skip;
             string result = PublicHelpers.RenderRazorViewToString(this, "_RemovedOutLetter", model);
             return Json(result);
@@ -362,14 +362,14 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ExtraRecivedOutLetters(int skip, int take, string organId = "")
         {
-            var model = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn).Skip(skip).Take(take).ToList()
+            var model = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn).Skip(skip).Take(take).ToList()
                                    : outLetterServices.All()
                                                .Where(m => m.Organ.ID == organId)
                                                .Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.RecievedOutLetterCount = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).Count()
-                                                       : outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).Count();
+            ViewBag.RecievedOutLetterCount = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).Count()
+                                                       : outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => l.Received && !l.Archived && !l.Removed).Count();
             ViewBag.RecivedOutLettersPageNumber = skip;
             string result = PublicHelpers.RenderRazorViewToString(this, "_RecievedOutletter", model);
             return Json(result);
@@ -380,7 +380,7 @@ namespace Council.UI.Controllers
         [CustomAuthorize(Roles = "Admin,Manager")]
         public ActionResult ExtraSendedOutLetters(int skip, int take, string organId = "")
         {
-            var model = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
+            var model = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => !l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList()
                                        : outLetterServices.All()
@@ -388,8 +388,8 @@ namespace Council.UI.Controllers
                                                .Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => !l.Received && !l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.SendedOutLetterCount = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && !l.Archived && !l.Removed).Count()
-                                                     : outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => !l.Received && !l.Archived && !l.Removed).Count();
+            ViewBag.SendedOutLetterCount = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && !l.Archived && !l.Removed).Count()
+                                                     : outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => !l.Received && !l.Archived && !l.Removed).Count();
             ViewBag.SendedOutLettersPageNumber = skip;
 
             string result = PublicHelpers.RenderRazorViewToString(this, "_SendedOutLetter", model);
@@ -409,8 +409,8 @@ namespace Council.UI.Controllers
                                                .Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted)
                                                .Where(l => l.Archived && !l.Removed).OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.ArchivedOutLetterCount = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Archived && !l.Removed).Count()
-                                                      : outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => l.Archived && !l.Removed).Count();
+            ViewBag.ArchivedOutLetterCount = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => l.Archived && !l.Removed).Count()
+                                                      : outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => l.Archived && !l.Removed).Count();
             ViewBag.ArchivedOutLettersPageNumber = skip;
             string result = PublicHelpers.RenderRazorViewToString(this, "_ArchivedOutLetter", model);
             return Json(result);
@@ -437,7 +437,7 @@ namespace Council.UI.Controllers
                                                         .Where(o => !o.Deleted)
                                                         .Where(l => l.Received && !l.Archived && !l.Removed)
                                                         .Where(l => l.OutLetterStatus >= 4 && l.OutLetterStatus <= 6).Count()
-                                                      : outLetterServices.All().Where(m => m.CouncilPeriod.IsActive)
+                                                      : outLetterServices.Where(m => m.CouncilPeriod.IsActive)
                                                         .Where(p => p.Organ.ID == organId)
                                                         .Where(m => m.CouncilPeriod.IsActive)
                                                         .Where(o => !o.Deleted)
@@ -461,8 +461,8 @@ namespace Council.UI.Controllers
                                                .Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed)
                                                .OrderByDescending(o => o.CreatedOn)
                                                .Skip(skip).Take(take).ToList();
-            ViewBag.PlanOutLetterCount = organId == "" ? outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).Count()
-                                                      : outLetterServices.All().Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).Count();
+            ViewBag.PlanOutLetterCount = organId == "" ? outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(o => !o.Deleted).Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).Count()
+                                                      : outLetterServices.Where(m => m.CouncilPeriod.IsActive).Where(p => p.Organ.ID == organId).Where(o => !o.Deleted).Where(l => !l.Received && l.OutLetterStatus == 2 && !l.Archived && !l.Removed).Count();
             ViewBag.PlanPageNumber = skip;
             string result = PublicHelpers.RenderRazorViewToString(this, "_PlanOutLetter", model);
             return Json(result);
@@ -474,9 +474,9 @@ namespace Council.UI.Controllers
         {
             ViewBag.Recivers = userServices.All().ToList();
            // ViewBag.UniqueNumber = uniqueNumberServices.GetUniqueNumber();
-            ViewBag.Organs = organService.All().Where(m=>m.Deleted==false).ToList();
-            // var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
-            ViewBag.CanSignatureList = userService.All().Where(m => m.CanSignatureForLetter == true).ToList();//boss != null ? boss.FirstName + ' ' + boss.LastName + " " + "[رئیس  شورا]" :  null;
+            ViewBag.Organs = organService.Where(m=>m.Deleted==false).ToList();
+            // var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
+            ViewBag.CanSignatureList = userService.Where(m => m.CanSignatureForLetter == true).ToList();//boss != null ? boss.FirstName + ' ' + boss.LastName + " " + "[رئیس  شورا]" :  null;
             return View();
         }
 
@@ -513,8 +513,8 @@ namespace Council.UI.Controllers
                 outLetter.OutLetterStatus = outLetterstatus;
                 outLetter.OutLetterNumber = uniqueNumberServices.GetUniqueNumberType(1);
                 outLetter.SendDate = publicMethods.toPersianNumber(publicMethods.ConvertToJalali(DateTime.Now)); 
-                var organ = organService.All().Where(m => m.ID == "1").FirstOrDefault();
-                outLetter.SignatureUserID = Signature; //userService.All().Where(m => m.ID == Signature).FirstOrDefault();
+                var organ = organService.Where(m => m.ID == "1").FirstOrDefault();
+                outLetter.SignatureUserID = Signature; //userService.Where(m => m.ID == Signature).FirstOrDefault();
                // outLetter.Organ = organ;
                 string letterID = outLetterServices.CreateOutLetter(outLetter, file, uploads);
                 if (letterID!=null)
@@ -583,7 +583,7 @@ namespace Council.UI.Controllers
                 outLetter.OutLetterStatus = outLetterstatus;
                 outLetter.OutLetterNumber = uniqueNumberServices.GetUniqueNumberType(1);
                 outLetter.SendDate = DateTime.Now.ToString();
-                var organ = organService.All().Where(m => m.ID == dd).FirstOrDefault();
+                var organ = organService.Where(m => m.ID == dd).FirstOrDefault();
                 outLetter.Organ = organ;
 
                 string letterID = outLetterServices.CreateOutLetter(outLetter, file, uploads);
@@ -694,7 +694,7 @@ namespace Council.UI.Controllers
         {
             ViewBag.Recivers = userServices.All().ToList();
            // ViewBag.UniqueNumber = uniqueNumberServices.GetUniqueNumber();
-            ViewBag.Organs = organService.All().Where(m=>m.Deleted==false).ToList();
+            ViewBag.Organs = organService.Where(m=>m.Deleted==false).ToList();
             return View();
         }
 
@@ -704,7 +704,7 @@ namespace Council.UI.Controllers
         {
             var dd = Request["Organ"];
             byte outLetterstatus = !string.IsNullOrEmpty(letterType) ? Convert.ToByte(letterType) : Convert.ToByte("200");
-            var organ = organService.All().Where(m => m.ID == dd).FirstOrDefault();
+            var organ = organService.Where(m => m.ID == dd).FirstOrDefault();
             outLetterSpecs.SendDate = publicMethods.toPersianNumber(publicMethods.ConvertToJalali(DateTime.Now));
             outLetterSpecs.OutLetterNumber = uniqueNumberServices.GetUniqueNumberType(2);
             outLetterSpecs.Organ = organ;
@@ -823,11 +823,11 @@ namespace Council.UI.Controllers
         public ActionResult EditSendLetter(string letterID)
         {
             var model = outLetterServices.Get<string>(letterID);
-           var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == letterID && m.Deleted == false).ToList().OrderBy(m => m.RowOrder);
+           var OrganList = copyToLetterService.Where(m => m.OutLetterID == letterID && m.Deleted == false).ToList().OrderBy(m => m.RowOrder);
 
            
-            ViewBag.Organs = organService.All().Where(m=>m.Deleted==false).ToList();
-            ViewBag.CanSignatureList = userService.All().Where(m => m.CanSignatureForLetter == true).ToList();//boss != null ? boss.FirstName + ' ' + boss.LastName + " " + "[رئیس  شورا]" :  null;
+            ViewBag.Organs = organService.Where(m=>m.Deleted==false).ToList();
+            ViewBag.CanSignatureList = userService.Where(m => m.CanSignatureForLetter == true).ToList();//boss != null ? boss.FirstName + ' ' + boss.LastName + " " + "[رئیس  شورا]" :  null;
             int count = 0;
             string OrganIDCopystr = "";
             string OrgantxtContent = "";
@@ -842,7 +842,7 @@ namespace Council.UI.Controllers
                     {
                         OrganIDCopystr += item.OrganID + ", ";
                         OrgantxtContent += item.Description + ",";
-                        organNameList+= organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name+",";
+                        organNameList+= organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name+",";
                     }
                 }
             };
@@ -868,7 +868,7 @@ namespace Council.UI.Controllers
             string[] q = dd.Split(',');
             string[] OrganIDCopy = rowID.Split(',');
             string[] OrganTextCopy = txtContent.Split(',');
-            var organ = organService.All().Where(m => m.ID == "1").FirstOrDefault();
+            var organ = organService.Where(m => m.ID == "1").FirstOrDefault();
             outLetter.Organ = organ;// organService.Get<string>(Organ);
             var item = outLetterServices.GetAsNoTracking(outLetter.ID);
             outLetter.Uploads = item.Uploads;
@@ -876,7 +876,7 @@ namespace Council.UI.Controllers
             outLetter.LetterID = null;
             outLetter.SignatureUserID = Signature;
             outLetter.OutLetterStatus = 7;
-            var organList = copyToLetterService.All().Where(m => m.OutLetterID == outLetter.ID && m.Deleted==false).ToList().OrderBy(m => m.RowOrder);
+            var organList = copyToLetterService.Where(m => m.OutLetterID == outLetter.ID && m.Deleted==false).ToList().OrderBy(m => m.RowOrder);
             foreach (var item2 in organList)
             {
                 copyToLetterService.Delete(item2.ID);
@@ -943,7 +943,7 @@ namespace Council.UI.Controllers
             string OrganCopy = "";
             if (model.Received == false)
             {
-                var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == model.ID && m.Deleted == false ).ToList().OrderBy(m => m.RowOrder);
+                var OrganList = copyToLetterService.Where(m => m.OutLetterID == model.ID && m.Deleted == false ).ToList().OrderBy(m => m.RowOrder);
                 int count = 0;
 
                 foreach (var item in OrganList)
@@ -953,11 +953,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy==1)
                         {
-                              OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + ", ";
+                              OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + ", ";
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "\n" + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -975,11 +975,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "\n" + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1008,7 +1008,7 @@ namespace Council.UI.Controllers
         public ActionResult EditReciveLetter(string letterID)
         {
             var model = outLetterServices.Get<string>(letterID);
-            ViewBag.Organs = organService.All().Where(m=>m.Deleted==false).ToList();
+            ViewBag.Organs = organService.Where(m=>m.Deleted==false).ToList();
             return View(model);
         }
 
@@ -1034,22 +1034,22 @@ namespace Council.UI.Controllers
         {
             var model = outLetterServices.Get<string>(outLetterId);
 
-            ViewBag.HasLetter = (letterServices.All().Where(m => m.CouncilPeriod.IsActive).Any(l => l.OutLetter.ID == outLetterId)) ? "True" : "False";
+            ViewBag.HasLetter = (letterServices.Where(m => m.CouncilPeriod.IsActive).Any(l => l.OutLetter.ID == outLetterId)) ? "True" : "False";
             string OrganListstr = "";
             if (model.Received==false)
             {
-                var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == model.ID && m.Deleted==false).ToList().OrderBy(m => m.RowOrder);
+                var OrganList = copyToLetterService.Where(m => m.OutLetterID == model.ID && m.Deleted==false).ToList().OrderBy(m => m.RowOrder);
                 int count = 0;
                 foreach (var item in OrganList)
                 {
                     count++;
                     if (count < OrganList.Count())
                     {
-                        OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + ", ";
+                        OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + ", ";
                     }
                     else
                     {
-                        OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+                        OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
                     }
 
                 };
@@ -1073,15 +1073,15 @@ namespace Council.UI.Controllers
 
         public ActionResult SendOutLetterPrintA4(string letterId)
         {
-            ViewBag.logo = settingsService.All().Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
+            ViewBag.logo = settingsService.Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
 
             var letter = outLetterServices.Get<string>(letterId);
-            var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+            var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
             string OrganListstr = "";
             string OrganCopy = "<p>";
             if (letter != null)
             {
-                var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m => m.RowOrder);
+                var OrganList = copyToLetterService.Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m => m.RowOrder);
                 int count = 0;
 
                 foreach (var item in OrganList)
@@ -1091,11 +1091,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "-  " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1113,11 +1113,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "- " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1152,15 +1152,15 @@ namespace Council.UI.Controllers
         }
         public ActionResult SendOutLetterPrintA5Header(string letterId)
         {
-            ViewBag.logo = settingsService.All().Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
+            ViewBag.logo = settingsService.Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
 
             var letter = outLetterServices.Get<string>(letterId);
-            var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+            var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
             string OrganListstr = "";
             string OrganCopy = "<p>";
             if (letter != null)
             {
-                var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m => m.RowOrder);
+                var OrganList = copyToLetterService.Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m => m.RowOrder);
                 int count = 0;
 
                 foreach (var item in OrganList)
@@ -1170,11 +1170,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "-  " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1192,11 +1192,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "- " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1232,15 +1232,15 @@ namespace Council.UI.Controllers
 
         public ActionResult SendOutLetterPrintA4Header(string letterId)
         {
-            ViewBag.logo = settingsService.All().Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
+            ViewBag.logo = settingsService.Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
 
             var letter = outLetterServices.Get<string>(letterId);
-            var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+            var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
             string OrganListstr = "";
             string OrganCopy = "<p>";
             if (letter != null)
             {
-                var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m=>m.RowOrder);
+                var OrganList = copyToLetterService.Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m=>m.RowOrder);
                 int count = 0;
 
                 foreach (var item in OrganList)
@@ -1250,11 +1250,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "-  " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1272,11 +1272,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "- " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1311,15 +1311,15 @@ namespace Council.UI.Controllers
 
         public ActionResult SendOutLetterPrintA5(string letterId)
         {
-            ViewBag.logo = settingsService.All().Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
+            ViewBag.logo = settingsService.Where(m => m.Deleted == false).FirstOrDefault().CouncilLogo;
 
             var letter = outLetterServices.Get<string>(letterId);
-            var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+            var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
             string OrganListstr = "";
             string OrganCopy = "<p>";
             if (letter != null)
             {
-                var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m=>m.RowOrder);
+                var OrganList = copyToLetterService.Where(m => m.OutLetterID == letter.ID && m.Deleted == false).ToList().OrderBy(m=>m.RowOrder);
                 int count = 0;
 
                 foreach (var item in OrganList)
@@ -1329,11 +1329,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + " ";
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "-  " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1351,11 +1351,11 @@ namespace Council.UI.Controllers
                     {
                         if (item.TypeCopy == 1)
                         {
-                            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+                            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
                         }
                         else
                         {
-                            var q = organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault();
+                            var q = organService.Where(m => m.ID == item.OrganID).FirstOrDefault();
                             OrganCopy += "- " + q.Name + " ";
                             if (!string.IsNullOrWhiteSpace(item.Description) && !string.IsNullOrEmpty(item.Description))
                             {
@@ -1393,8 +1393,8 @@ namespace Council.UI.Controllers
         //public ActionResult rptSendOutLetter(string letterId,int WhitHeader)
         //{
         //    var letter = outLetterServices.Get<string>(letterId);
-        //    var Signatory = userServices.All().Where(m => m.ID==letter.SignatureUserID).FirstOrDefault();
-        //    var currentSetting = CurrtenSettingService.All().Where(m => m.Deleted == false).FirstOrDefault();
+        //    var Signatory = userServices.Where(m => m.ID==letter.SignatureUserID).FirstOrDefault();
+        //    var currentSetting = CurrtenSettingService.Where(m => m.Deleted == false).FirstOrDefault();
         //    PrintOutLetter printLetter = new PrintOutLetter();
         //    printLetter.Content = letter.Comment;
         //    printLetter.LetterDate = letter.OutLetterDate;
@@ -1407,18 +1407,18 @@ namespace Council.UI.Controllers
         //    printLetter.CopyTo = letter.CopyTo;
         //    // printLetter.BossName = boss.FirstName + " " + boss.LastName;
         //    string OrganListstr = "";
-        //    var OrganList = copyToLetterService.All().Where(m => m.OutLetterID == letterId && m.Deleted == false).ToList();
+        //    var OrganList = copyToLetterService.Where(m => m.OutLetterID == letterId && m.Deleted == false).ToList();
         //    int count = 0;
         //    foreach (var item in OrganList)
         //    {
         //        count++;
         //        if (count<OrganList.Count())
         //        {
-        //            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name + ", ";
+        //            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name + ", ";
         //        }
         //        else
         //        {
-        //            OrganListstr += organService.All().Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
+        //            OrganListstr += organService.Where(m => m.ID == item.OrganID).FirstOrDefault().Name;
         //        }
 
         //    };
@@ -1451,9 +1451,9 @@ namespace Council.UI.Controllers
         //public ActionResult rptRecievedOutLetterPrint(string letterId)
         //{
         //    var letter = outLetterServices.Get<string>(letterId);
-        //    var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+        //    var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
         //    LetterModels printLetter = new LetterModels();
-        //    var currentSetting = CurrtenSettingService.All().Where(m => m.Deleted == false).FirstOrDefault();
+        //    var currentSetting = CurrtenSettingService.Where(m => m.Deleted == false).FirstOrDefault();
 
         //    printLetter.OutLetterDate = letter.OutLetterDate;
         //    printLetter.OutLetterNumber = letter.OutLetterNumber;
@@ -1539,7 +1539,7 @@ namespace Council.UI.Controllers
         public ActionResult RecievedOutLetterPrint(string letterId)
         {
             var letter = outLetterServices.Get<string>(letterId);
-            var boss = userServices.All().Where(m => m.IsCouncilBoss).FirstOrDefault();
+            var boss = userServices.Where(m => m.IsCouncilBoss).FirstOrDefault();
             LetterModels printLetter = new LetterModels();
 
             printLetter.OutLetterDate = letter.OutLetterDate;
@@ -1549,7 +1549,7 @@ namespace Council.UI.Controllers
             printLetter.Bringer = letter.Bringer;
             printLetter.Organ = letter.Organ.Name;
             printLetter.RegisterNumber = letter.RegisterNumber;
-            ViewBag.logo = settingsService.All().Where(m=>m.Deleted==false).FirstOrDefault().CouncilLogo;
+            ViewBag.logo = settingsService.Where(m=>m.Deleted==false).FirstOrDefault().CouncilLogo;
             return View(printLetter);
         }
       

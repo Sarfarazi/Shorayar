@@ -31,7 +31,7 @@ namespace Council.UI.Helpers
         public static MvcHtmlString GetPersonNameWithAppID(this HtmlHelper html, string UserID)
         {
             UserServices userService = new UserServices();
-            var user = userService.All().FirstOrDefault(u => u.ID == UserID);
+            var user = userService.FirstOrDefault(u => u.ID == UserID);
             return user == null ? MvcHtmlString.Create("") : MvcHtmlString.Create(user.FirstName + " " + user.LastName);
         }
         public static MvcHtmlString ContentSubstring(this HtmlHelper html, string content, int numberOfChars = 700)

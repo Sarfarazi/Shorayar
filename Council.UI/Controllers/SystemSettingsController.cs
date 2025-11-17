@@ -18,7 +18,7 @@ namespace Council.UI.Controllers
 
         public ActionResult Index()
         {
-            ViewBag.Settings = settingService.All().Where(m => !m.Deleted).ToList();
+            ViewBag.Settings = settingService.Where(m => !m.Deleted).ToList();
             return View("Index", null);
         }
 
@@ -26,7 +26,7 @@ namespace Council.UI.Controllers
         [HttpGet]
         public ActionResult Edit(string id)
         {
-            ViewBag.Organs = settingService.All().Where(m => !m.Deleted).ToList();
+            ViewBag.Organs = settingService.Where(m => !m.Deleted).ToList();
             var current = settingService.Get<string>(id);
             var model = new UpdateSettings
             {

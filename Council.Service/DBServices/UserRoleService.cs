@@ -212,31 +212,31 @@ namespace Council.Service.DBServices
 
         //public bool UserIsBossHelper(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).BossHelper;
+        //    return this.FirstOrDefault(u => u.ID == Id).BossHelper;
         //}
         //public bool UserIsSiteManager(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).IsSiteManager;
+        //    return this.FirstOrDefault(u => u.ID == Id).IsSiteManager;
         //}
         //public bool UserIsWriter1(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).IsWriter1;
+        //    return this.FirstOrDefault(u => u.ID == Id).IsWriter1;
         //}
         //public bool UserIsWriter2(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).IsWriter2;
+        //    return this.FirstOrDefault(u => u.ID == Id).IsWriter2;
         //}
         //public bool UserIsOtherCouncilMember(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).IsOtherCouncilMember;
+        //    return this.FirstOrDefault(u => u.ID == Id).IsOtherCouncilMember;
         //}
         //public bool UserIsManager(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).IsManager;
+        //    return this.FirstOrDefault(u => u.ID == Id).IsManager;
         //}
         //public bool UserIsMember(string Id)
         //{
-        //    return this.All().FirstOrDefault(u => u.ID == Id).IsCouncilMember;
+        //    return this.FirstOrDefault(u => u.ID == Id).IsCouncilMember;
         //}
     }
 }

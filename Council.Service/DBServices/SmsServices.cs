@@ -50,7 +50,7 @@ namespace Council.Service.DBServices
                     smsDeliverLog.SMSErrorCode = new SMSErrorCode();
                     smsDeliverLog.User = new User();
 
-                    SMSErrorCode error = DeliverCode > 200 ? smsErrorCodeService.All().Where(m => m.ErrorCode == 200).FirstOrDefault() : smsErrorCodeService.All().Where(m => m.ErrorCode == DeliverCode).FirstOrDefault();
+                    SMSErrorCode error = DeliverCode > 200 ? smsErrorCodeService.Where(m => m.ErrorCode == 200).FirstOrDefault() : smsErrorCodeService.Where(m => m.ErrorCode == DeliverCode).FirstOrDefault();
                     smsDeliverLog.SMSErrorCode = error;
                     smsDeliverLog.User = allUser[i];
                     smsDeliverLog.Content = inviteMessage;

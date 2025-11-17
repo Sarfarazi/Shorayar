@@ -53,7 +53,7 @@ namespace Council.UI.Controllers
         #region تغییر دوره فعال
         public ActionResult ChangePeriod(string Id)
         {
-            var model = periodService.All().Where(m => m.ID == Id).FirstOrDefault();
+            var model = periodService.Where(m => m.ID == Id).FirstOrDefault();
 
             if (model != null)
             {

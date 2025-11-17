@@ -95,7 +95,7 @@ namespace Council.Core.Models
         public string CommissionId { get; set; }
         public DateTime CreatedOn { get; set; }
         public LetterStatus LetterStatus { get; set; }
-        public string IsRule { get; set; }
+        public int? IsRule { get; set; }
         public string CommissionName { get; set; }
     }
 

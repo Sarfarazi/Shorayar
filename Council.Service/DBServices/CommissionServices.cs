@@ -57,7 +57,7 @@ namespace Council.Service.DBServices
         }
         public Commission GetCommisionByChairmanId(string bossId)
         {
-            return this.All().FirstOrDefault(c => c.CommissionChairman.ID == bossId);
+            return this.FirstOrDefault(c => c.CommissionChairman.ID == bossId);
         }
         public string GetCommisionNameByChairmanId(string bossId)
         {

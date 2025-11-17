@@ -104,8 +104,8 @@ namespace Council.UI.Controllers
             ViewBag.RemovedRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
             ViewBag.OutLetterRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
             ViewBag.AllLetterRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
-            ViewBag.EndLetters = letterService.All().Where(m => m.CouncilPeriod.IsActive && m.OutLetter == null && m.LetterRefrences.Any(n => n.SenderAppID == UserId && n.RefrenceType == RefrenceType.EndOfLetter)).Select(b => b.ID).ToList();
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
+            ViewBag.EndLetters = letterService.Where(m => m.CouncilPeriod.IsActive && m.OutLetter == null && m.LetterRefrences.Any(n => n.SenderAppID == UserId && n.RefrenceType == RefrenceType.EndOfLetter)).Select(b => b.ID).ToList();
 
             return View(model);
         }
@@ -119,7 +119,7 @@ namespace Council.UI.Controllers
             ViewBag.ArchivedLetters = LetterCounts.Where(l => l.Archived).Count();
 
             ViewBag.ArchivedRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
             return PartialView("_ArchivedLetters", model.Where(l => l.Archived));
         }
         public ActionResult DisplayOnlyCouncilLetters(string skip = "0", string take = "50")
@@ -132,7 +132,7 @@ namespace Council.UI.Controllers
             ViewBag.CouncilLetters = LetterCounts.Where(l => l.LetterStatus > 3).Count();
 
             ViewBag.CouncilRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
             return PartialView("_ForCouncilLetters", model.Where(l => l.LetterStatus > 3));
         }
         public ActionResult DisplayOnlyOutOfReadyLetters(string skip = "0", string take = "50")
@@ -145,7 +145,7 @@ namespace Council.UI.Controllers
             ViewBag.OutOfReadyLetters = LetterCounts.Where(l => l.LetterStatus == 10 || l.LetterStatus == 11).Count();
 
             ViewBag.OutOfReadyRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
             return PartialView("_ForCouncilLetters", model.Where(l => l.LetterStatus > 3));
         }
         public ActionResult DisplayOnlyRemovedLetters(string skip = "0", string take = "50")
@@ -159,7 +159,7 @@ namespace Council.UI.Controllers
             ViewBag.RemovedLetters = LetterCounts.Where(l => l.Deleted).Count();
 
             ViewBag.RemovedRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
             return PartialView("_RemovedLetters", model.Where(l => l.Deleted));
         }
         public ActionResult DisplayOnlyOutLetters(string skip = "0", string take = "50")
@@ -171,7 +171,7 @@ namespace Council.UI.Controllers
 
             ViewBag.OutLetters = LetterCounts.Where(l => !String.IsNullOrEmpty(l.OutLetter_ID)).Count();
             ViewBag.OutLetterRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
             return PartialView("_OutLetters", model.Where(l => !String.IsNullOrEmpty(l.OutLetter_ID)));
         }
         public ActionResult GetOnlyAllLetters(string skip, string take)
@@ -183,7 +183,7 @@ namespace Council.UI.Controllers
             ViewBag.AllLetterCount = LetterCounts.Where(l => l.Archived == false && l.Deleted == false).OrderByDescending(l => l.CreatedOn).Count();
 
             ViewBag.AllLetterRowNumber = skip == "0" && take == "-1" ? 1 : Convert.ToInt32(skip) + 1;
-            ViewBag.User = userService.All().FirstOrDefault(u => u.ID == UserId);
+            ViewBag.User = userService.FirstOrDefault(u => u.ID == UserId);
             return PartialView("_ExtraAllLetters", model.Where(l => l.Archived == false && l.Deleted == false).OrderByDescending(l => l.CreatedOn));
         }
 
@@ -191,7 +191,7 @@ namespace Council.UI.Controllers
         #region جزییات نامه
         public ActionResult LetterItem(string letterID)
         {
-            var item = letterService.All().Where(l => l.ID == letterID).FirstOrDefault();
+            var item = letterService.Where(l => l.ID == letterID).FirstOrDefault();
             var activeUsers = item.LetterRefrences.OrderByDescending(l => l.CreatedOn).FirstOrDefault().Recivers.Where(m => m.IsActive);
             var users = activeUsers != null ? activeUsers.FirstOrDefault() : null;
             var UserId = userService.GetUserByUserName(User.Identity.Name).ID;
@@ -202,8 +202,8 @@ namespace Council.UI.Controllers
             model.LastReciverID = users != null ? users.ID : "";
             model.UserIsBoss = userService.UserIsBoss(UserId);
             model.UserIsBossHelper = userService.UserIsBossHelper(UserId);
-            model.Commisions = commisionService.All().Where(m => !m.Deleted).ToList();
-            model.Statements = defaultStatementService.All().Where(m => !m.Deleted).ToList();
+            model.Commisions = commisionService.Where(m => !m.Deleted).ToList();
+            model.Statements = defaultStatementService.Where(m => !m.Deleted).ToList();
             model.LastRefrence = letterService.GetLastRefrence(letterID);
             model.UserPosition = letterService.GetUserPosition(UserId, item.ID);
             return View(model);
@@ -283,10 +283,10 @@ namespace Council.UI.Controllers
             ViewBag.UniqueNumber = uniqueNumberService.GetUniqueNumber();
             ViewBag.LetterTitle = letterService.Get<string>(letterID).Title;
             ViewBag.LetterID = letterID;
-            ViewBag.Users = userService.All().Where(m => m.IsActive && m.IsCouncilMember).ToList();
-            var session = sessionService.All().Where(m => m.IsActive).FirstOrDefault();
+            ViewBag.Users = userService.Where(m => m.IsActive && m.IsCouncilMember).ToList();
+            var session = sessionService.Where(m => m.IsActive).FirstOrDefault();
             ViewBag.SessionNumber = session != null ? session.MeetingNumber : -200;
-            ViewBag.Meetings = meetingService.All().Where(m => m.NoCouncil).Where(m => !m.MeetingUsers.Any()).ToList();
+            ViewBag.Meetings = meetingService.Where(m => m.NoCouncil).Where(m => !m.MeetingUsers.Any()).ToList();
             return View();
         }
 
@@ -305,8 +305,8 @@ namespace Council.UI.Controllers
             ViewBag.LetterTitle = letterService.Get<string>(letterID).Title;
             ViewBag.LetterID = letterID;
             ViewBag.Users = letterService.GetCommissionMembers(letterID, true);
-            ViewBag.SessionNumber = sessionService.All().Where(m => m.IsActive).FirstOrDefault().MeetingNumber;
-            ViewBag.Meetings = meetingService.All().Where(m => m.NoCouncil).Where(m => !m.MeetingUsers.Any()).ToList();
+            ViewBag.SessionNumber = sessionService.Where(m => m.IsActive).FirstOrDefault().MeetingNumber;
+            ViewBag.Meetings = meetingService.Where(m => m.NoCouncil).Where(m => !m.MeetingUsers.Any()).ToList();
             return View();
         }
 

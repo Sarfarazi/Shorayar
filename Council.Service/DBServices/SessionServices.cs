@@ -18,7 +18,7 @@ namespace Council.Service.DBServices
 
         public void DeActiveAllSession()
         {
-            var sessions = All().Where(m => m.IsActive).ToList();
+            var sessions = Where(m => m.IsActive).ToList();
             foreach(var item in sessions)
             {
                 if (item.IsActive)
@@ -31,10 +31,10 @@ namespace Council.Service.DBServices
             Save();
         }
         private void RemoveLettersToVotingStatus(int sessionNumber) {
-            var meetings = meetingService.All().Where(m => m.MeetingNumber == sessionNumber.ToString()).Where(m => !m.MeetingUsers.Any()).ToList();
+            var meetings = meetingService.Where(m => m.MeetingNumber == sessionNumber.ToString()).Where(m => !m.MeetingUsers.Any()).ToList();
             foreach(var meeting in meetings)
             {
-                var letter = letterService.All().Where(m => m.Meeting.ID == meeting.ID).FirstOrDefault();
+                var letter = letterService.Where(m => m.Meeting.ID == meeting.ID).FirstOrDefault();
                 letterService.RemoveMeetingFromLetter(letter.ID);
                 letterService.ChangLetterStatus(letter.ID, LetterStatus.OutOfVotting);
 
@@ -46,7 +46,7 @@ namespace Council.Service.DBServices
         }
         public MeetingHeader GetActiveSession()
         {
-            return All().Where(m => m.IsActive).OrderByDescending(m=>m.CreatedOn).FirstOrDefault(); 
+            return Where(m => m.IsActive).OrderByDescending(m=>m.CreatedOn).FirstOrDefault(); 
         }
 
         public string GetUniqueNumberForSession(string CouncilPeriodsID)
@@ -59,7 +59,7 @@ namespace Council.Service.DBServices
 
         private string GetLastUniqueCode(string CouncilPeriodsID)
         {
-            MeetingHeader uniqueNumber = this.All().Where(u => u.CouncilPeriodsID == CouncilPeriodsID ).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
+            MeetingHeader uniqueNumber = this.Where(u => u.CouncilPeriodsID == CouncilPeriodsID ).OrderByDescending(u => u.CreatedOn).FirstOrDefault();
             if (uniqueNumber == null)
                 return "0";
 

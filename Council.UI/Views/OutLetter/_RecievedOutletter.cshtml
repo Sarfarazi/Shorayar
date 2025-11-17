@@ -13,7 +13,7 @@
 {
     foreach (var item in Model)
     {
-        var letter = letterService.All().Where(m => m.OutLetter.ID == item.ID).FirstOrDefault();
+        var letter = letterService.Where(m => m.OutLetter.ID == item.ID).FirstOrDefault();
         <tr style="@(letter != null ? "background: #fff3cf;" : "")" >
             <td class="text-center">
                 <span id="rowNumber">@(++comNumber + Convert.ToInt32(ViewBag.RecivedOutLettersPageNumber))</span>

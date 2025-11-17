@@ -38,7 +38,7 @@ namespace Council.Service.DBServices
                 UserIsBossHelper = userService.UserIsBossHelper(_userId),
                 UserIsMember = userService.UserIsMember(_userId),
                 UserIsSiteManager = userService.UserIsSiteManager(_userId),
-                //Finished = letterService.All().Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Take(10).ToList(),
+                //Finished = letterService.Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Take(10).ToList(),
                 Finished = null,
                 AllCommissions = AllCommissionIds(),
                 MyCommissions = MyCommissionIds(),
@@ -88,7 +88,7 @@ namespace Council.Service.DBServices
         }
         public int GetMyLetterCount()
         {
-           return letterService.All().Where(k => k.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End).ToList().Count();            
+           return letterService.Where(k => k.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End).ToList().Count();            
         }
         public LastOpinionModel GetLastOpinionModel(string skip, string take,string searchText="")
         {                        
@@ -96,10 +96,10 @@ namespace Council.Service.DBServices
             {
                 UserIsBoss = userService.UserIsBoss(_userId),
                 UserIsBossHelper= userService.UserIsBossHelper(_userId),
-                //Finished = take == "-1"? letterService.All().Where(j=>j.CouncilPeriod.IsActive).Where(m=>m.LetterRefrences.Any(p=>p.Recivers.Any(n=>n.ID== _userId))).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).ToList():                                                       
-                //                         letterService.All().Where(j => j.CouncilPeriod.IsActive).Where(m => m.LetterRefrences.Any(p => p.Recivers.Any(n => n.ID == _userId))).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).Take(Convert.ToInt32(take)).ToList(),
-                Finished = take == "-1" ? letterService.All().Where(j => j.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).ToList() :
-                                         letterService.All().Where(j => j.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).Take(Convert.ToInt32(take)).ToList(),
+                //Finished = take == "-1"? letterService.Where(j=>j.CouncilPeriod.IsActive).Where(m=>m.LetterRefrences.Any(p=>p.Recivers.Any(n=>n.ID== _userId))).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).ToList():                                                       
+                //                         letterService.Where(j => j.CouncilPeriod.IsActive).Where(m => m.LetterRefrences.Any(p => p.Recivers.Any(n => n.ID == _userId))).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).Take(Convert.ToInt32(take)).ToList(),
+                Finished = take == "-1" ? letterService.Where(j => j.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).ToList() :
+                                         letterService.Where(j => j.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End).OrderByDescending(l => l.CreatedOn).Skip(Convert.ToInt32(skip)).Take(Convert.ToInt32(take)).ToList(),
                 MyCommissions = MyCommissionIds()
             };
             return model;
@@ -122,7 +122,7 @@ namespace Council.Service.DBServices
             {
                 UserIsBoss = userService.UserIsBoss(_userId),
                 UserIsBossHelper = userService.UserIsBossHelper(_userId),
-                Finished = letterService.All().Where(k => k.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End && l.Title.Contains(txt)).OrderByDescending(l => l.CreatedOn).ToList() ,                                   
+                Finished = letterService.Where(k => k.CouncilPeriod.IsActive).Where(l => l.LetterStatus == LetterStatus.End && l.Title.Contains(txt)).OrderByDescending(l => l.CreatedOn).ToList() ,                                   
                 MyCommissions = MyCommissionIds()
             };
             return model;
@@ -157,23 +157,23 @@ namespace Council.Service.DBServices
         }
         public IQueryable<Letter> MyLetter()
         {
-            return letterService.All().Where(k => k.CouncilPeriod.IsActive).Where(m=>!m.Deleted).Where(l => l.LetterRefrences.Any(r => r.SenderAppID == _userId || r.Recivers.Any(u => u.ID == _userId)));
+            return letterService.Where(k => k.CouncilPeriod.IsActive).Where(m=>!m.Deleted).Where(l => l.LetterRefrences.Any(r => r.SenderAppID == _userId || r.Recivers.Any(u => u.ID == _userId)));
         }
         //public IQueryable<Letter> MyCommissionLetter()
         //{
         //    var myCommissionIds = MyCommissionIds();
-        //    return letterService.All().Where(l => l.LetterRefrences.OrderBy(lr => lr.CreatedOn).Last().RefrenceType == RefrenceType.SendToCommissionMembers &&
+        //    return letterService.Where(l => l.LetterRefrences.OrderBy(lr => lr.CreatedOn).Last().RefrenceType == RefrenceType.SendToCommissionMembers &&
         //                myCommissionIds.Contains(l.LetterRefrences.OrderBy(lr => lr.CreatedOn)
         //                    .Last(lr => !String.IsNullOrEmpty(lr.CommissionId)).CommissionId));
         //}
         public IQueryable<Letter> CommissionCouncilLetter()
         {
-            return letterService.All().Where(l => l.LetterStatus == LetterStatus.CommissionVoting);
+            return letterService.Where(l => l.LetterStatus == LetterStatus.CommissionVoting);
         }
         List<CommissionAndBossIds> MyCommissionIds()
         {
             if (_myCommissionIds == null)
-                _myCommissionIds = commissionService.All().Where(c => c.CommissionChairman.ID == _userId
+                _myCommissionIds = commissionService.Where(c => c.CommissionChairman.ID == _userId
                               || c.Members.Any(m => m.ID == _userId))
                                 .Select(c => new CommissionAndBossIds { BossId = c.CommissionChairman.ID, CommissionId = c.ID }).ToList();
 

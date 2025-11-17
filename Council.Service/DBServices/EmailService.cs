@@ -15,7 +15,7 @@ namespace Council.Service.DBServices
 
         public EmailInfo GetEceInfo()
         {
-            return this.All().Where(m => m.UserName == "info@shorayar.com").FirstOrDefault();             
+            return this.Where(m => m.UserName == "info@shorayar.com").FirstOrDefault();             
         }
     }
 }

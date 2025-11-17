@@ -17,7 +17,7 @@ namespace Council.Service.DBServices
 
         public List<Voting> GetVotingOfLetter(string letterID, bool isCommission = false)
         {
-            return All().Where(v => v.Letter.ID == letterID && v.IsCommission == isCommission).Where(m=>!m.Deleted).ToList();
+            return Where(v => v.Letter.ID == letterID && v.IsCommission == isCommission).Where(m=>!m.Deleted).ToList();
         }        
     }
 }

@@ -18,7 +18,7 @@ namespace Council.UI.Controllers
         #region لیست سازمان ها
         public ActionResult Index()
         {
-            ViewBag.Organs = organService.All().Where(m => !m.Deleted).ToList();
+            ViewBag.Organs = organService.Where(m => !m.Deleted).ToList();
             return View("Index", null);
         }
         #endregion
@@ -27,7 +27,7 @@ namespace Council.UI.Controllers
         [HttpGet]
         public ActionResult Index(string id)
         {
-            ViewBag.Organs = organService.All().Where(m => !m.Deleted).ToList();
+            ViewBag.Organs = organService.Where(m => !m.Deleted).ToList();
             Organ model = organService.Get<string>(id);
             return View(model);
         } 

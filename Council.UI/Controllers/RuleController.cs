@@ -83,7 +83,7 @@ namespace Council.UI.Controllers
             CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             var userId = _User.UserId;
 
-            var MyCommision = commissionService.All().Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
+            var MyCommision = commissionService.Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
 
             ViewBag.ruleLetterCount = letterService.All()
                 .Where(m => m.CouncilPeriod.IsActive)
@@ -98,7 +98,7 @@ namespace Council.UI.Controllers
             CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             var userId = _User.UserId;
 
-            var MyCommision = commissionService.All().Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
+            var MyCommision = commissionService.Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
 
             var result = take == -1
                 ? letterService.All()
@@ -131,7 +131,7 @@ namespace Council.UI.Controllers
             CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             var userId = _User.UserId;
 
-            var MyCommision = commissionService.All().Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
+            var MyCommision = commissionService.Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
 
             ViewBag.ruleLetterCount = letterService.All()
                 .Where(m => m.CouncilPeriod.IsActive)
@@ -146,7 +146,7 @@ namespace Council.UI.Controllers
             CustomPrincipal _User = (CustomPrincipal)HttpContext.User;
             var userId = _User.UserId;
 
-            var MyCommision = commissionService.All().Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
+            var MyCommision = commissionService.Where(c => c.CommissionChairman.ID == userId).Select(m => m.ID).ToList();
 
             var result = take == -1
                 ? letterService.All()
@@ -183,7 +183,7 @@ namespace Council.UI.Controllers
             ViewBag.CancelVoted = votings.Where(m => m.VoteStatus == "3").Count();
             ViewBag.LetterId = letterId;
             ViewBag.TitleLetter = letter.Title;
-            var outletter = outletterService.All().Where(m => m.ID == letter.OutLetter.ID).FirstOrDefault();
+            var outletter = outletterService.Where(m => m.ID == letter.OutLetter.ID).FirstOrDefault();
             if (outletter != null)
             {
                 ViewBag.LetterNumber = outletter.OutLetterNumber;
@@ -207,7 +207,7 @@ namespace Council.UI.Controllers
             ViewBag.CancelVoted = votings.Where(m => m.VoteStatus == "3").Count();
             ViewBag.LetterId = letterId;
             ViewBag.TitleLetter = letter.Title;
-            var outletter = outletterService.All().Where(m => m.ID == letter.OutLetter.ID).FirstOrDefault();
+            var outletter = outletterService.Where(m => m.ID == letter.OutLetter.ID).FirstOrDefault();
             if (outletter != null)
             {
                 ViewBag.LetterNumber = outletter.OutLetterNumber;
